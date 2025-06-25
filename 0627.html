@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Monopoly Web Demo</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background-color: #f0f0f0;
+      text-align: center;
+    }
+    #board {
+      display: grid;
+      grid-template-columns: repeat(6, 100px);
+      grid-template-rows: repeat(6, 100px);
+      gap: 2px;
+      margin: 20px auto;
+      width: 612px;
+      height: 612px;
+      background-color: #ccc;
+      padding: 10px;
+      border-radius: 10px;
+      position: relative;
+    }
+    .tile {
+      background-color: rgba(255, 255, 255, 0.85);
+      border: 1px solid #999;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 14px;
+      position: relative;
+      color: black;
+      overflow: hidden;
+    }
+    .tile img {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      top: 0;
+      left: 0;
+      z-index: 0;
+    }
+    .tile-label {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(255, 255, 255, 0.8);
+      font-size: 12px;
+      padding: 2px;
+      z-index: 1;
+    }
+    .player {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      position: absolute;
+      z-index: 2;
+    }
+    .player1 {
+      background-color: red;
+      bottom: 5px;
+      right: 5px;
+    }
+    .player2 {
+      background-color: blue;
+      top: 5px;
+      left: 5px;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      margin-top: 10px;
+      background-color: #ffffffcc;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <h1>大富翁 - 兩人版 DEMO</h1>
+  <div id="board"></div>
+  <p>玩家 <span id="current-player">1</span> 的回合</p>
+  <p>玩家1位置：<span id="pos1">0</span> | 玩家2位置：<span id="pos2">0</span></p>
+  <button onclick="rollDice()">擲骰子</button>
+
+  <script>
+    const board = document.getElementById('board');
+    const tileNames = [
+      "台北", "新北", "基隆", "宜蘭", "花蓮", "台東",
+      "屏東", "高雄", "台南", "嘉義", "雲林", "彰化",
+      "南投", "台中", "苗栗", "新竹", "桃園", "澎湖",
+      "金門", "連江"
+    ];
+
+    const tileImages = [
+      "https://upload.wikimedia.org/wikipedia/commons/5/5f/Taipei_101_Tower.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/f/f3/Tamsui_River_Sunset.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/0/00/Keelung_Port.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/4/41/Yilan_County_Government.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/3/32/Taroko_Gorge.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/7/74/Taitung_Seashore_Park.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/1/17/Kenting_Beach.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/0/04/Kaohsiung_Harbor.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/e/ed/Chihkan_Tower_Tainan.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/7/75/Chiayi_Park.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/e/ee/Yunlin_Douliu.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/f/f4/Lukang_Old_Street.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/9/95/Sun_Moon_Lake.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/d/d9/National_Taichung_Theater.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/4/49/Miaoli_City.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/b/bb/Hsinchu_City_God_Temple.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/d/d7/Taoyuan_Airport.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/2/23/Penghu_Islands.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/c/c3/Kinmen_Traditional_Architecture.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/0/02/Lienchiang_Nangan.jpg"
+    ];
+
+    const tileLayout = [];
+    for (let i = 0; i < 6; i++) tileLayout.push(i);
+    for (let i = 1; i < 5; i++) tileLayout.push(6 * i + 5);
+    for (let i = 5; i >= 0; i--) tileLayout.push(6 * 5 + i);
+    for (let i = 4; i > 0; i--) tileLayout.push(6 * i);
+
+    const positions = [0, 0];
+    let currentPlayer = 0;
+
+    for (let r = 0; r < 6; r++) {
+      for (let c = 0; c < 6; c++) {
+        const index = r * 6 + c;
+        const div = document.createElement("div");
+        div.className = "tile";
+        div.id = `tile-${index}`;
+        board.appendChild(div);
+      }
+    }
+
+    tileLayout.forEach((tileIdx, i) => {
+      const div = document.getElementById(`tile-${tileIdx}`);
+      const img = document.createElement('img');
+      img.src = tileImages[i % tileImages.length];
+      div.appendChild(img);
+      const label = document.createElement('div');
+      label.className = 'tile-label';
+      label.innerText = tileNames[i % tileNames.length];
+      div.appendChild(label);
+    });
+
+    function updateBoard() {
+      document.querySelectorAll('.player').forEach(el => el.remove());
+
+      const p1 = document.createElement('div');
+      p1.className = 'player player1';
+      document.getElementById(`tile-${tileLayout[positions[0]]}`).appendChild(p1);
+
+      const p2 = document.createElement('div');
+      p2.className = 'player player2';
+      document.getElementById(`tile-${tileLayout[positions[1]]}`).appendChild(p2);
+
+      document.getElementById('pos1').textContent = positions[0];
+      document.getElementById('pos2').textContent = positions[1];
+      document.getElementById('current-player').textContent = currentPlayer + 1;
+    }
+
+    function rollDice() {
+      const roll = Math.floor(Math.random() * 6) + 1;
+      positions[currentPlayer] = (positions[currentPlayer] + roll) % tileLayout.length;
+      updateBoard();
+      currentPlayer = 1 - currentPlayer;
+    }
+
+    updateBoard();
+  </script>
+</body>
+</html>
