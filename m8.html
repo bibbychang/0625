@@ -110,21 +110,31 @@
     let currentQuestion = {};
     let scores = [0, 0];
 
+    
+	
+	
+	
     function updateUI() {
-      document.getElementById("rollBtn1").style.visibility = currentPlayer === 0 ? "visible" : "hidden";
-      document.getElementById("submitBtn1").style.visibility = currentPlayer === 0 ? "visible" : "hidden";
-      document.getElementById("question1").style.visibility = currentPlayer === 0 ? "visible" : "hidden";
-      document.getElementById("turnInfo1").style.visibility = currentPlayer === 0 ? "visible" : "hidden";
-      document.getElementById("answer1").style.visibility = currentPlayer === 0 ? "visible" : "hidden";
-      document.getElementById("left-ui").classList.toggle("active", currentPlayer === 0);
+      const showPlayer1 = currentPlayer === 0;
+      const showPlayer2 = currentPlayer === 1;
 
-      document.getElementById("rollBtn2").style.visibility = currentPlayer === 1 ? "visible" : "hidden";
-      document.getElementById("submitBtn2").style.visibility = currentPlayer === 1 ? "visible" : "hidden";
-      document.getElementById("question2").style.visibility = currentPlayer === 1 ? "visible" : "hidden";
-      document.getElementById("turnInfo2").style.visibility = currentPlayer === 1 ? "visible" : "hidden";
-      document.getElementById("answer2").style.visibility = currentPlayer === 1 ? "visible" : "hidden";
-      document.getElementById("right-ui").classList.toggle("active", currentPlayer === 1);
+      document.getElementById("rollBtn1").style.display = showPlayer1 ? "block" : "none";
+      document.getElementById("submitBtn1").style.display = showPlayer1 ? "block" : "none";
+      document.getElementById("question1").style.display = showPlayer1 ? "block" : "none";
+      document.getElementById("turnInfo1").style.display = showPlayer1 ? "block" : "none";
+      document.getElementById("answer1").style.display = showPlayer1 ? "block" : "none";
+      document.getElementById("left-ui").classList.toggle("active", showPlayer1);
+
+      document.getElementById("rollBtn2").style.display = showPlayer2 ? "block" : "none";
+      document.getElementById("submitBtn2").style.display = showPlayer2 ? "block" : "none";
+      document.getElementById("question2").style.display = showPlayer2 ? "block" : "none";
+      document.getElementById("turnInfo2").style.display = showPlayer2 ? "block" : "none";
+      document.getElementById("answer2").style.display = showPlayer2 ? "block" : "none";
+      document.getElementById("right-ui").classList.toggle("active", showPlayer2);
     }
+ 
+	
+	
 
     function shuffle(array) {
       for (let i = array.length - 1; i > 0; i--) {
