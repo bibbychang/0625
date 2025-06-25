@@ -24,6 +24,15 @@
       gap: 10px;
       width: 150px;
     }
+    #right-ui, #rollBtn2, #question2, #turnInfo2, #answer2 {
+      text-align: left;
+    }
+    #left-ui, #rollBtn1, #question1, #turnInfo1, #answer1 {
+      text-align: right;
+    }
+    #rollBtn1, #rollBtn2, #answer1, #answer2 {
+      width: 100%;
+    }
     #board {
       display: grid;
       grid-template-columns: repeat(8, 60px);
@@ -61,19 +70,19 @@
   <div id="scoreboard">玩家 1 分數：<span id="score1">0</span> ｜ 玩家 2 分數：<span id="score2">0</span></div>
   <div id="game-container">
     <div id="left-ui">
-      <button id="rollBtn1" onclick="rollDice()">🎲 玩家 1 擲骰</button>
+      <button id="rollBtn1" onclick="rollDice(0)">🎲 玩家 1 擲骰</button>
       <p id="turnInfo1"></p>
       <p id="question1"></p>
       <input type="text" id="answer1" placeholder="輸入答案" />
-      <button onclick="checkAnswer()">送出答案</button>
+      <button onclick="checkAnswer(0)">送出答案</button>
     </div>
     <div id="board"></div>
     <div id="right-ui">
-      <button id="rollBtn2" onclick="rollDice()">🎲 玩家 2 擲骰</button>
+      <button id="rollBtn2" onclick="rollDice(1)">🎲 玩家 2 擲骰</button>
       <p id="turnInfo2"></p>
       <p id="question2"></p>
       <input type="text" id="answer2" placeholder="輸入答案" />
-      <button onclick="checkAnswer()">送出答案</button>
+      <button onclick="checkAnswer(1)">送出答案</button>
     </div>
   </div>
   <audio id="correctSound" src="https://www.soundjay.com/buttons/sounds/button-3.mp3"></audio>
@@ -100,6 +109,11 @@
     let diceRoll = 0;
     let currentQuestion = {};
     let scores = [0, 0];
+
+    function updateUI() {
+      document.getElementById("left-ui").style.display = currentPlayer === 0 ? "flex" : "none";
+      document.getElementById("right-ui").style.display = currentPlayer === 1 ? "flex" : "none";
+    }
 
     function shuffle(array) {
       for (let i = array.length - 1; i > 0; i--) {
@@ -200,7 +214,8 @@
       });
     }
 
-    function rollDice() {
+    function rollDice(playerIdx) {
+      if (playerIdx !== currentPlayer) return;
       document.getElementById("diceSound").play();
       diceRoll = Math.floor(Math.random() * 6) + 1;
       const a = Math.floor(Math.random() * 10);
@@ -221,7 +236,8 @@
       }
     }
 
-    function checkAnswer() {
+    function checkAnswer(playerIdx) {
+      if (playerIdx !== currentPlayer) return;
       const ans = parseInt(document.getElementById(currentPlayer === 0 ? "answer1" : "answer2").value);
       if (ans === currentQuestion.a + currentQuestion.b) {
         document.getElementById("correctSound").play();
@@ -253,6 +269,7 @@
       currentPlayer = 1 - currentPlayer;
       document.getElementById("answer1").value = "";
       document.getElementById("answer2").value = "";
+      updateUI();
     }
 
     buildBoard();
@@ -260,6 +277,7 @@
     dfs(0, 0, maxSteps, [[0, 0]]);
     renderPath();
     placePlayers();
+    updateUI();
   </script>
 </body>
 </html>
