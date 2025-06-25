@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>è¿·å®®å¤§å¯Œç¿</title>
+  <title>°g®c¤j´I¯Î</title>
   <style>
     body {
       font-family: sans-serif;
@@ -22,7 +22,7 @@
       display: flex;
       flex-direction: column;
       gap: 10px;
-      width: 150px;min-height: 250px;
+      width: 50px;
     }
     #right-ui, #rollBtn2, #question2, #turnInfo2, #answer2 {
       text-align: left;
@@ -35,13 +35,13 @@
     }
     #board {
       display: grid;
-      grid-template-columns: repeat(8, 60px);
-      grid-template-rows: repeat(8, 60px);
+      grid-template-columns: repeat(8, 40px);
+      grid-template-rows: repeat(8, 40px);
       gap: 2px;
     }
     .cell {
-      width: 60px;
-      height: 60px;
+      width: 40px;
+      height: 40px;
       background-color: #f0f0f0;
       position: relative;
       font-size: 10px;
@@ -63,30 +63,28 @@
     }
     .player1 { background-color: red; }
     .player2 { background-color: blue; }
-	
   </style>
 </head>
 <body>
-  <h1>è¿·å®®å¤§å¯Œç¿éŠæˆ²</h1>
-  <div id="scoreboard">ç©å®¶ 1 åˆ†æ•¸ï¼š<span id="score1">0</span> ï½œ ç©å®¶ 2 åˆ†æ•¸ï¼š<span id="score2">0</span></div>
+  <h1>°g®c¤j´I¯Î¹CÀ¸</h1>
+  <div id="scoreboard">ª±®a 1 ¤À¼Æ¡G<span id="score1">0</span> ¡U ª±®a 2 ¤À¼Æ¡G<span id="score2">0</span></div>
   <div id="game-container">
     <div id="left-ui">
-      <button id="rollBtn1" onclick="rollDice(0)">ğŸ² ç©å®¶ 1 æ“²éª°</button>
+      <button id="rollBtn1" onclick="rollDice(0)">&#127922; ª±®a 1 ÂY»ë</button>
       <p id="turnInfo1"></p>
       <p id="question1"></p>
-      <input type="text" id="answer1" placeholder="è¼¸å…¥ç­”æ¡ˆ" />
-      <button onclick="checkAnswer(0)">é€å‡ºç­”æ¡ˆ</button>
+      <input type="text" id="answer1" placeholder="¿é¤Jµª®×" />
+      <button onclick="checkAnswer(0)">°e¥X</button>
     </div>
-    
+    <div id="board"></div>
     <div id="right-ui">
-      <button id="rollBtn2" onclick="rollDice(1)">ğŸ² ç©å®¶ 2 æ“²éª°</button>
+      <button id="rollBtn2" onclick="rollDice(1)">&#127922; ª±®a 2 ÂY»ë</button>
       <p id="turnInfo2"></p>
       <p id="question2"></p>
-      <input type="text" id="answer2" placeholder="è¼¸å…¥ç­”æ¡ˆ" />
-      <button onclick="checkAnswer(1)">é€å‡ºç­”æ¡ˆ</button>
+      <input type="text" id="answer2" placeholder="¿é¤Jµª®×" />
+      <button onclick="checkAnswer(1)">°e¥X</button>
     </div>
   </div>
-  <div id="board"></div>
   <audio id="correctSound" src="https://www.soundjay.com/buttons/sounds/button-3.mp3"></audio>
   <audio id="diceSound" src="https://www.soundjay.com/button/beep-07.wav"></audio>
   <script>
@@ -242,11 +240,11 @@
       document.getElementById("question2").textContent = "";
 
       if (currentPlayer === 0) {
-        document.getElementById("turnInfo1").textContent = `ç©å®¶ 1 çš„å›åˆï¼Œæ“²å‡º ${diceRoll} é»`;
-        document.getElementById("question1").textContent = `è«‹å•ï¼š${a} + ${b} = ?`;
+        document.getElementById("turnInfo1").textContent = `ª±®a 1 ªº¦^¦X¡AÂY¥X ${diceRoll} ÂI`;
+        document.getElementById("question1").textContent = `½Ğ°İ¡G${a} + ${b} = ?`;
       } else {
-        document.getElementById("turnInfo2").textContent = `ç©å®¶ 2 çš„å›åˆï¼Œæ“²å‡º ${diceRoll} é»`;
-        document.getElementById("question2").textContent = `è«‹å•ï¼š${a} + ${b} = ?`;
+        document.getElementById("turnInfo2").textContent = `ª±®a 2 ªº¦^¦X¡AÂY¥X ${diceRoll} ÂI`;
+        document.getElementById("question2").textContent = `½Ğ°İ¡G${a} + ${b} = ?`;
       }
     }
 
@@ -260,7 +258,7 @@
         document.getElementById("score2").textContent = scores[1];
         movePlayer();
       } else {
-        alert("ç­”éŒ¯äº†ï¼æ›ä¸‹ä¸€ä½ã€‚");
+        alert("µª¿ù¤F¡I´«¤U¤@¦ì¡C");
         nextTurn();
       }
     }
@@ -273,7 +271,7 @@
       placePlayers();
 
       if (playerPositions[currentPlayer] === path.length - 1) {
-        alert(`ğŸ‰ ç©å®¶ ${currentPlayer + 1} æŠµé”çµ‚é»ï¼Œç²å‹ï¼`);
+        alert(`&#127881; ª±®a ${currentPlayer + 1} ©è¹F²×ÂI¡AÀò³Ó¡I`);
       } else {
         nextTurn();
       }
