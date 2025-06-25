@@ -63,6 +63,18 @@
     }
     .player1 { background-color: red; }
     .player2 { background-color: blue; }
+	.ladder-line {
+      position: absolute;
+      width: 2px;
+      background-color: green;
+      z-index: 1;
+    }
+    .custom-line {
+      position: absolute;
+      background-color: purple;
+      width: 2px;
+      z-index: 1;
+    }
   </style>
 </head>
 <body>
@@ -109,25 +121,25 @@
     let diceRoll = 0;
     let currentQuestion = {};
     let scores = [0, 0];
-function drawCustomLine(index1, index2) {
-      const cellSize = 62;
-      const [x1, y1] = path[index1];
-      const [x2, y2] = path[index2];
-      const cx1 = x1 * cellSize + cellSize / 2;
-      const cy1 = y1 * cellSize + cellSize / 2;
-      const cx2 = x2 * cellSize + cellSize / 2;
-      const cy2 = y2 * cellSize + cellSize / 2;
-      const len = Math.sqrt((cx2 - cx1)**2 + (cy2 - cy1)**2);
-      const angle = Math.atan2(cy2 - cy1, cx2 - cx1) * 180 / Math.PI;
-      const line = document.createElement("div");
-      line.className = "custom-line";
-    line.style.height = `${len}px`;
-    line.style.left = `${Math.min(cx1, cx2)}px`;
-    line.style.top = `${Math.min(cy1, cy2)}px`;
-    line.style.transform = `translate(0, 0) rotate(${angle}deg)`;
-    line.style.transformOrigin = 'top left';
-    board.appendChild(line);
-    }
+	function drawCustomLine(index1, index2) {
+		  const cellSize = 62;
+		  const [x1, y1] = path[index1];
+		  const [x2, y2] = path[index2];
+		  const cx1 = x1 * cellSize + cellSize / 2;
+		  const cy1 = y1 * cellSize + cellSize / 2;
+		  const cx2 = x2 * cellSize + cellSize / 2;
+		  const cy2 = y2 * cellSize + cellSize / 2;
+		  const len = Math.sqrt((cx2 - cx1)**2 + (cy2 - cy1)**2);
+		  const angle = Math.atan2(cy2 - cy1, cx2 - cx1) * 180 / Math.PI;
+		  const line = document.createElement("div");
+		  line.className = "custom-line";
+		line.style.height = `${len}px`;
+		line.style.left = `${Math.min(cx1, cx2)}px`;
+		line.style.top = `${Math.min(cy1, cy2)}px`;
+		line.style.transform = `translate(0, 0) rotate(${angle}deg)`;
+		line.style.transformOrigin = 'top left';
+		board.appendChild(line);
+		}
     function updateUI() {
   const leftUI = document.getElementById("left-ui");
   const rightUI = document.getElementById("right-ui");
