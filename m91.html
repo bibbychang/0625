@@ -21,7 +21,7 @@
     #left-ui, #right-ui {
       display: flex;
       flex-direction: column;
-      gap: 2px;
+      gap: 10px;
       width: 20px;
     }
     #right-ui, #rollBtn2, #question2, #turnInfo2, #answer2 {
@@ -264,18 +264,31 @@
     }
 
     function movePlayer() {
-      playerPositions[currentPlayer] += diceRoll;
-      if (playerPositions[currentPlayer] >= path.length) {
-        playerPositions[currentPlayer] = path.length - 1;
-      }
-      placePlayers();
+  playerPositions[currentPlayer] += diceRoll;
+  if (playerPositions[currentPlayer] >= path.length) {
+    playerPositions[currentPlayer] = path.length - 1;
+  }
 
-      if (playerPositions[currentPlayer] === path.length - 1) {
-        alert(`🎉 玩家 ${currentPlayer + 1} 抵達終點，獲勝！`);
-      } else {
-        nextTurn();
-      }
-    }
+  // 找出目前走到的位置對應的圖片
+  const [x, y] = path[playerPositions[currentPlayer]];
+  const cell = document.querySelector(`.cell[data-x="${x}"][data-y="${y}"]`);
+  const img = cell.querySelector("img");
+  const imgName = img?.src.split("/").pop(); // 取得圖片檔名
+
+  // 若圖片為指定圖案則退回起點
+  if (["underdesk.png", "ok1.png", "ok3.png"].includes(imgName)) {
+    alert("碰到危險地點，退回起點！");
+    playerPositions[currentPlayer] = 0;
+  }
+
+  placePlayers();
+
+  if (playerPositions[currentPlayer] === path.length - 1) {
+    alert(`🎉 玩家 ${currentPlayer + 1} 抵達終點，獲勝！`);
+  } else {
+    nextTurn();
+  }
+}
 
     function nextTurn() {
       currentPlayer = 1 - currentPlayer;
