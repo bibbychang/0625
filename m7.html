@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>迷宮大富翁</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    #game-container {
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      gap: 40px;
+      margin-top: 20px;
+    }
+    #left-ui, #right-ui {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      width: 150px;
+    }
+    #board {
+      display: grid;
+      grid-template-columns: repeat(8, 60px);
+      grid-template-rows: repeat(8, 60px);
+      gap: 2px;
+    }
+    .cell {
+      width: 60px;
+      height: 60px;
+      background-color: #f0f0f0;
+      position: relative;
+      font-size: 10px;
+      text-align: right;
+      padding: 2px;
+    }
+    .path img {
+      width: 100%;
+      height: 100%;
+    }
+    .player {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      position: absolute;
+      top: 18px;
+      left: 18px;
+      z-index: 2;
+    }
+    .player1 { background-color: red; }
+    .player2 { background-color: blue; }
+  </style>
+</head>
+<body>
+  <h1>迷宮大富翁遊戲</h1>
+  <div id="scoreboard">玩家 1 分數：<span id="score1">0</span> ｜ 玩家 2 分數：<span id="score2">0</span></div>
+  <div id="game-container">
+    <div id="left-ui">
+      <button id="rollBtn1" onclick="rollDice()">🎲 玩家 1 擲骰</button>
+      <p id="turnInfo1"></p>
+      <p id="question1"></p>
+      <input type="text" id="answer1" placeholder="輸入答案" />
+      <button onclick="checkAnswer()">送出答案</button>
+    </div>
+    <div id="board"></div>
+    <div id="right-ui">
+      <button id="rollBtn2" onclick="rollDice()">🎲 玩家 2 擲骰</button>
+      <p id="turnInfo2"></p>
+      <p id="question2"></p>
+      <input type="text" id="answer2" placeholder="輸入答案" />
+      <button onclick="checkAnswer()">送出答案</button>
+    </div>
+  </div>
+  <audio id="correctSound" src="https://www.soundjay.com/buttons/sounds/button-3.mp3"></audio>
+  <audio id="diceSound" src="https://www.soundjay.com/button/beep-07.wav"></audio>
+  <script>
+    const board = document.getElementById("board");
+    const gridSize = 8;
+    const maxSteps = 20;
+    const maxTurns = 8;
+    const minStraightLength = 3;
+    const cells = [];
+    const path = [];
+    const visited = Array.from({ length: gridSize }, () => Array(gridSize).fill(false));
+    const imagePool = [
+      "warning2.png", "ok1.png", "underdesk.png", "rain2.png", "ok3.png",
+      "quiz.png", "fire2.png", "safezone.png", "rain3.png", "bus.png",
+      "fire1.png", "event2.png", "rain1.png", "dice.png", "bag2.png",
+      "earthquake1.png", "ok2.png", "warning1.png", "firstaid2.png", "event1.png",
+      "earthquake3.png", "light.png"
+    ];
+
+    let playerPositions = [0, 0];
+    let currentPlayer = 0;
+    let diceRoll = 0;
+    let currentQuestion = {};
+    let scores = [0, 0];
+
+    function shuffle(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+    }
+
+    function isValid(x, y) {
+      return x >= 0 && y >= 0 && x < gridSize && y < gridSize && !visited[y][x];
+    }
+
+    function countTurns(p) {
+      let turns = 0;
+      for (let i = 2; i < p.length; i++) {
+        const [x0, y0] = p[i - 2];
+        const [x1, y1] = p[i - 1];
+        const [x2, y2] = p[i];
+        const dx1 = x1 - x0, dy1 = y1 - y0;
+        const dx2 = x2 - x1, dy2 = y2 - y1;
+        if (dx1 !== dx2 || dy1 !== dy2) turns++;
+      }
+      return turns;
+    }
+
+    function dfs(x, y, steps, pathSoFar, lastDir = null, straightCount = 0) {
+      if (steps === 0) {
+        if (countTurns(pathSoFar) <= maxTurns) {
+          path.push(...pathSoFar);
+          return true;
+        }
+        return false;
+      }
+      const dirs = [ [1,0], [-1,0], [0,1], [0,-1] ];
+      shuffle(dirs);
+      for (const [dx, dy] of dirs) {
+        const nx = x + dx;
+        const ny = y + dy;
+        if (isValid(nx, ny)) {
+          const newDir = `${dx},${dy}`;
+          const isTurn = lastDir !== null && newDir !== lastDir;
+          if (isTurn && straightCount < minStraightLength) continue;
+          visited[ny][nx] = true;
+          pathSoFar.push([nx, ny]);
+          if (dfs(nx, ny, steps - 1, pathSoFar, newDir, isTurn ? 1 : straightCount + 1)) return true;
+          pathSoFar.pop();
+          visited[ny][nx] = false;
+        }
+      }
+      return false;
+    }
+
+    function buildBoard() {
+      board.innerHTML = "";
+      cells.length = 0;
+      for (let y = 0; y < gridSize; y++) {
+        for (let x = 0; x < gridSize; x++) {
+          const cell = document.createElement("div");
+          cell.className = "cell";
+          cell.dataset.x = x;
+          cell.dataset.y = y;
+          board.appendChild(cell);
+          cells.push(cell);
+        }
+      }
+    }
+
+    function renderPath() {
+      shuffle(imagePool);
+      const usedImages = ["start_yellow.png", ...imagePool.slice(0, path.length - 2), "goal.png"];
+      path.forEach(([x, y], index) => {
+        const cell = cells[y * gridSize + x];
+        cell.classList.add("path");
+        const img = document.createElement("img");
+        img.src = `monopoly_images/${usedImages[index]}`;
+        cell.appendChild(img);
+
+        const label = document.createElement("div");
+        label.textContent = index;
+        label.style.position = "absolute";
+        label.style.bottom = "2px";
+        label.style.right = "2px";
+        label.style.fontSize = "8px";
+        label.style.color = "black";
+        label.style.backgroundColor = "rgba(255,255,255,0.7)";
+        cell.appendChild(label);
+      });
+    }
+
+    function placePlayers() {
+      document.querySelectorAll(".player").forEach(p => p.remove());
+      playerPositions.forEach((pos, i) => {
+        const [x, y] = path[pos];
+        const cell = cells[y * gridSize + x];
+        const token = document.createElement("div");
+        token.className = `player player${i+1}`;
+        cell.appendChild(token);
+      });
+    }
+
+    function rollDice() {
+      document.getElementById("diceSound").play();
+      diceRoll = Math.floor(Math.random() * 6) + 1;
+      const a = Math.floor(Math.random() * 10);
+      const b = Math.floor(Math.random() * 10);
+      currentQuestion = { a, b };
+
+      document.getElementById("turnInfo1").textContent = "";
+      document.getElementById("turnInfo2").textContent = "";
+      document.getElementById("question1").textContent = "";
+      document.getElementById("question2").textContent = "";
+
+      if (currentPlayer === 0) {
+        document.getElementById("turnInfo1").textContent = `玩家 1 的回合，擲出 ${diceRoll} 點`;
+        document.getElementById("question1").textContent = `請問：${a} + ${b} = ?`;
+      } else {
+        document.getElementById("turnInfo2").textContent = `玩家 2 的回合，擲出 ${diceRoll} 點`;
+        document.getElementById("question2").textContent = `請問：${a} + ${b} = ?`;
+      }
+    }
+
+    function checkAnswer() {
+      const ans = parseInt(document.getElementById(currentPlayer === 0 ? "answer1" : "answer2").value);
+      if (ans === currentQuestion.a + currentQuestion.b) {
+        document.getElementById("correctSound").play();
+        scores[currentPlayer]++;
+        document.getElementById("score1").textContent = scores[0];
+        document.getElementById("score2").textContent = scores[1];
+        movePlayer();
+      } else {
+        alert("答錯了！換下一位。");
+        nextTurn();
+      }
+    }
+
+    function movePlayer() {
+      playerPositions[currentPlayer] += diceRoll;
+      if (playerPositions[currentPlayer] >= path.length) {
+        playerPositions[currentPlayer] = path.length - 1;
+      }
+      placePlayers();
+
+      if (playerPositions[currentPlayer] === path.length - 1) {
+        alert(`🎉 玩家 ${currentPlayer + 1} 抵達終點，獲勝！`);
+      } else {
+        nextTurn();
+      }
+    }
+
+    function nextTurn() {
+      currentPlayer = 1 - currentPlayer;
+      document.getElementById("answer1").value = "";
+      document.getElementById("answer2").value = "";
+    }
+
+    buildBoard();
+    visited[0][0] = true;
+    dfs(0, 0, maxSteps, [[0, 0]]);
+    renderPath();
+    placePlayers();
+  </script>
+</body>
+</html>
