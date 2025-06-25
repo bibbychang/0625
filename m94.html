@@ -121,11 +121,12 @@ function drawCustomLine(index1, index2) {
       const angle = Math.atan2(cy2 - cy1, cx2 - cx1) * 180 / Math.PI;
       const line = document.createElement("div");
       line.className = "custom-line";
-      line.style.height = `${len}px`;
-      line.style.left = `${cx1}px`;
-      line.style.top = `${cy1}px`;
-      line.style.transform = `translate(-1px, -1px) rotate(${angle}deg)`;
-      board.appendChild(line);
+    line.style.height = `${len}px`;
+    line.style.left = `${Math.min(cx1, cx2)}px`;
+    line.style.top = `${Math.min(cy1, cy2)}px`;
+    line.style.transform = `translate(0, 0) rotate(${angle}deg)`;
+    line.style.transformOrigin = 'top left';
+    board.appendChild(line);
     }
     function updateUI() {
   const leftUI = document.getElementById("left-ui");
@@ -212,25 +213,28 @@ function drawCustomLine(index1, index2) {
 
     function renderPath() {
       shuffle(imagePool);
-      const usedImages = ["start_yellow.png", ...imagePool.slice(0, path.length - 2), "goal.png"];
-      path.forEach(([x, y], index) => {
-        const cell = cells[y * gridSize + x];
-        cell.classList.add("path");
-        const img = document.createElement("img");
-        img.src = `${usedImages[index]}`;
-        cell.appendChild(img);
+    const usedImages = ["start_yellow.png", ...imagePool.slice(0, path.length - 2), "goal.png"];
+    path.forEach(([x, y], index) => {
+      const cell = cells[y * gridSize + x];
+      cell.classList.add("path");
+      const img = document.createElement("img");
+      img.src = `${usedImages[index]}`;
+      cell.appendChild(img);
 
-        const label = document.createElement("div");
-        label.textContent = index;
-        label.style.position = "absolute";
-        label.style.bottom = "2px";
-        label.style.right = "2px";
-        label.style.fontSize = "8px";
-        label.style.color = "black";
-        label.style.backgroundColor = "rgba(255,255,255,0.7)";
-        cell.appendChild(label);
-      });
-    }
+      const label = document.createElement("div");
+      label.textContent = index;
+      label.style.position = "absolute";
+      label.style.bottom = "2px";
+      label.style.right = "2px";
+      label.style.fontSize = "8px";
+      label.style.color = "black";
+      label.style.backgroundColor = "rgba(255,255,255,0.7)";
+      cell.appendChild(label);
+    });
+
+    // 畫線：path 渲染完後
+    drawCustomLine(3, 7);
+  }
 
     function placePlayers() {
       document.querySelectorAll(".player").forEach(p => p.remove());
