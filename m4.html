@@ -21,21 +21,37 @@
     .cell {
       width: 80px;
       height: 80px;
-      border: 1px solid #ccc;
+      border: 2px solid #333;
+      border-radius: 10px;
       display: flex;
       align-items: center;
       justify-content: center;
       position: relative;
+      box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
+      transform: rotateZ(calc(var(--angle, 0deg)));
+      overflow: hidden;
     }
     .cell img {
       max-width: 100%;
       max-height: 100%;
+      opacity: 0.85;
+    }
+    .arrow {
+      position: absolute;
+      bottom: 3px;
+      right: 3px;
+      font-size: 12px;
+      font-weight: bold;
+      background: rgba(255,255,255,0.7);
+      padding: 2px 4px;
+      border-radius: 3px;
     }
     .player {
       width: 20px;
       height: 20px;
       border-radius: 50%;
       position: absolute;
+      z-index: 2;
     }
     .player1 {
       background-color: red;
@@ -53,10 +69,10 @@
   </style>
 </head>
 <body>
-  <h1>Monopoly Board Game (5x5)</h1>
+  <h1>Monopoly Board Game (5x5 Snake Style)</h1>
   <div id="board"></div>
   <div id="controls">
-    <button onclick="rollDice()">Roll Dice</button>
+    <button onclick="rollDice()">🎲 Roll Dice</button>
     <p id="status"></p>
   </div>
 
@@ -68,7 +84,7 @@
 
     const imagePool = [
       "warning2.png", "ok1.png", "underdesk.png", "rain2.png", "ok3.png",
-      "quiz.png", "start_green.png", "fire2.png", "safezone.png", "rain3.png",
+      "quiz.png", "safe.png", "fire2.png", "safezone.png", "rain3.png",
       "bus.png", "fire1.png", "event2.png", "rain1.png", "dice.png",
       "bag2.png", "earthquake1.png", "ok2.png", "warning1.png", "firstaid2.png",
       "event1.png", "earthquake3.png", "light.png"
@@ -107,7 +123,11 @@
     layoutOrder.forEach((gridIndex, i) => {
       const img = document.createElement("img");
       img.src = `${tileImages[i]}`;
+      const arrow = document.createElement("div");
+      arrow.className = "arrow";
+      arrow.innerText = i + 1;
       indexToCell[gridIndex].appendChild(img);
+      indexToCell[gridIndex].appendChild(arrow);
       cells.push(indexToCell[gridIndex]);
     });
 
@@ -148,7 +168,7 @@ ${question} = ?`);
         if (playerPositions[currentPlayer] >= cells.length - 1) {
           playerPositions[currentPlayer] = cells.length - 1;
           drawPlayers();
-          alert(`Player ${currentPlayer + 1} wins!`);
+          alert(`🎉 Player ${currentPlayer + 1} wins!`);
           return;
         }
         drawPlayers();
