@@ -129,7 +129,7 @@
     tileLayout.forEach((tileIdx, i) => {
       const div = document.getElementById(`tile-${tileIdx}`);
       const img = document.createElement('img');
-      img.src = `tile_${(i % 22 + 1).toString().padStart(2, '0')}.png`;
+      img.src = `tiles/tile_${(i % 22 + 1).toString().padStart(2, '0')}.png`;
       div.appendChild(img);
     });
 
@@ -311,7 +311,7 @@
     tileLayout.forEach((tileIdx, i) => {
       const div = document.getElementById(`tile-${tileIdx}`);
       const img = document.createElement('img');
-      img.src = `tiles/tile_${(i % 22 + 1).toString().padStart(2, '0')}.png`;
+      img.src = `tile_${(i % 22 + 1).toString().padStart(2, '0')}.png`;
       div.appendChild(img);
     });
 
