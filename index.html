@@ -122,12 +122,32 @@
     }
 
     function rollDice() {
-      const roll = Math.floor(Math.random() * 6) + 1;
-      alert(`玩家 ${currentPlayer + 1} 擲出 ${roll} 點！`);
-      positions[currentPlayer] = (positions[currentPlayer] + roll) % tileLayout.length;
-      updateBoard();
-      currentPlayer = 1 - currentPlayer;
-    }
+  const roll = Math.floor(Math.random() * 6) + 1;
+
+  // 隨機產生一題簡單數學題
+  const num1 = Math.floor(Math.random() * 10) + 1;
+  const num2 = Math.floor(Math.random() * 10) + 1;
+  const operator = Math.random() > 0.5 ? "+" : "×";
+  const correctAnswer = operator === "+" ? num1 + num2 : num1 * num2;
+
+  const userAnswer = prompt(`🎲 玩家 ${currentPlayer + 1} 擲出 ${roll} 點！\n要答對才能前進～\n\n請問：${num1} ${operator} ${num2} = ?`);
+
+  if (userAnswer === null) {
+    alert("你取消了作答，換下一位！");
+    currentPlayer = 1 - currentPlayer;
+    return;
+  }
+
+  if (parseInt(userAnswer) === correctAnswer) {
+    alert("✅ 答對了！前進 " + roll + " 步！");
+    positions[currentPlayer] = (positions[currentPlayer] + roll) % tileLayout.length;
+    updateBoard();
+  } else {
+    alert(`❌ 答錯了，正確答案是 ${correctAnswer}！換下一位～`);
+  }
+
+  currentPlayer = 1 - currentPlayer;
+}
 
     updateBoard();
   </script>
