@@ -59,6 +59,7 @@
     const gridSize = 8;
     const maxSteps = 20;
     const maxTurns = 8;
+    const minStraightLength = 3;
     const cells = [];
     const path = [];
     const visited = Array.from({ length: gridSize }, () => Array(gridSize).fill(false));
@@ -99,7 +100,7 @@
       return turns;
     }
 
-    function dfs(x, y, steps, pathSoFar) {
+    function dfs(x, y, steps, pathSoFar, lastDir = null, straightCount = 0) {
       if (steps === 0) {
         if (countTurns(pathSoFar) <= maxTurns) {
           path.push(...pathSoFar);
@@ -113,9 +114,12 @@
         const nx = x + dx;
         const ny = y + dy;
         if (isValid(nx, ny)) {
+          const newDir = `${dx},${dy}`;
+          const isTurn = lastDir !== null && newDir !== lastDir;
+          if (isTurn && straightCount < minStraightLength) continue;
           visited[ny][nx] = true;
           pathSoFar.push([nx, ny]);
-          if (dfs(nx, ny, steps - 1, pathSoFar)) return true;
+          if (dfs(nx, ny, steps - 1, pathSoFar, newDir, isTurn ? 1 : straightCount + 1)) return true;
           pathSoFar.pop();
           visited[ny][nx] = false;
         }
