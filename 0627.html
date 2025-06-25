@@ -91,34 +91,17 @@
   <script>
     const board = document.getElementById('board');
     const tileNames = [
-      "台北", "新北", "基隆", "宜蘭", "花蓮", "台東",
-      "屏東", "高雄", "台南", "嘉義", "雲林", "彰化",
-      "南投", "台中", "苗栗", "新竹", "桃園", "澎湖",
-      "金門", "連江"
+      "開心", "哭哭", "下雨", "高雄", "台南", "嘉義",
+      "雲林", "彰化", "南投", "台中", "苗栗", "新竹",
+      "桃園", "澎湖", "金門", "連江", "宜蘭", "花蓮",
+      "台東", "屏東"
     ];
 
-    const tileImages = [
-      "https://upload.wikimedia.org/wikipedia/commons/5/5f/Taipei_101_Tower.jpg",
-      "https://upload.wikimedia.org/wikipedia/commons/f/f3/Tamsui_River_Sunset.jpg",
-      "https://upload.wikimedia.org/wikipedia/commons/0/00/Keelung_Port.jpg",
-      "https://upload.wikimedia.org/wikipedia/commons/4/41/Yilan_County_Government.jpg",
-      "https://upload.wikimedia.org/wikipedia/commons/3/32/Taroko_Gorge.jpg",
-      "https://upload.wikimedia.org/wikipedia/commons/7/74/Taitung_Seashore_Park.jpg",
-      "https://upload.wikimedia.org/wikipedia/commons/1/17/Kenting_Beach.jpg",
-      "https://upload.wikimedia.org/wikipedia/commons/0/04/Kaohsiung_Harbor.jpg",
-      "https://upload.wikimedia.org/wikipedia/commons/e/ed/Chihkan_Tower_Tainan.jpg",
-      "https://upload.wikimedia.org/wikipedia/commons/7/75/Chiayi_Park.jpg",
-      "https://upload.wikimedia.org/wikipedia/commons/e/ee/Yunlin_Douliu.jpg",
-      "https://upload.wikimedia.org/wikipedia/commons/f/f4/Lukang_Old_Street.jpg",
-      "https://upload.wikimedia.org/wikipedia/commons/9/95/Sun_Moon_Lake.jpg",
-      "https://upload.wikimedia.org/wikipedia/commons/d/d9/National_Taichung_Theater.jpg",
-      "https://upload.wikimedia.org/wikipedia/commons/4/49/Miaoli_City.jpg",
-      "https://upload.wikimedia.org/wikipedia/commons/b/bb/Hsinchu_City_God_Temple.jpg",
-      "https://upload.wikimedia.org/wikipedia/commons/d/d7/Taoyuan_Airport.jpg",
-      "https://upload.wikimedia.org/wikipedia/commons/2/23/Penghu_Islands.jpg",
-      "https://upload.wikimedia.org/wikipedia/commons/c/c3/Kinmen_Traditional_Architecture.jpg",
-      "https://upload.wikimedia.org/wikipedia/commons/0/02/Lienchiang_Nangan.jpg"
-    ];
+    function getImage(index) {
+      if (index % 3 === 0) return "https://cdn-icons-png.flaticon.com/512/742/742751.png"; // 開心
+      if (index % 3 === 1) return "https://cdn-icons-png.flaticon.com/512/742/742752.png"; // 哭哭
+      return "https://cdn-icons-png.flaticon.com/512/1163/1163624.png"; // 下雨
+    }
 
     const tileLayout = [];
     for (let i = 0; i < 6; i++) tileLayout.push(i);
@@ -142,7 +125,7 @@
     tileLayout.forEach((tileIdx, i) => {
       const div = document.getElementById(`tile-${tileIdx}`);
       const img = document.createElement('img');
-      img.src = tileImages[i % tileImages.length];
+      img.src = getImage(i);
       div.appendChild(img);
       const label = document.createElement('div');
       label.className = 'tile-label';
