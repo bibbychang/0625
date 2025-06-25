@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Maze Monopoly Game</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    #board {
+      display: grid;
+      grid-template-columns: repeat(8, 60px);
+      grid-template-rows: repeat(8, 60px);
+      gap: 2px;
+      margin: 20px auto;
+    }
+    .cell {
+      width: 60px;
+      height: 60px;
+      background-color: #f0f0f0;
+      position: relative;
+      font-size: 10px;
+      text-align: right;
+      padding: 2px;
+    }
+    .path img {
+      width: 100%;
+      height: 100%;
+    }
+    .player {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      position: absolute;
+      top: 18px;
+      left: 18px;
+      z-index: 2;
+    }
+    .player1 { background-color: red; }
+    .player2 { background-color: blue; }
+  </style>
+</head>
+<body>
+  <h1>Maze Monopoly Game</h1>
+  <button onclick="rollDice()">Roll Dice</button>
+  <p id="turnInfo"></p>
+  <p id="question"></p>
+  <input type="text" id="answer" placeholder="Answer here" />
+  <button onclick="checkAnswer()">Submit Answer</button>
+  <div id="board"></div>
+
+  <script>
+    const board = document.getElementById("board");
+    const gridSize = 8;
+    const maxSteps = 20;
+    const maxTurns = 8;
+    const cells = [];
+    const path = [];
+    const visited = Array.from({ length: gridSize }, () => Array(gridSize).fill(false));
+    const imagePool = [
+      "warning2.png", "ok1.png", "underdesk.png", "rain2.png", "ok3.png",
+      "quiz.png", "fire2.png", "safezone.png", "rain3.png", "bus.png",
+      "fire1.png", "event2.png", "rain1.png", "dice.png", "bag2.png",
+      "earthquake1.png", "ok2.png", "warning1.png", "firstaid2.png", "event1.png",
+      "earthquake3.png", "light.png"
+    ];
+
+    let playerPositions = [0, 0];
+    let currentPlayer = 0;
+    let diceRoll = 0;
+    let currentQuestion = {};
+
+    function shuffle(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+    }
+
+    function isValid(x, y) {
+      return x >= 0 && y >= 0 && x < gridSize && y < gridSize && !visited[y][x];
+    }
+
+    function countTurns(p) {
+      let turns = 0;
+      for (let i = 2; i < p.length; i++) {
+        const [x0, y0] = p[i - 2];
+        const [x1, y1] = p[i - 1];
+        const [x2, y2] = p[i];
+        const dx1 = x1 - x0, dy1 = y1 - y0;
+        const dx2 = x2 - x1, dy2 = y2 - y1;
+        if (dx1 !== dx2 || dy1 !== dy2) turns++;
+      }
+      return turns;
+    }
+
+    function dfs(x, y, steps, pathSoFar) {
+      if (steps === 0) {
+        if (countTurns(pathSoFar) <= maxTurns) {
+          path.push(...pathSoFar);
+          return true;
+        }
+        return false;
+      }
+      const dirs = [ [1,0], [-1,0], [0,1], [0,-1] ];
+      shuffle(dirs);
+      for (const [dx, dy] of dirs) {
+        const nx = x + dx;
+        const ny = y + dy;
+        if (isValid(nx, ny)) {
+          visited[ny][nx] = true;
+          pathSoFar.push([nx, ny]);
+          if (dfs(nx, ny, steps - 1, pathSoFar)) return true;
+          pathSoFar.pop();
+          visited[ny][nx] = false;
+        }
+      }
+      return false;
+    }
+
+    function buildBoard() {
+      board.innerHTML = "";
+      cells.length = 0;
+      for (let y = 0; y < gridSize; y++) {
+        for (let x = 0; x < gridSize; x++) {
+          const cell = document.createElement("div");
+          cell.className = "cell";
+          cell.dataset.x = x;
+          cell.dataset.y = y;
+          board.appendChild(cell);
+          cells.push(cell);
+        }
+      }
+    }
+
+    function renderPath() {
+      shuffle(imagePool);
+      const usedImages = ["start_yellow.png", ...imagePool.slice(0, path.length - 2), "goal.png"];
+      path.forEach(([x, y], index) => {
+        const cell = cells[y * gridSize + x];
+        cell.classList.add("path");
+        const img = document.createElement("img");
+        img.src = `${usedImages[index]}`;
+        cell.appendChild(img);
+
+        const label = document.createElement("div");
+        label.textContent = index;
+        label.style.position = "absolute";
+        label.style.bottom = "2px";
+        label.style.right = "2px";
+        label.style.fontSize = "8px";
+        label.style.color = "black";
+        label.style.backgroundColor = "rgba(255,255,255,0.7)";
+        cell.appendChild(label);
+      });
+    }
+
+    function placePlayers() {
+      document.querySelectorAll(".player").forEach(p => p.remove());
+      playerPositions.forEach((pos, i) => {
+        const [x, y] = path[pos];
+        const cell = cells[y * gridSize + x];
+        const token = document.createElement("div");
+        token.className = `player player${i+1}`;
+        cell.appendChild(token);
+      });
+    }
+
+    function rollDice() {
+      diceRoll = Math.floor(Math.random() * 6) + 1;
+      const a = Math.floor(Math.random() * 10);
+      const b = Math.floor(Math.random() * 10);
+      currentQuestion = { a, b };
+      document.getElementById("question").textContent = `Player ${currentPlayer + 1}, solve: ${a} + ${b}`;
+      document.getElementById("turnInfo").textContent = `Player ${currentPlayer + 1}'s turn. You rolled a ${diceRoll}.`;
+    }
+
+    function checkAnswer() {
+      const ans = parseInt(document.getElementById("answer").value);
+      if (ans === currentQuestion.a + currentQuestion.b) {
+        movePlayer();
+      } else {
+        alert("Wrong answer. Try again next turn.");
+        nextTurn();
+      }
+    }
+
+    function movePlayer() {
+      playerPositions[currentPlayer] += diceRoll;
+      if (playerPositions[currentPlayer] >= path.length) {
+        playerPositions[currentPlayer] = path.length - 1;
+      }
+      placePlayers();
+
+      if (playerPositions[currentPlayer] === path.length - 1) {
+        alert(`🎉 Player ${currentPlayer + 1} reached the goal!`);
+      } else {
+        nextTurn();
+      }
+    }
+
+    function nextTurn() {
+      currentPlayer = 1 - currentPlayer;
+      document.getElementById("answer").value = "";
+    }
+
+    // Initialize
+    buildBoard();
+    visited[0][0] = true;
+    dfs(0, 0, maxSteps, [[0, 0]]);
+    renderPath();
+    placePlayers();
+  </script>
+</body>
+</html>
