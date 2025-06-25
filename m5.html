@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Monopoly Board Game</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+    }
+    #board {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      max-width: 600px;
+    }
+    .cell {
+      width: 80px;
+      height: 80px;
+      border: 2px solid #333;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
+      overflow: hidden;
+    }
+    .cell img {
+      max-width: 100%;
+      max-height: 100%;
+      opacity: 0.85;
+    }
+    .arrow {
+      position: absolute;
+      bottom: 3px;
+      right: 3px;
+      font-size: 12px;
+      font-weight: bold;
+      background: rgba(255,255,255,0.7);
+      padding: 2px 4px;
+      border-radius: 3px;
+    }
+    .player {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      position: absolute;
+      z-index: 2;
+    }
+    .player1 {
+      background-color: red;
+      top: 5px;
+      left: 5px;
+    }
+    .player2 {
+      background-color: blue;
+      bottom: 5px;
+      right: 5px;
+    }
+    #controls {
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Monopoly Board Game (Random Snake Layout)</h1>
+  <div id="board"></div>
+  <div id="controls">
+    <button onclick="rollDice()">🎲 Roll Dice</button>
+    <p id="status"></p>
+  </div>
+
+  <script>
+    const board = document.getElementById("board");
+    const cells = [];
+    const playerPositions = [0, 0];
+    let currentPlayer = 0;
+
+    const imagePool = [
+      "warning2.png", "ok1.png", "underdesk.png", "rain2.png", "ok3.png",
+      "quiz.png", "safe.png", "fire2.png", "safezone.png", "rain3.png",
+      "bus.png", "fire1.png", "event2.png", "rain1.png", "dice.png",
+      "bag2.png", "earthquake1.png", "ok2.png", "warning1.png", "firstaid2.png",
+      "event1.png", "earthquake3.png", "light.png"
+    ];
+
+    function shuffleArray(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+    }
+
+    shuffleArray(imagePool);
+    const tileImages = ["start_yellow.png", ...imagePool.slice(0, 18), "goal.png"];
+
+    tileImages.forEach((imgName, i) => {
+      const cell = document.createElement("div");
+      cell.className = "cell";
+
+      const img = document.createElement("img");
+      img.src = `${imgName}`;
+
+      const arrow = document.createElement("div");
+      arrow.className = "arrow";
+      arrow.innerText = i + 1;
+
+      cell.appendChild(img);
+      cell.appendChild(arrow);
+      board.appendChild(cell);
+      cells.push(cell);
+    });
+
+    function drawPlayers() {
+      cells.forEach(cell => {
+        const players = cell.querySelectorAll(".player");
+        players.forEach(p => p.remove());
+      });
+      const p1 = document.createElement("div");
+      p1.className = "player player1";
+      const p2 = document.createElement("div");
+      p2.className = "player player2";
+      cells[playerPositions[0]].appendChild(p1);
+      cells[playerPositions[1]].appendChild(p2);
+    }
+
+    drawPlayers();
+
+    function rollDice() {
+      const roll = Math.floor(Math.random() * 6) + 1;
+      const num1 = Math.floor(Math.random() * 9) + 1;
+      const num2 = Math.floor(Math.random() * 9) + 1;
+      const op = Math.random() > 0.5 ? '+' : '*';
+      const question = `${num1} ${op} ${num2}`;
+      const answer = op === '+' ? num1 + num2 : num1 * num2;
+      const userInput = prompt(`🎲 Player ${currentPlayer + 1} rolled ${roll}!\nAnswer to move:\n${question} = ?`);
+
+      if (userInput === null) {
+        alert("Skipped. Next player!");
+        currentPlayer = 1 - currentPlayer;
+        return;
+      }
+
+      if (parseInt(userInput) === answer) {
+        playerPositions[currentPlayer] += roll;
+        if (playerPositions[currentPlayer] >= cells.length - 1) {
+          playerPositions[currentPlayer] = cells.length - 1;
+          drawPlayers();
+          alert(`🎉 Player ${currentPlayer + 1} wins!`);
+          return;
+        }
+        drawPlayers();
+      } else {
+        alert(`❌ Wrong! The correct answer was ${answer}.`);
+      }
+
+      currentPlayer = 1 - currentPlayer;
+    }
+  </script>
+</body>
+</html>
