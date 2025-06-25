@@ -23,35 +23,21 @@
       flex-direction: column;
       gap: 10px;
       width: 150px;
-      min-height: 250px;
-      background-color: #f9f9f9;
-      border: 1px solid #aaa;
-      padding: 10px;
-      border-radius: 10px;
     }
-    #left-ui::before {
-      content: "👤 玩家 1";
-      font-weight: bold;
-      margin-bottom: 5px;
+    #right-ui, #rollBtn2, #question2, #turnInfo2, #answer2 {
+      text-align: left;
     }
-    #right-ui::before {
-      content: "玩家 2 👤";
-      font-weight: bold;
-      margin-bottom: 5px;
+    #left-ui, #rollBtn1, #question1, #turnInfo1, #answer1 {
+      text-align: right;
     }
-    #left-ui:not(.active) *:not(:first-child),
-    #right-ui:not(.active) *:not(:first-child) {
-      display: none;
-    }
-    #left-ui.active, #right-ui.active {
-      box-shadow: 0 0 10px 3px #ffd700;
+    #rollBtn1, #rollBtn2, #answer1, #answer2 {
+      width: 100%;
     }
     #board {
       display: grid;
       grid-template-columns: repeat(8, 60px);
       grid-template-rows: repeat(8, 60px);
       gap: 2px;
-      position: relative;
     }
     .cell {
       width: 60px;
@@ -77,12 +63,6 @@
     }
     .player1 { background-color: red; }
     .player2 { background-color: blue; }
-    .ladder-line {
-      position: absolute;
-      width: 2px;
-      background-color: green;
-      z-index: 1;
-    }
   </style>
 </head>
 <body>
@@ -94,7 +74,7 @@
       <p id="turnInfo1"></p>
       <p id="question1"></p>
       <input type="text" id="answer1" placeholder="輸入答案" />
-      <button id="submitBtn1" onclick="checkAnswer(0)">送出答案</button>
+      <button onclick="checkAnswer(0)">送出答案</button>
     </div>
     <div id="board"></div>
     <div id="right-ui">
@@ -102,7 +82,7 @@
       <p id="turnInfo2"></p>
       <p id="question2"></p>
       <input type="text" id="answer2" placeholder="輸入答案" />
-      <button id="submitBtn2" onclick="checkAnswer(1)">送出答案</button>
+      <button onclick="checkAnswer(1)">送出答案</button>
     </div>
   </div>
   <audio id="correctSound" src="https://www.soundjay.com/buttons/sounds/button-3.mp3"></audio>
@@ -111,21 +91,42 @@
     const board = document.getElementById("board");
     const gridSize = 8;
     const maxSteps = 20;
+    const maxTurns = 8;
+    const minStraightLength = 3;
+    const cells = [];
     const path = [];
     const visited = Array.from({ length: gridSize }, () => Array(gridSize).fill(false));
-    let currentPlayer = 0;
-    let playerPositions = [0, 0];
-    let scores = [0, 0];
-    let diceRoll = 0;
-    let currentQuestion = {};
-    let ladder = null;
-const imagePool = [
+    const imagePool = [
       "warning2.png", "ok1.png", "underdesk.png", "rain2.png", "ok3.png",
       "quiz.png", "fire2.png", "safezone.png", "rain3.png", "bus.png",
       "fire1.png", "event2.png", "rain1.png", "dice.png", "bag2.png",
       "earthquake1.png", "ok2.png", "warning1.png", "firstaid2.png", "event1.png",
       "earthquake3.png", "light.png"
     ];
+	const specialTeleport = { fromIndex: 3, toIndex: 7 };
+    let playerPositions = [0, 0];
+    let currentPlayer = 0;
+    let diceRoll = 0;
+    let currentQuestion = {};
+    let scores = [0, 0];
+function drawCustomLine(index1, index2) {
+      const cellSize = 62;
+      const [x1, y1] = path[index1];
+      const [x2, y2] = path[index2];
+      const cx1 = x1 * cellSize + cellSize / 2;
+      const cy1 = y1 * cellSize + cellSize / 2;
+      const cx2 = x2 * cellSize + cellSize / 2;
+      const cy2 = y2 * cellSize + cellSize / 2;
+      const len = Math.sqrt((cx2 - cx1)**2 + (cy2 - cy1)**2);
+      const angle = Math.atan2(cy2 - cy1, cx2 - cx1) * 180 / Math.PI;
+      const line = document.createElement("div");
+      line.className = "custom-line";
+      line.style.height = `${len}px`;
+      line.style.left = `${cx1}px`;
+      line.style.top = `${cy1}px`;
+      line.style.transform = `translate(-1px, -1px) rotate(${angle}deg)`;
+      board.appendChild(line);
+    }
     function updateUI() {
   const leftUI = document.getElementById("left-ui");
   const rightUI = document.getElementById("right-ui");
@@ -143,20 +144,18 @@ const imagePool = [
   }
 }
 
-
-
-    function isValid(x, y) {
-      return x >= 0 && y >= 0 && x < gridSize && y < gridSize && !visited[y][x];
-    }
-
-
- function shuffle(array) {
+    function shuffle(array) {
       for (let i = array.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [array[i], array[j]] = [array[j], array[i]];
       }
     }
-	function countTurns(p) {
+
+    function isValid(x, y) {
+      return x >= 0 && y >= 0 && x < gridSize && y < gridSize && !visited[y][x];
+    }
+
+    function countTurns(p) {
       let turns = 0;
       for (let i = 2; i < p.length; i++) {
         const [x0, y0] = p[i - 2];
@@ -168,18 +167,27 @@ const imagePool = [
       }
       return turns;
     }
-    function dfs(x, y, steps, pathSoFar) {
+
+    function dfs(x, y, steps, pathSoFar, lastDir = null, straightCount = 0) {
       if (steps === 0) {
-        path.push(...pathSoFar);
-        return true;
+        if (countTurns(pathSoFar) <= maxTurns) {
+          path.push(...pathSoFar);
+          return true;
+        }
+        return false;
       }
-      const dirs = [[1,0], [-1,0], [0,1], [0,-1]];
-      for (const [dx, dy] of dirs.sort(() => Math.random() - 0.5)) {
-        const nx = x + dx, ny = y + dy;
+      const dirs = [ [1,0], [-1,0], [0,1], [0,-1] ];
+      shuffle(dirs);
+      for (const [dx, dy] of dirs) {
+        const nx = x + dx;
+        const ny = y + dy;
         if (isValid(nx, ny)) {
+          const newDir = `${dx},${dy}`;
+          const isTurn = lastDir !== null && newDir !== lastDir;
+          if (isTurn && straightCount < minStraightLength) continue;
           visited[ny][nx] = true;
           pathSoFar.push([nx, ny]);
-          if (dfs(nx, ny, steps - 1, pathSoFar)) return true;
+          if (dfs(nx, ny, steps - 1, pathSoFar, newDir, isTurn ? 1 : straightCount + 1)) return true;
           pathSoFar.pop();
           visited[ny][nx] = false;
         }
@@ -189,6 +197,7 @@ const imagePool = [
 
     function buildBoard() {
       board.innerHTML = "";
+      cells.length = 0;
       for (let y = 0; y < gridSize; y++) {
         for (let x = 0; x < gridSize; x++) {
           const cell = document.createElement("div");
@@ -196,6 +205,7 @@ const imagePool = [
           cell.dataset.x = x;
           cell.dataset.y = y;
           board.appendChild(cell);
+          cells.push(cell);
         }
       }
     }
@@ -223,90 +233,66 @@ const imagePool = [
     }
 
     function placePlayers() {
-      document.querySelectorAll(".player").forEach(e => e.remove());
+      document.querySelectorAll(".player").forEach(p => p.remove());
       playerPositions.forEach((pos, i) => {
         const [x, y] = path[pos];
-        const idx = y * gridSize + x;
-        const cell = board.children[idx];
+        const cell = cells[y * gridSize + x];
         const token = document.createElement("div");
         token.className = `player player${i+1}`;
         cell.appendChild(token);
       });
     }
 
-    function generateLadder() {
-      const candidates = path.slice(1, path.length - 1);
-      for (let i = 0; i < candidates.length - 1; i++) {
-        const a = candidates[i];
-        const b = candidates[i + 1];
-        const ai = path.findIndex(p => p[0] === a[0] && p[1] === a[1]);
-        const bi = path.findIndex(p => p[0] === b[0] && p[1] === b[1]);
-        if (Math.abs(ai - bi) > 2) {
-          ladder = { from: a, to: b };
-          drawLadderLine(a, b);
-          break;
-        }
-      }
-    }
-
-    function drawLadderLine(from, to) {
-      const cellSize = 62;
-      const x1 = from[0] * cellSize + cellSize / 2;
-      const y1 = from[1] * cellSize + cellSize / 2;
-      const x2 = to[0] * cellSize + cellSize / 2;
-      const y2 = to[1] * cellSize + cellSize / 2;
-      const len = Math.sqrt((x2 - x1)**2 + (y2 - y1)**2);
-      const angle = Math.atan2(y2 - y1, x2 - x1) * 180 / Math.PI;
-      const line = document.createElement("div");
-      line.className = "ladder-line";
-      line.style.height = `${len}px`;
-      line.style.left = `${x1}px`;
-      line.style.top = `${y1}px`;
-      line.style.transform = `translate(-1px, -1px) rotate(${angle}deg)`;
-      board.appendChild(line);
-    }
-
-    function checkLadder(pos) {
-      const [x, y] = path[pos];
-      if (!ladder) return pos;
-      if (x === ladder.from[0] && y === ladder.from[1]) {
-        alert("你滑走了");
-        return path.findIndex(p => p[0] === ladder.to[0] && p[1] === ladder.to[1]);
-      }
-      if (x === ladder.to[0] && y === ladder.to[1]) {
-        alert("你滑走了");
-        return path.findIndex(p => p[0] === ladder.from[0] && p[1] === ladder.from[1]);
-      }
-      return pos;
-    }
-
     function rollDice(playerIdx) {
       if (playerIdx !== currentPlayer) return;
+      document.getElementById("diceSound").play();
       diceRoll = Math.floor(Math.random() * 6) + 1;
       const a = Math.floor(Math.random() * 10);
       const b = Math.floor(Math.random() * 10);
       currentQuestion = { a, b };
-      document.getElementById("question1").textContent = playerIdx === 0 ? `${a} + ${b} = ?` : "";
-      document.getElementById("question2").textContent = playerIdx === 1 ? `${a} + ${b} = ?` : "";
-      document.getElementById("turnInfo1").textContent = playerIdx === 0 ? `擲出 ${diceRoll} 點` : "";
-      document.getElementById("turnInfo2").textContent = playerIdx === 1 ? `擲出 ${diceRoll} 點` : "";
+
+      document.getElementById("turnInfo1").textContent = "";
+      document.getElementById("turnInfo2").textContent = "";
+      document.getElementById("question1").textContent = "";
+      document.getElementById("question2").textContent = "";
+
+      if (currentPlayer === 0) {
+        document.getElementById("turnInfo1").textContent = `玩家 1 的回合，擲出 ${diceRoll} 點`;
+        document.getElementById("question1").textContent = `請問：${a} + ${b} = ?`;
+      } else {
+        document.getElementById("turnInfo2").textContent = `玩家 2 的回合，擲出 ${diceRoll} 點`;
+        document.getElementById("question2").textContent = `請問：${a} + ${b} = ?`;
+      }
     }
 
     function checkAnswer(playerIdx) {
-      const val = parseInt(document.getElementById(playerIdx === 0 ? "answer1" : "answer2").value);
-      if (val === currentQuestion.a + currentQuestion.b) {
+      if (playerIdx !== currentPlayer) return;
+      const ans = parseInt(document.getElementById(currentPlayer === 0 ? "answer1" : "answer2").value);
+      if (ans === currentQuestion.a + currentQuestion.b) {
+        document.getElementById("correctSound").play();
+        scores[currentPlayer]++;
+        document.getElementById("score1").textContent = scores[0];
+        document.getElementById("score2").textContent = scores[1];
         movePlayer();
       } else {
-        alert("答錯了，換下一位");
-        currentPlayer = 1 - currentPlayer;
-        updateUI();
+        alert("答錯了！換下一位。");
+        nextTurn();
       }
     }
 
     function movePlayer() {
       playerPositions[currentPlayer] += diceRoll;
       if (playerPositions[currentPlayer] >= path.length) playerPositions[currentPlayer] = path.length - 1;
-      playerPositions[currentPlayer] = checkLadder(playerPositions[currentPlayer]);
+
+      // 檢查是否落在特殊傳送點
+      if (playerPositions[currentPlayer] === specialTeleport.fromIndex) {
+        playerPositions[currentPlayer] = specialTeleport.toIndex;
+        alert("你滑走了");
+      } else if (playerPositions[currentPlayer] === specialTeleport.toIndex) {
+        playerPositions[currentPlayer] = specialTeleport.fromIndex;
+        alert("你滑走了");
+      }
+
       placePlayers();
       if (playerPositions[currentPlayer] === path.length - 1) {
         alert(`玩家 ${currentPlayer+1} 抵達終點！`);
@@ -316,12 +302,19 @@ const imagePool = [
       }
     }
 
+    function nextTurn() {
+      currentPlayer = 1 - currentPlayer;
+      document.getElementById("answer1").value = "";
+      document.getElementById("answer2").value = "";
+      updateUI();
+    }
+
+    buildBoard();
     visited[0][0] = true;
     dfs(0, 0, maxSteps, [[0, 0]]);
-    buildBoard();
     renderPath();
     placePlayers();
-    generateLadder();
+	drawCustomLine(specialTeleport.fromIndex, specialTeleport.toIndex);
     updateUI();
   </script>
 </body>
