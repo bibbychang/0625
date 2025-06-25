@@ -110,30 +110,25 @@
     let currentQuestion = {};
     let scores = [0, 0];
 
-    
-	
-	
-	
     function updateUI() {
-    
-    let currentPlayer = 0; // 必須預設目前玩家變數
+      document.getElementById("rollBtn1").style.visibility = currentPlayer === 0 ? "visible" : "hidden";
+      document.getElementById("submitBtn1").style.visibility = currentPlayer === 0 ? "visible" : "hidden";
+      document.getElementById("question1").style.visibility = currentPlayer === 0 ? "visible" : "hidden";
+      document.getElementById("turnInfo1").style.visibility = currentPlayer === 0 ? "visible" : "hidden";
+      document.getElementById("answer1").style.visibility = currentPlayer === 0 ? "visible" : "hidden";
+      document.getElementById("left-ui").classList.toggle("active", currentPlayer === 0);
 
-    function updateUI() {
-      const leftUI = document.getElementById("left-ui");
-      const rightUI = document.getElementById("right-ui");
-
-      if (currentPlayer === 0) {
-        leftUI.classList.remove("hidden");
-        rightUI.classList.add("hidden");
-      } else {
-        leftUI.classList.add("hidden");
-        rightUI.classList.remove("hidden");
-      }
+      document.getElementById("rollBtn2").style.visibility = currentPlayer === 1 ? "visible" : "hidden";
+      document.getElementById("submitBtn2").style.visibility = currentPlayer === 1 ? "visible" : "hidden";
+      document.getElementById("question2").style.visibility = currentPlayer === 1 ? "visible" : "hidden";
+      document.getElementById("turnInfo2").style.visibility = currentPlayer === 1 ? "visible" : "hidden";
+      document.getElementById("answer2").style.visibility = currentPlayer === 1 ? "visible" : "hidden";
+      document.getElementById("right-ui").classList.toggle("active", currentPlayer === 1);
     }
-
-    updateUI(); // 載入時立即執行
-  
- 
+	
+	
+	
+	
 	
 	
 
