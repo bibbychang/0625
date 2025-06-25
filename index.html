@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Monopoly Web Demo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>防災大富翁 DEMO</title>
   <style>
     body {
       font-family: sans-serif;
@@ -12,46 +12,27 @@
     }
     #board {
       display: grid;
-      grid-template-columns: repeat(6, 100px);
-      grid-template-rows: repeat(6, 100px);
       gap: 2px;
       margin: 20px auto;
-      width: 612px;
-      height: 612px;
       background-color: #ccc;
       padding: 10px;
       border-radius: 10px;
       position: relative;
     }
     .tile {
-      background-color: rgba(255, 255, 255, 0.85);
+      background-color: #fff;
       border: 1px solid #999;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      font-size: 14px;
       position: relative;
-      color: black;
       overflow: hidden;
     }
     .tile img {
-      position: absolute;
       width: 100%;
       height: 100%;
       object-fit: cover;
+      position: absolute;
       top: 0;
       left: 0;
       z-index: 0;
-    }
-    .tile-label {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      background: rgba(255, 255, 255, 0.8);
-      font-size: 12px;
-      padding: 2px;
-      z-index: 1;
     }
     .player {
       width: 20px;
@@ -73,7 +54,7 @@
     button {
       padding: 10px 20px;
       font-size: 16px;
-      margin-top: 10px;
+      margin: 10px 5px;
       background-color: #ffffffcc;
       border: none;
       border-radius: 5px;
@@ -82,56 +63,34 @@
   </style>
 </head>
 <body>
-  <h1>大富翁 - 兩人版 DEMO</h1>
+  <h1>防災大富翁 - 隨機棋盤 DEMO</h1>
   <div id="board"></div>
   <p>玩家 <span id="current-player">1</span> 的回合</p>
   <p>玩家1位置：<span id="pos1">0</span> | 玩家2位置：<span id="pos2">0</span></p>
-  <button onclick="rollDice()">擲骰子</button>
+  <button onclick="rollDice()">🎲 擲骰子</button>
+  <button onclick="location.reload()">🔁 新棋盤</button>
 
   <script>
     const board = document.getElementById('board');
-    const tileNames = [
-      "台北", "新北", "基隆", "宜蘭", "花蓮", "台東",
-      "屏東", "高雄", "台南", "嘉義", "雲林", "彰化",
-      "南投", "台中", "苗栗", "新竹", "桃園", "澎湖",
-      "金門", "連江"
-    ];
+    const N = Math.floor(Math.random() * (10 - 4 + 1)) + 4;
 
-    const tileImages = [
-      "https://upload.wikimedia.org/wikipedia/commons/5/5f/Taipei_101_Tower.jpg",
-      "https://upload.wikimedia.org/wikipedia/commons/f/f3/Tamsui_River_Sunset.jpg",
-      "https://upload.wikimedia.org/wikipedia/commons/0/00/Keelung_Port.jpg",
-      "https://upload.wikimedia.org/wikipedia/commons/4/41/Yilan_County_Government.jpg",
-      "https://upload.wikimedia.org/wikipedia/commons/3/32/Taroko_Gorge.jpg",
-      "https://upload.wikimedia.org/wikipedia/commons/7/74/Taitung_Seashore_Park.jpg",
-      "https://upload.wikimedia.org/wikipedia/commons/1/17/Kenting_Beach.jpg",
-      "https://upload.wikimedia.org/wikipedia/commons/0/04/Kaohsiung_Harbor.jpg",
-      "https://upload.wikimedia.org/wikipedia/commons/e/ed/Chihkan_Tower_Tainan.jpg",
-      "https://upload.wikimedia.org/wikipedia/commons/7/75/Chiayi_Park.jpg",
-      "https://upload.wikimedia.org/wikipedia/commons/e/ee/Yunlin_Douliu.jpg",
-      "https://upload.wikimedia.org/wikipedia/commons/f/f4/Lukang_Old_Street.jpg",
-      "https://upload.wikimedia.org/wikipedia/commons/9/95/Sun_Moon_Lake.jpg",
-      "https://upload.wikimedia.org/wikipedia/commons/d/d9/National_Taichung_Theater.jpg",
-      "https://upload.wikimedia.org/wikipedia/commons/4/49/Miaoli_City.jpg",
-      "https://upload.wikimedia.org/wikipedia/commons/b/bb/Hsinchu_City_God_Temple.jpg",
-      "https://upload.wikimedia.org/wikipedia/commons/d/d7/Taoyuan_Airport.jpg",
-      "https://upload.wikimedia.org/wikipedia/commons/2/23/Penghu_Islands.jpg",
-      "https://upload.wikimedia.org/wikipedia/commons/c/c3/Kinmen_Traditional_Architecture.jpg",
-      "https://upload.wikimedia.org/wikipedia/commons/0/02/Lienchiang_Nangan.jpg"
-    ];
+    board.style.gridTemplateColumns = `repeat(${N}, 100px)`;
+    board.style.gridTemplateRows = `repeat(${N}, 100px)`;
+    board.style.width = `${N * 102}px`;
+    board.style.height = `${N * 102}px`;
 
     const tileLayout = [];
-    for (let i = 0; i < 6; i++) tileLayout.push(i);
-    for (let i = 1; i < 5; i++) tileLayout.push(6 * i + 5);
-    for (let i = 5; i >= 0; i--) tileLayout.push(6 * 5 + i);
-    for (let i = 4; i > 0; i--) tileLayout.push(6 * i);
+    for (let i = 0; i < N; i++) tileLayout.push(i);
+    for (let i = 1; i < N - 1; i++) tileLayout.push(i * N + (N - 1));
+    for (let i = N - 1; i >= 0; i--) tileLayout.push((N - 1) * N + i);
+    for (let i = N - 2; i > 0; i--) tileLayout.push(i * N);
 
     const positions = [0, 0];
     let currentPlayer = 0;
 
-    for (let r = 0; r < 6; r++) {
-      for (let c = 0; c < 6; c++) {
-        const index = r * 6 + c;
+    for (let r = 0; r < N; r++) {
+      for (let c = 0; c < N; c++) {
+        const index = r * N + c;
         const div = document.createElement("div");
         div.className = "tile";
         div.id = `tile-${index}`;
@@ -142,12 +101,8 @@
     tileLayout.forEach((tileIdx, i) => {
       const div = document.getElementById(`tile-${tileIdx}`);
       const img = document.createElement('img');
-      img.src = tileImages[i % tileImages.length];
+      img.src = `tiles/tile_${(i % 22 + 1).toString().padStart(2, '0')}.png`;
       div.appendChild(img);
-      const label = document.createElement('div');
-      label.className = 'tile-label';
-      label.innerText = tileNames[i % tileNames.length];
-      div.appendChild(label);
     });
 
     function updateBoard() {
@@ -168,6 +123,7 @@
 
     function rollDice() {
       const roll = Math.floor(Math.random() * 6) + 1;
+      alert(`玩家 ${currentPlayer + 1} 擲出 ${roll} 點！`);
       positions[currentPlayer] = (positions[currentPlayer] + roll) % tileLayout.length;
       updateBoard();
       currentPlayer = 1 - currentPlayer;
