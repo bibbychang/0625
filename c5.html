@@ -42,7 +42,7 @@
     #map {
       display: grid;
       grid-template-columns: repeat(8, 60px);
-      grid-template-rows: repeat(6, 60px);
+      grid-template-rows: repeat(8, 60px);
       gap: 2px;
       background-color: #888;
       justify-content: start;
@@ -70,7 +70,7 @@
     #game-board {
       display: grid;
       grid-template-columns: repeat(8, 60px);
-      grid-template-rows: repeat(6, 60px);
+      grid-template-rows: repeat(8, 60px);
       gap: 2px;
     }
     #game-board .cell {
@@ -91,14 +91,14 @@
   </style>
 </head>
 <body>
-  <h1>大富翁地圖編輯器 + 遊戲</h1>
+  <h1>大富翁地圖編輯器 + 遊戲123</h1>
   <div id="main">
     <div id="editor">
       <h3>拖曳圖片進格子</h3>
       <div id="sidebar">
         <img src="start.jpg" class="item" draggable="true" data-img="start.jpg">
         <img src="goal.jpg" class="item" draggable="true" data-img="goal.jpg">
-         <img src="earthquake2.jpg" class="item" draggable="true" data-img="earthquake2.jpg">
+          <img src="earthquake2.jpg" class="item" draggable="true" data-img="earthquake2.jpg">
     <img src="earthquake3.png" class="item" draggable="true" data-img="earthquake3.png">
     <img src="event1.png" class="item" draggable="true" data-img="event1.png">
     <img src="event2.png" class="item" draggable="true" data-img="event2.png">
@@ -113,8 +113,7 @@
 	<img src="rain1.png" class="item" draggable="true" data-img="rain1.png">
 	<img src="rain2.png" class="item" draggable="true" data-img="rain2.png">
 	<img src="rain3.png" class="item" draggable="true" data-img="rain3.png">
-		
-		
+	
       </div>
       <div id="map"></div>
       <button onclick="startGame()">▶ 開始遊戲</button>
@@ -130,7 +129,7 @@
     const gameBoard = document.getElementById("game-board");
     let mapData = [], pathIndices = [], playerStep = 0;
 
-    for (let i = 0; i < 48; i++) {
+    for (let i = 0; i < 64; i++) {
       const cell = document.createElement("div");
       cell.className = "cell";
       cell.dataset.cell = i;
@@ -178,7 +177,7 @@
     }
 
     function buildGame() {
-      for (let i = 0; i < 48; i++) {
+      for (let i = 0; i < 64; i++) {
         const cell = document.createElement("div");
         cell.className = "cell";
         if (mapData[i]) {
@@ -210,6 +209,7 @@
       document.querySelectorAll(".player").forEach(p => p.remove());
       const cellIndex = pathIndices[playerStep];
       const cell = gameBoard.children[cellIndex];
+      if (!cell) return;
       const token = document.createElement("div");
       token.className = "player player1";
       cell.appendChild(token);
