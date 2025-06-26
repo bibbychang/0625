@@ -26,10 +26,9 @@
     }
     #sidebar {
       display: flex;
-      flex-wrap: nowrap;
-      overflow-x: auto;
-      padding-bottom: 10px;
+      flex-wrap: wrap;
       gap: 6px;
+      margin-bottom: 10px;
     }
     #sidebar img {
       width: 60px;
@@ -39,7 +38,6 @@
       border: 1px solid #aaa;
       background: white;
       border-radius: 6px;
-      flex: 0 0 auto;
     }
     #map {
       display: grid;
@@ -71,7 +69,7 @@
     }
     #game-board {
       display: grid;
-      grid-template-columns: repeat(6, 60px);
+      grid-template-columns: repeat(8, 60px);
       grid-template-rows: repeat(6, 60px);
       gap: 2px;
     }
@@ -91,6 +89,7 @@
     .player1 { background-color: red; }
     .player2 { background-color: blue; }
   </style>
+    
 </head>
 <body>
   <h1>大富翁地圖編輯器 + 遊戲111</h1>
@@ -185,7 +184,7 @@
     }
 
     function buildGame() {
-      for (let i = 0; i < 36; i++) {
+      for (let i = 0; i < 48; i++) {
         const cell = document.createElement("div");
         cell.className = "cell";
         if (mapData[i]) {
