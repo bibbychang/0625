@@ -4,56 +4,66 @@
   <meta charset="UTF-8">
   <title>大富翁地圖產生器</title>
   <style>
+    * {
+      box-sizing: border-box;
+    }
     body {
       display: flex;
       margin: 0;
       height: 100vh;
       font-family: sans-serif;
     }
+
     #sidebar {
-      width: 180px;
+      width: 150px;
       padding: 10px;
       border-right: 2px solid #ccc;
       background: #f4f4f4;
       overflow-y: auto;
     }
+
     #sidebar img {
-      width: 100%;
-      margin-bottom: 10px;
+      width: 80px;
+      margin: 8px auto;
       cursor: grab;
+      display: block;
       border: 1px solid #aaa;
       background: white;
-      border-radius: 8px;
+      border-radius: 6px;
     }
+
     #map {
       flex: 1;
       display: grid;
       grid-template-columns: repeat(8, 1fr);
       grid-template-rows: repeat(8, 1fr);
-      gap: 1px;
-      background: #888;
+      gap: 2px;
       padding: 10px;
+      background-color: #999;
     }
+
     .cell {
       background: #fff;
       border: 1px solid #aaa;
       position: relative;
-      width: 100%;
-      height: 100%;
+      aspect-ratio: 1 / 1;
+      overflow: hidden;
     }
+
     .cell img {
       max-width: 100%;
       max-height: 100%;
       position: absolute;
       top: 0;
       left: 0;
+      object-fit: contain;
     }
   </style>
 </head>
 <body>
 
   <div id="sidebar">
-    <h3>可用項目</h3>
+    <h3>項目</h3>
     <img src="earthquake2.jpg" class="item" draggable="true" id="earthquake2">
     <img src="earthquake3.png" class="item" draggable="true" id="earthquake3">
     <img src="event1.png" class="item" draggable="true" id="event1">
@@ -66,7 +76,7 @@
   </div>
 
   <div id="map">
-    <!-- 動態產生 64 格 -->
+    <!-- 自動產生 64 格 -->
     <script>
       for (let i = 0; i < 64; i++) {
         document.write('<div class="cell" ondragover="event.preventDefault()" ondrop="drop(event)" data-cell="' + i + '"></div>');
@@ -75,27 +85,11 @@
   </div>
 
   <script>
-    // 拖曳功能
+    // 拖曳邏輯
     document.querySelectorAll('.item').forEach(item => {
       item.addEventListener('dragstart', e => {
         e.dataTransfer.setData('text/plain', e.target.src);
       });
     });
 
-    function drop(e) {
-      e.preventDefault();
-      const imageUrl = e.dataTransfer.getData('text/plain');
-      const cell = e.target.closest('.cell');
-
-      // 移除舊圖
-      const oldImg = cell.querySelector('img');
-      if (oldImg) oldImg.remove();
-
-      const img = document.createElement('img');
-      img.src = imageUrl;
-      cell.appendChild(img);
-    }
-  </script>
-
-</body>
-</html>
+    function drop(e)
