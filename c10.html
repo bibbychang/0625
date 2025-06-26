@@ -38,6 +38,14 @@
       background: white;
       border-radius: 6px;
     }
+    #map-controls {
+      margin-bottom: 10px;
+    }
+    #map-controls button {
+      margin-right: 6px;
+      padding: 6px 12px;
+      font-size: 14px;
+    }
     #map {
       display: grid;
       grid-template-columns: repeat(8, 60px);
@@ -60,6 +68,7 @@
       top: 0;
       left: 0;
       object-fit: contain;
+      z-index: 1;
     }
     .cell .order-number {
       position: absolute;
@@ -85,8 +94,8 @@
       gap: 2px;
     }
     .player {
-      width: 40px;
-      height: 40px;
+      width: 24px;
+      height: 24px;
       position: absolute;
       z-index: 5;
       transition: transform 0.4s ease;
@@ -103,14 +112,31 @@
       width: 100%;
       height: 100%;
     }
+    #pathDisplay {
+      position: fixed;
+      bottom: 10px;
+      right: 10px;
+      background: #fff;
+      padding: 6px 10px;
+      font-size: 12px;
+      max-height: 40vh;
+      overflow-y: auto;
+      border: 1px solid #ccc;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
   </style>
 </head>
 <body>
-  <h1>大富翁地圖編輯器 + 遊戲12345</h1>
+<div id="map-controls">
+  <button onclick="loadPresetMap(1)">地圖1</button>
+  <button onclick="loadPresetMap(2)">地圖2</button>
+  <button onclick="loadPresetMap(3)">地圖3</button>
+</div>
+<div id="pathDisplay"></div>
+<h1>大富翁地圖編輯器 + 遊戲1234</h1>
   <div id="main">
     <div id="editor">
       <h3>拖曳圖片進格子</h3>
-	  
       <div id="sidebar">
         <img src="start.jpg" class="item" draggable="true" data-img="start.jpg">
         <img src="goal.jpg" class="item" draggable="true" data-img="goal.jpg">
@@ -118,14 +144,8 @@
         <img src="fire1.png" class="item" draggable="true" data-img="fire1.png">
         <img src="firstaid2.png" class="item" draggable="true" data-img="firstaid2.png">
       </div>
-	  <div id="map-controls">
-  <button onclick="loadPresetMap(1)">地圖1</button>
-  <button onclick="loadPresetMap(2)">地圖2</button>
-  <button onclick="loadPresetMap(3)">地圖3</button>
-  
-</div><button onclick="startGame()">▶ 開始遊戲</button>
       <div id="map"></div>
-      
+      <button onclick="startGame()">▶ 開始遊戲</button>
     </div>
     <div id="game">
       <h3>遊戲區</h3>
@@ -136,8 +156,15 @@
       </p>
     </div>
   </div>
-  <script>
-    const mapEl = document.getElementById("map");
+
+
+
+
+
+
+<script>
+
+const mapEl = document.getElementById("map");
     const gameBoard = document.getElementById("game-board");
     let mapData = [], pathIndices = [], placedOrder = [];
     let playerSteps = [0, 0];
@@ -175,58 +202,27 @@
       }
     }
 
+
+
+
     function startGame() {
-  gameBoard.innerHTML = '';
-  mapData = [];
-  pathIndices = [...placedOrder];
-  const cells = mapEl.querySelectorAll('.cell');
-  cells.forEach((cell, index) => {
-    const img = cell.querySelector('img');
-    const imgSrc = img ? img.src : null;
-    mapData.push(imgSrc);
-  });
-  console.log("行走順序:", pathIndices);
-  const pathDetails = pathIndices.map(i => `${i}: ${mapData[i]?.split('/').pop() || '空白'}`);
-  document.getElementById("pathDisplay").innerText = "順序\n" + pathDetails.join("\n");
-  playerSteps = [0, 0];
-  playerTokens = [null, null];
-  currentPlayer = 0;
-  gameEnded = false;
-  buildGame();
-}
-function loadPresetMap(mapId) {
-  if (mapId === 1) {
-    const preset = [
-      { index: 0, img: 'start.jpg' },
-      { index: 1, img: 'event1.png' },
-      { index: 2, img: 'fire1.png' },
-      { index: 3, img: 'firstaid2.png' },
-      { index: 4, img: 'fire1.png' },
-      { index: 12, img: 'firstaid2.png' },
-      { index: 20, img: 'fire1.png' },
-      { index: 28, img: 'event1.png' },
-      { index: 35, img: 'goal.jpg' },
-    ];
-    const cells = document.querySelectorAll(".cell");
-    document.querySelectorAll(".cell img").forEach(e => e.remove());
-    document.querySelectorAll(".order-number").forEach(e => e.remove());
-    placedOrder.length = 0;
-    preset.forEach((entry, i) => {
-      const cell = cells[entry.index];
-      const img = document.createElement('img');
-      img.src = entry.img;
-      cell.appendChild(img);
-      if (entry.img.includes('start')) cell.classList.add('start-cell');
-      if (entry.img.includes('goal')) cell.classList.add('goal-cell');
-      placedOrder.push(entry.index);
-      const orderLabel = document.createElement("div");
-      orderLabel.className = "order-number";
-      orderLabel.textContent = i + 1;
-      cell.appendChild(orderLabel);
-    });
-  } else {
-    alert("尚未設定的地圖");
-  }
+      gameBoard.innerHTML = '';
+      mapData = [];
+      pathIndices = [...placedOrder];
+      const cells = mapEl.querySelectorAll('.cell');
+      cells.forEach((cell, index) => {
+        const img = cell.querySelector('img');
+        const imgSrc = img ? img.src : null;
+        mapData.push(imgSrc);
+      });
+      console.log("行走順序:", pathIndices);
+      playerSteps = [0, 0];
+      playerTokens = [null, null];
+      currentPlayer = 0;
+      gameEnded = false;
+      buildGame();
+    }
+
     function buildGame() {
       for (let i = 0; i < 64; i++) {
         const cell = document.createElement("div");
@@ -306,6 +302,44 @@ function loadPresetMap(mapId) {
         playerTokens[index] = token;
       });
     }
-  </script>
+
+
+
+
+function loadPresetMap(mapId) {
+  if (mapId === 1) {
+    const preset = [
+      { index: 0, img: 'start.jpg' },
+      { index: 1, img: 'event1.png' },
+      { index: 2, img: 'fire1.png' },
+      { index: 3, img: 'firstaid2.png' },
+      { index: 4, img: 'fire1.png' },
+      { index: 12, img: 'firstaid2.png' },
+      { index: 20, img: 'fire1.png' },
+      { index: 28, img: 'event1.png' },
+      { index: 35, img: 'goal.jpg' },
+    ];
+    const cells = document.querySelectorAll(".cell");
+    document.querySelectorAll(".cell img").forEach(e => e.remove());
+    document.querySelectorAll(".order-number").forEach(e => e.remove());
+    placedOrder.length = 0;
+    preset.forEach((entry, i) => {
+      const cell = cells[entry.index];
+      const img = document.createElement('img');
+      img.src = entry.img;
+      cell.appendChild(img);
+      if (entry.img.includes('start')) cell.classList.add('start-cell');
+      if (entry.img.includes('goal')) cell.classList.add('goal-cell');
+      placedOrder.push(entry.index);
+      const orderLabel = document.createElement("div");
+      orderLabel.className = "order-number";
+      orderLabel.textContent = i + 1;
+      cell.appendChild(orderLabel);
+    });
+  } else {
+    alert("尚未設定的地圖");
+  }
+}
+</script>
 </body>
 </html>
