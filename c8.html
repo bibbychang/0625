@@ -84,14 +84,12 @@
       grid-template-rows: repeat(8, 60px);
       gap: 2px;
     }
-    #game-board .cell {
-      position: relative;
-    }
     .player {
       width: 24px;
       height: 24px;
       position: absolute;
       z-index: 2;
+      transition: transform 0.3s ease;
     }
     .player1 {
       top: 4px;
@@ -104,6 +102,7 @@
     .player img {
       width: 100%;
       height: 100%;
+      transition: transform 0.3s ease;
     }
   </style>
 </head>
@@ -138,6 +137,7 @@
     let playerSteps = [0, 0];
     let currentPlayer = 0;
     let gameEnded = false;
+    let previousPositions = [0, 0];
 
     for (let i = 0; i < 64; i++) {
       const cell = document.createElement("div");
@@ -181,6 +181,7 @@
       });
       console.log("行走順序:", pathIndices);
       playerSteps = [0, 0];
+      previousPositions = [0, 0];
       currentPlayer = 0;
       gameEnded = false;
       buildGame();
@@ -213,11 +214,13 @@
       if (gameEnded) return;
       const dice = Math.floor(Math.random() * 6) + 1;
       document.getElementById("diceResult").textContent = dice;
+      previousPositions[currentPlayer] = playerSteps[currentPlayer];
       playerSteps[currentPlayer] += dice;
       if (playerSteps[currentPlayer] >= pathIndices.length)
         playerSteps[currentPlayer] = pathIndices.length - 1;
 
       renderPlayers();
+
       const cellIndex = pathIndices[playerSteps[currentPlayer]];
       if (mapData[cellIndex]?.includes('goal.jpg')) {
         alert(`🎉 玩家 ${currentPlayer + 1} 抵達終點，獲勝！`);
@@ -233,6 +236,7 @@
       document.querySelectorAll(".player").forEach(p => p.remove());
       playerSteps.forEach((step, index) => {
         const cellIndex = pathIndices[step];
+        const prevIndex = pathIndices[previousPositions[index]];
         const cell = gameBoard.children[cellIndex];
         if (!cell) return;
         const token = document.createElement("div");
@@ -240,6 +244,19 @@
         const car = new Image();
         car.src = index === 0 ? "car_red.png" : "car_blue.png";
         car.alt = `玩家${index + 1}`;
+
+        // 方向調整
+        let angle = 0;
+        if (prevIndex !== undefined && prevIndex !== cellIndex) {
+          const dx = (cellIndex % 8) - (prevIndex % 8);
+          const dy = Math.floor(cellIndex / 8) - Math.floor(prevIndex / 8);
+          if (dx === 1) angle = 0;         // →
+          else if (dx === -1) angle = 180; // ←
+          else if (dy === 1) angle = 90;   // ↓
+          else if (dy === -1) angle = 270; // ↑
+        }
+        car.style.transform = `rotate(${angle}deg)`;
+
         token.appendChild(car);
         cell.appendChild(token);
       });
