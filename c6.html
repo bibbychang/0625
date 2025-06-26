@@ -105,19 +105,33 @@
   </style>
 </head>
 <body>
-  <h1>大富翁地圖編輯器 + 遊戲</h1>
+  
   <div id="main">
     <div id="editor">
-      <h3>拖曳圖片進格子</h3>
+      <h3>拖曳圖片進格子 第一個要拉start 最後一個要拉goal 結束後按開始遊戲</h3>
       <div id="sidebar">
         <img src="start.jpg" class="item" draggable="true" data-img="start.jpg">
         <img src="goal.jpg" class="item" draggable="true" data-img="goal.jpg">
-        <img src="event1.png" class="item" draggable="true" data-img="event1.png">
-        <img src="fire1.png" class="item" draggable="true" data-img="fire1.png">
-        <img src="firstaid2.png" class="item" draggable="true" data-img="firstaid2.png">
+          <img src="earthquake2.jpg" class="item" draggable="true" data-img="earthquake2.jpg">
+    <img src="earthquake3.png" class="item" draggable="true" data-img="earthquake3.png">
+    <img src="event1.png" class="item" draggable="true" data-img="event1.png">
+    <img src="event2.png" class="item" draggable="true" data-img="event2.png">
+    <img src="fire1.png" class="item" draggable="true" data-img="fire1.png">
+    <img src="fire2.png" class="item" draggable="true" data-img="fire2.png">
+    <img src="firstaid2.png" class="item" draggable="true" data-img="firstaid2.png">
+	<img src="warning2.png" class="item" draggable="true" data-img="warning2.png">
+    <img src="ok1.png" class="item" draggable="true" data-img="ok1.png">
+	<img src="ok2.png" class="item" draggable="true" data-img="ok1.png">
+	<img src="ok3.png" class="item" draggable="true" data-img="ok1.png">
+    <img src="underdesk.png" class="item" draggable="true" data-img="underdesk.png">
+	<img src="rain1.png" class="item" draggable="true" data-img="rain1.png">
+	<img src="rain2.png" class="item" draggable="true" data-img="rain2.png">
+	<img src="rain3.png" class="item" draggable="true" data-img="rain3.png">
+	
       </div>
+	  <button onclick="startGame()">▶ 開始遊戲</button>
       <div id="map"></div>
-      <button onclick="startGame()">▶ 開始遊戲</button>
+      
     </div>
     <div id="game">
       <h3>遊戲區</h3>
