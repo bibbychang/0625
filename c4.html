@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>地圖編輯 + 大富翁遊戲123</title>
-  <style>
+ <style>
     * { box-sizing: border-box; }
     body {
       font-family: sans-serif;
@@ -24,9 +24,15 @@
     #editor {
       border-right: 2px solid #ccc;
     }
+    #sidebar {
+      display: flex;
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      padding-bottom: 10px;
+      gap: 6px;
+    }
     #sidebar img {
-     
-	  width: 60px;
+      width: 60px;
       height: 60px;
       cursor: grab;
       display: block;
@@ -34,9 +40,6 @@
       background: white;
       border-radius: 6px;
       flex: 0 0 auto;
-	  
-	  
-	  
     }
     #map {
       display: grid;
