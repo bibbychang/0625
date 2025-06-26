@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <title>地圖編輯 + 大富翁遊戲</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: sans-serif;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+    #main {
+      display: flex;
+      flex: 1;
+    }
+    #editor, #game {
+      flex: 1;
+      overflow: auto;
+      padding: 10px;
+    }
+    #editor {
+      border-right: 2px solid #ccc;
+    }
+    #sidebar img {
+      width: 60px;
+      height: 60px;
+      margin: 6px auto;
+      cursor: grab;
+      display: block;
+      border: 1px solid #aaa;
+      background: white;
+      border-radius: 6px;
+    }
+    #map {
+      display: grid;
+      grid-template-columns: repeat(6, 60px);
+      grid-template-rows: repeat(6, 60px);
+      gap: 2px;
+      background-color: #888;
+      justify-content: start;
+      align-content: start;
+    }
+    .cell {
+      width: 60px;
+      height: 60px;
+      background: #fff;
+      border: 1px solid #aaa;
+      position: relative;
+      overflow: hidden;
+    }
+    .cell img {
+      width: 60px;
+      height: 60px;
+      position: absolute;
+      top: 0;
+      left: 0;
+      object-fit: contain;
+    }
+    #history-panel {
+      margin-top: 10px;
+    }
+    #game-board {
+      display: grid;
+      grid-template-columns: repeat(6, 60px);
+      grid-template-rows: repeat(6, 60px);
+      gap: 2px;
+    }
+    #game-board .cell {
+      position: relative;
+      font-size: 10px;
+    }
+    .player {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      position: absolute;
+      top: 18px;
+      left: 18px;
+      z-index: 2;
+    }
+    .player1 { background-color: red; }
+    .player2 { background-color: blue; }
+  </style>
+</head>
+<body>
+  <h1>大富翁地圖編輯器 + 遊戲</h1>
+  <div id="main">
+    <div id="editor">
+      <h3>拖曳圖片進格子</h3>
+      <div id="sidebar">
+        <img src="start.jpg" class="item" draggable="true" data-img="start.jpg">
+        <img src="goal.jpg" class="item" draggable="true" data-img="goal.jpg">
+        <img src="event1.png" class="item" draggable="true" data-img="event1.png">
+        <img src="fire1.png" class="item" draggable="true" data-img="fire1.png">
+        <img src="firstaid2.png" class="item" draggable="true" data-img="firstaid2.png">
+        <!-- 可繼續新增圖片 -->
+      </div>
+      <div id="map"></div>
+      <button onclick="startGame()">▶ 開始遊戲</button>
+    </div>
+    <div id="game">
+      <h3>遊戲區</h3>
+      <div id="game-board"></div>
+      <p><button onclick="rollDice()">🎲 擲骰</button> 擲出 <span id="diceResult">-</span></p>
+    </div>
+  </div>
+  <script>
+    const mapEl = document.getElementById("map");
+    const gameBoard = document.getElementById("game-board");
+    let placementHistory = [], mapData = [];
+
+    // 產生 6x6 編輯地圖
+    for (let i = 0; i < 36; i++) {
+      const cell = document.createElement("div");
+      cell.className = "cell";
+      cell.dataset.cell = i;
+      cell.ondragover = e => e.preventDefault();
+      cell.ondrop = drop;
+      mapEl.appendChild(cell);
+    }
+
+    // 拖曳邏輯
+    document.querySelectorAll('.item').forEach(item => {
+      item.ondragstart = e => {
+        e.dataTransfer.setData('text/plain', item.dataset.img);
+      };
+    });
+
+    function drop(e) {
+      e.preventDefault();
+      const filename = e.dataTransfer.getData('text/plain');
+      const cell = e.target.closest('.cell');
+      cell.innerHTML = '';
+      const img = new Image();
+      img.src = filename;
+      img.width = img.height = 60;
+      cell.appendChild(img);
+    }
+
+    // 遊戲啟動
+    function startGame() {
+      gameBoard.innerHTML = '';
+      mapData = [];
+      const cells = mapEl.querySelectorAll('.cell');
+      cells.forEach(cell => {
+        const img = cell.querySelector('img');
+        mapData.push(img ? img.src : null);
+      });
+      buildGame(mapData);
+    }
+
+    function buildGame(data) {
+      for (let i = 0; i < 36; i++) {
+        const cell = document.createElement("div");
+        cell.className = "cell";
+        if (data[i]) {
+          const img = new Image();
+          img.src = data[i];
+          cell.appendChild(img);
+        }
+        gameBoard.appendChild(cell);
+      }
+      playerPos = 0;
+      renderPlayer();
+    }
+
+    let playerPos = 0;
+    function rollDice() {
+      const dice = Math.floor(Math.random() * 6) + 1;
+      document.getElementById("diceResult").textContent = dice;
+      playerPos = Math.min(playerPos + dice, 35);
+      renderPlayer();
+    }
+
+    function renderPlayer() {
+      document.querySelectorAll(".player").forEach(p => p.remove());
+      const cell = gameBoard.children[playerPos];
+      const token = document.createElement("div");
+      token.className = "player player1";
+      cell.appendChild(token);
+    }
+  </script>
+</body>
+</html>
