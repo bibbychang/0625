@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <title>地圖編輯 + 大富翁遊戲</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: sans-serif;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+    #main {
+      display: flex;
+      flex: 1;
+    }
+    #editor, #game {
+      flex: 1;
+      overflow: auto;
+      padding: 10px;
+    }
+    #editor {
+      border-right: 2px solid #ccc;
+    }
+    #sidebar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 10px;
+    }
+    #sidebar img {
+      width: 60px;
+      height: 60px;
+      cursor: grab;
+      border: 1px solid #aaa;
+      background: white;
+      border-radius: 6px;
+    }
+    #map {
+      display: grid;
+      grid-template-columns: repeat(8, 60px);
+      grid-template-rows: repeat(8, 60px);
+      gap: 2px;
+      background-color: #888;
+    }
+    .cell {
+      width: 60px;
+      height: 60px;
+      background: #fff;
+      border: 1px solid #aaa;
+      position: relative;
+      overflow: hidden;
+    }
+    .cell img {
+      width: 60px;
+      height: 60px;
+      position: absolute;
+      top: 0;
+      left: 0;
+      object-fit: contain;
+      z-index: 1;
+    }
+    .cell .order-number {
+      position: absolute;
+      bottom: 2px;
+      right: 4px;
+      font-size: 10px;
+      color: black;
+      background: rgba(255,255,255,0.7);
+      padding: 1px 3px;
+      border-radius: 4px;
+      z-index: 3;
+    }
+    .start-cell {
+      border: 2px solid green !important;
+    }
+    .goal-cell {
+      border: 2px solid gold !important;
+    }
+    #game-board {
+      display: grid;
+      grid-template-columns: repeat(8, 60px);
+      grid-template-rows: repeat(8, 60px);
+      gap: 2px;
+    }
+    .player {
+      width: 24px;
+      height: 24px;
+      position: absolute;
+      z-index: 5;
+      transition: transform 0.4s ease;
+    }
+    .player1 {
+      top: 4px;
+      left: 4px;
+    }
+    .player2 {
+      top: 4px;
+      right: 4px;
+    }
+    .player img {
+      width: 100%;
+      height: 100%;
+    }
+    #pathDisplay {
+      position: fixed;
+      bottom: 10px;
+      right: 10px;
+      background: #fff;
+      padding: 6px 10px;
+      font-size: 12px;
+      max-height: 40vh;
+      overflow-y: auto;
+      border: 1px solid #ccc;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+  </style>
+</head>
+<body>
+<div id="pathDisplay"></div>
+<!-- 內容維持不變 -->
+<script>
+function startGame() {
+  gameBoard.innerHTML = '';
+  mapData = [];
+  pathIndices = [...placedOrder];
+  const cells = mapEl.querySelectorAll('.cell');
+  cells.forEach((cell, index) => {
+    const img = cell.querySelector('img');
+    const imgSrc = img ? img.src : null;
+    mapData.push(imgSrc);
+  });
+  console.log("行走順序:", pathIndices);
+  const pathDetails = pathIndices.map(i => `${i}: ${mapData[i]?.split('/').pop() || '空白'}`);
+  document.getElementById("pathDisplay").innerText = "順序\n" + pathDetails.join("\n");
+  playerSteps = [0, 0];
+  playerTokens = [null, null];
+  currentPlayer = 0;
+  gameEnded = false;
+  buildGame();
+}
+</script>
+</body>
+</html>
