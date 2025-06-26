@@ -105,10 +105,10 @@
   </style>
 </head>
 <body>
-  <h1>大富翁地圖編輯器 + 遊戲</h1>
+  <h2>大富翁地圖編輯器 + 遊戲</h2>
   <div id="main">
     <div id="editor">
-      <h3>拖曳圖片進格子</h3>
+      <h3>拖曳圖片進格子  第一個要拉start 最後一個要拉goal 結束後按開始遊戲</h3>
       <div id="sidebar">
         <img src="start.jpg" class="item" draggable="true" data-img="start.jpg">
         <img src="goal.jpg" class="item" draggable="true" data-img="goal.jpg">
@@ -129,8 +129,9 @@
 	<img src="rain3.png" class="item" draggable="true" data-img="rain3.png">
 	
       </div>
+	    <button onclick="startGame()">▶ 開始遊戲</button>
       <div id="map"></div>
-      <button onclick="startGame()">▶ 開始遊戲</button>
+      
     </div>
     <div id="game">
       <h3>遊戲區</h3>
