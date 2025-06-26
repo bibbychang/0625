@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <title>大富翁地圖產生器10</title>
+  <style>
+    body {
+      display: flex;
+      margin: 0;
+      height: 100vh;
+      font-family: sans-serif;
+    }
+
+    #sidebar {
+      width: 160px;
+      padding: 10px;
+      border-right: 2px solid #ccc;
+      background: #f4f4f4;
+      overflow-y: auto;
+    }
+
+    #sidebar img {
+      width: 60px;
+      height: 60px;
+      margin: 6px auto;
+      cursor: grab;
+      display: block;
+      border: 1px solid #aaa;
+      background: white;
+      border-radius: 6px;
+    }
+
+    #map {
+      flex: 1;
+      display: grid;
+      grid-template-columns: repeat(6, 60px);
+      grid-template-rows: repeat(6, 60px);
+      gap: 2px;
+      padding: 10px;
+      background-color: #888;
+      justify-content: start;
+      align-content: start;
+    }
+
+    .cell {
+      background: #fff;
+      border: 1px solid #aaa;
+      position: relative;
+      width: 60px;
+      height: 60px;
+      overflow: hidden;
+    }
+
+    .cell img {
+      width: 60px;
+      height: 60px;
+      position: absolute;
+      top: 0;
+      left: 0;
+      object-fit: contain;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="sidebar">
+    <h3>可用項目</h3>
+    <img src="earthquake2.jpg" class="item" draggable="true" data-img="earthquake2.jpg">
+    <img src="earthquake3.png" class="item" draggable="true" data-img="earthquake3.png">
+    <img src="event1.png" class="item" draggable="true" data-img="event1.png">
+    <img src="event2.png" class="item" draggable="true" data-img="event2.png">
+    <img src="fire1.png" class="item" draggable="true" data-img="fire1.png">
+    <img src="fire2.png" class="item" draggable="true" data-img="fire2.png">
+    <img src="firstaid2.png" class="item" draggable="true" data-img="firstaid2.png">
+    <img src="goal.jpg" class="item" draggable="true" data-img="goal.jpg">
+    <img src="start.jpg" class="item" draggable="true" data-img="start.jpg">
+  </div>
+
+  <div id="map">
+    <script>
+      for (let i = 0; i < 36; i++) {
+        const isStart = i === 0;
+        const imgTag = isStart ? '<img src="start.jpg">' : '';
+        document.write('<div class="cell" ondragover="event.preventDefault()" ondrop="drop(event)" data-cell="' + i + '">' + imgTag + '</div>');
+      }
+    </script>
+  </div>
+
+  <script>
+    // 拖曳邏輯
+    document.querySelectorAll('.item').forEach(item => {
+      item.addEventListener('dragstart', e => {
+        e.dataTransfer.setData('text/plain', item.getAttribute('data-img'));
+      });
+    });
+
+    function drop(e) {
+      e.preventDefault();
+      const filename = e.dataTransfer.getData('text/plain');
+      const cell = e.target.closest('.cell');
+
+      // 清空原圖
+      const oldImg = cell.querySelector('img');
+      if (oldImg) oldImg.remove();
+
+      // 加上新圖
+      const img = new Image();
+      img.src = filename;
+      img.width = 60;
+      img.height = 60;
+      cell.appendChild(img);
+    }
+  </script>
+
+</body>
+</html>
