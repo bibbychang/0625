@@ -106,16 +106,29 @@
   </style>
 </head>
 <body>
-  <h1>大富翁地圖編輯器 + 遊戲1234567</h1>
+  <h1>大富翁地圖編輯器 + 遊戲now</h1>
   <div id="main">
     <div id="editor">
       <h3>拖曳圖片進格子</h3>
       <div id="sidebar">
         <img src="start.jpg" class="item" draggable="true" data-img="start.jpg">
         <img src="goal.jpg" class="item" draggable="true" data-img="goal.jpg">
-        <img src="event1.png" class="item" draggable="true" data-img="event1.png">
-        <img src="fire1.png" class="item" draggable="true" data-img="fire1.png">
-        <img src="firstaid2.png" class="item" draggable="true" data-img="firstaid2.png">
+         <img src="earthquake2.jpg" class="item" draggable="true" data-img="earthquake2.jpg">
+    <img src="earthquake3.png" class="item" draggable="true" data-img="earthquake3.png">
+    <img src="event1.png" class="item" draggable="true" data-img="event1.png">
+    <img src="event2.png" class="item" draggable="true" data-img="event2.png">
+    <img src="fire1.png" class="item" draggable="true" data-img="fire1.png">
+    <img src="fire2.png" class="item" draggable="true" data-img="fire2.png">
+    <img src="firstaid2.png" class="item" draggable="true" data-img="firstaid2.png">
+	<img src="warning2.png" class="item" draggable="true" data-img="warning2.png">
+    <img src="ok1.png" class="item" draggable="true" data-img="ok1.png">
+	<img src="ok2.png" class="item" draggable="true" data-img="ok1.png">
+	<img src="ok3.png" class="item" draggable="true" data-img="ok1.png">
+    <img src="underdesk.png" class="item" draggable="true" data-img="underdesk.png">
+	<img src="rain1.png" class="item" draggable="true" data-img="rain1.png">
+	<img src="rain2.png" class="item" draggable="true" data-img="rain2.png">
+	<img src="rain3.png" class="item" draggable="true" data-img="rain3.png">
+	
       </div>
 	  <button onclick="loadMap1()">📌 地圖1</button><button onclick="startGame()">▶ 開始遊戲</button>
       <div id="map"></div>
@@ -175,11 +188,21 @@
       { index: 1, img: 'event1.png' },
       { index: 2, img: 'fire1.png' },
       { index: 3, img: 'firstaid2.png' },
-      { index: 4, img: 'fire1.png' },
-      { index: 12, img: 'firstaid2.png' },
-      { index: 20, img: 'fire1.png' },
-      { index: 28, img: 'event1.png' },
-      { index: 35, img: 'goal.jpg' },
+      { index: 4, img: 'ok1.png' },
+      { index: 7, img: 'firstaid2.png' },
+      { index: 12, img: 'rain3.png' },
+      { index: 15, img: 'event1.png' },
+      { index: 16, img: 'goal.jpg' },
+	  { index: 18, img: 'rain1.png' },
+      { index: 21, img: 'earthquake3.png' },
+      { index: 23, img: 'rain2.png' },
+      { index: 24, img: 'event2.png' },
+      { index: 37, img: 'goal.jpg' },
+	  { index: 30, img: 'underdesk.png' },
+      { index: 38, img: 'ok2.png' },
+      { index: 42, img: 'fire1.png' },
+      { index: 43, img: 'ok3.png' },
+      { index: 44, img: 'goal.jpg' },
     ];
     placedOrder = [];
     map1.forEach(({ index, img }) => {
