@@ -103,18 +103,6 @@
       width: 100%;
       height: 100%;
     }
-	#pathDisplay {
-      position: fixed;
-      bottom: 10px;
-      right: 10px;
-      background: #fff;
-      padding: 6px 10px;
-      font-size: 12px;
-      max-height: 40vh;
-      overflow-y: auto;
-      border: 1px solid #ccc;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-    }
   </style>
 </head>
 <body>
@@ -140,8 +128,6 @@
         擲出 <span id="diceResult">-</span>
       </p>
     </div>
-	<div id="pathDisplay" style="position: fixed; bottom: 10px; right: 10px; background: #fff; padding: 5px; font-size: 12px;"></div>
-
   </div>
   <script>
     const mapEl = document.getElementById("map");
@@ -183,24 +169,22 @@
     }
 
     function startGame() {
-  gameBoard.innerHTML = '';
-  mapData = [];
-  pathIndices = [...placedOrder];
-  const cells = mapEl.querySelectorAll('.cell');
-  cells.forEach((cell, index) => {
-    const img = cell.querySelector('img');
-    const imgSrc = img ? img.src : null;
-    mapData.push(imgSrc);
-  });
-  console.log("行走順序:", pathIndices);
-  const pathDetails = pathIndices.map(i => `${i}: ${mapData[i]?.split('/').pop() || '空白'}`);
-  document.getElementById("pathDisplay").innerText = "順序\n" + pathDetails.join("\n");
-  playerSteps = [0, 0];
-  playerTokens = [null, null];
-  currentPlayer = 0;
-  gameEnded = false;
-  buildGame();
-}
+      gameBoard.innerHTML = '';
+      mapData = [];
+      pathIndices = [...placedOrder];
+      const cells = mapEl.querySelectorAll('.cell');
+      cells.forEach((cell, index) => {
+        const img = cell.querySelector('img');
+        const imgSrc = img ? img.src : null;
+        mapData.push(imgSrc);
+      });
+      console.log("行走順序:", pathIndices,imgSrc);
+      playerSteps = [0, 0];
+      playerTokens = [null, null];
+      currentPlayer = 0;
+      gameEnded = false;
+      buildGame();
+    }
 
     function buildGame() {
       for (let i = 0; i < 64; i++) {
