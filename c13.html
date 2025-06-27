@@ -228,7 +228,7 @@ function updateMode() {
       { index: 25, img: 'fire1.png' },
       { index: 24, img: 'ok3.png' },
 	  { index: 16, img: 'ok1.png' },
-      { index: 17, img: 'goal.png' },
+      { index: 8, img: 'goal.png' },
     ];
     placedOrder = [];
     map1.forEach(({ index, img }) => {
@@ -312,11 +312,11 @@ function updateMode() {
 
       animateMove(currentPlayer, fromIndex, toIndex, () => {
         updateStatus();
-        if (mode === "round" && playerRounds[currentPlayer] >= roundGoal) {
-          alert(`🎉 玩家 \${currentPlayer + 1} 完成 \${roundGoal} 圈，獲勝！`);
+        if (mode === "round" && playerRounds[currentPlayer] >= roundGoal) {		
+          alert(`🎉 玩家 ${currentPlayer + 1} 完成 ${roundGoal} 圈，獲勝！`);
           gameEnded = true;
         } else if (mode === "score" && playerScores[currentPlayer] >= scoreGoal) {
-          alert(`🎉 玩家 \${currentPlayer + 1} 累積 \${scoreGoal} 分，獲勝！`);
+          alert(`🎉 玩家 ${currentPlayer + 1} 累積 ${scoreGoal} 分，獲勝！`);
           gameEnded = true;
         } else {
           currentPlayer = (currentPlayer + 1) % 2;
