@@ -170,6 +170,7 @@
         <span id="people">-</span>  擲出 <span id="diceResult">-</span>
       </p>
       <p id="status"></p>
+	  <div id="log"></div>
     </div>
   </div>
   <script>
@@ -218,6 +219,7 @@ function askQuiz(onCorrect, onWrong) {
         onCorrect();
       } else {
         alert("答錯了！輪到下一位玩家。");
+		logQuizFail(currentPlayer, quiz.question);
         onWrong();
       }
     }
@@ -354,6 +356,7 @@ function updateMode() {
         if (mode === "score") playerScores[currentPlayer] += dice;
         animateMove(currentPlayer, fromIndex, toIndex, () => {
           updateStatus();
+		  logAction(currentPlayer, dice, toIndex);
           if (mode === "round" && playerRounds[currentPlayer] >= roundGoal) {
             alert(`🎉 玩家 ${currentPlayer + 1} 完成 ${roundGoal} 圈，獲勝！`);
             gameEnded = true;
@@ -411,6 +414,21 @@ function updateMode() {
         playerTokens[index] = token;
       });
     }
+	function logAction(player, dice, pos) {
+      const log = document.getElementById("log");
+      const stepNum = pathIndices.indexOf(pos) + 1;
+      const imgSrc = mapData[pos] || "";
+      const imgName = imgSrc.split('/').pop();
+      log.innerText += `玩家${player + 1} 擲出 ${dice}，移動到第 ${stepNum} 格（${imgName}）`;
+      log.scrollTop = log.scrollHeight;
+    }
+
+    function logQuizFail(player, question) {
+      const log = document.getElementById("log");
+      log.innerText += `玩家${player + 1} 答錯題目：「${question}」，失去前進機會`;
+      log.scrollTop = log.scrollHeight;
+    }
+	
 </script>
     
 </body>
