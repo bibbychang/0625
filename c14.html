@@ -173,23 +173,12 @@
     </div>
   </div>
   <script>
-  const quizQuestions = [
-      {
-        question: "地震來時最安全的躲避位置是？",
-        options: ["A. 電梯裡", "B. 桌子下", "C. 陽台"],
-        answer: "B"
-      },
-      {
-        question: "地震時，應該立刻做什麼？",
-        options: ["A. 跑出教室", "B. 找堅固物品躲避", "C. 拿手機拍照"],
-        answer: "B"
-      },
-      {
-        question: "哪一項是地震時「不應該」做的事？",
-        options: ["A. 躲在牆角", "B. 往窗戶靠近", "C. 保持冷靜"],
-        answer: "A"
-      },
-    ];
+  let quizQuestions = [];
+
+fetch("quiz.json")
+  .then(res => res.json())
+  .then(data => quizQuestions = data);
+  const quiz = quizQuestions[Math.floor(Math.random() * quizQuestions.length)];
   
   
   
@@ -228,7 +217,7 @@ function askQuiz(callback) {
         alert("答對了！可以前進。");
         callback();
       } else {
-        alert("答錯了！請重新擲骰。");
+        alert("答錯了！換下一位。");
       }
     }
 
@@ -255,10 +244,10 @@ function updateMode() {
     const map1 = [
       { index: 0, img: 'start.png' },
       { index: 1, img: 'quiz.png' },
-      { index: 2, img: 'fire1.png' },
-      { index: 3, img: 'firstaid2.png' },
-      { index: 4, img: 'ok1.png' },
-      { index: 5, img: 'safe.png' },
+      { index: 2, img: 'quiz.png' },
+      { index: 3, img: 'quiz.png' },
+      { index: 4, img: 'quiz.png' },
+      { index: 5, img: 'quiz.png' },
       { index: 6, img: 'rain3.png' },
       { index: 7, img: 'event1.png' },
       { index: 15, img: 'card2.png' },
