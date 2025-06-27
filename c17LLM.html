@@ -224,6 +224,10 @@ fetch("quiz.json")
       };
     });
  async function askQuiz(onCorrect, onWrong) {
+ if (!window.WebLLM || !window.WebLLM.WebLLMEngine) {
+  alert("WebLLM 載入失敗，請確認網路或使用支援 WebGPU 的 Chrome 瀏覽器");
+  return;
+}
       const synth = window.speechSynthesis;
       const engine = new window.WebLLM.WebLLMEngine();
       await engine.reload("Llama-3-8B-Instruct-q4f16_1");
