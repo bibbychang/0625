@@ -186,6 +186,25 @@
     </div>
   </div>
   <script>
+  let engine;
+let engineReady = false;
+
+async function initWebLLM() {
+  if (!window.WebLLM || !window.WebLLM.WebLLMEngine) {
+    alert("⚠️ 無法載入 WebLLM，請使用支援 WebGPU 的 Chrome 瀏覽器！");
+    return;
+  }
+  engine = new window.WebLLM.WebLLMEngine();
+  await engine.reload("Llama-3-8B-Instruct-q4f16_1");
+  engineReady = true;
+  console.log("✅ WebLLM 模型載入完成！");
+}
+
+initWebLLM(); // 頁面一開始就初始化模型
+  
+  
+  
+  
   let quizQuestions = [];
 
 fetch("quiz.json")
@@ -224,25 +243,24 @@ fetch("quiz.json")
       };
     });
  async function askQuiz(onCorrect, onWrong) {
- if (!window.WebLLM || !window.WebLLM.WebLLMEngine) {
-  alert("WebLLM 載入失敗，請確認網路或使用支援 WebGPU 的 Chrome 瀏覽器");
-  return;
-}
-      const synth = window.speechSynthesis;
-      const engine = new window.WebLLM.WebLLMEngine();
-      await engine.reload("Llama-3-8B-Instruct-q4f16_1");
+ 
+     if (!engineReady) {
+    alert("🧠 AI 模型尚未載入完成，請稍候再試！");
+    return;
+  }
+  const synth = window.speechSynthesis;
 
-      const output = await engine.chat.completion([
-        {
-          role: "user",
-          content:
-            "請出一題地震防災相關的選擇題，提供三個選項（A/B/C），並清楚標註正確答案，格式如下：{ \"question\": \"...\", \"options\": [\"A. ...\", \"B. ...\", \"C. ...\"], \"answer\": \"B\" }"
-        }
-      ]);
+  const output = await engine.chat.completion([
+    {
+      role: "user",
+      content:
+        "請出一題地震防災相關的選擇題，提供三個選項（A/B/C），並清楚標註正確答案，格式如下：{ \"question\": \"...\", \"options\": [\"A. ...\", \"B. ...\", \"C. ...\"], \"answer\": \"B\" }"
+    }
+  ]);
 
-      const match = output.choices?.[0]?.message?.content.match(/\{[\s\S]*\}/);
-      if (!match) return alert("無法解析題目");
-      const quiz = JSON.parse(match[0]);
+  const match = output.choices?.[0]?.message?.content.match(/\{[\s\S]*\}/);
+  if (!match) return alert("⚠️ 無法解析 AI 題目格式");
+  const quiz = JSON.parse(match[0]);
 
       const modal = document.createElement("div");
       modal.style = "position:fixed;top:0;left:0;width:100%;height:100%;background-color:rgba(0,0,0,0.7);display:flex;justify-content:center;align-items:center;z-index:9999;";
