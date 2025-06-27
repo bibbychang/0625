@@ -352,6 +352,12 @@ function updateMode() {
       const fromIndex = pathIndices[prevStep % pathIndices.length];
       const toIndex = pathIndices[step];
       const cellImg = mapData[toIndex] || "";
+
+      function nextTurn() {
+        currentPlayer = (currentPlayer + 1) % 2;
+        document.getElementById("currentPlayer").textContent = currentPlayer + 1;
+      }
+
       function proceed() {
         playerSteps[currentPlayer] = step;
         if (mode === "score") playerScores[currentPlayer] += dice;
@@ -364,13 +370,13 @@ function updateMode() {
             alert(`🎉 玩家 ${currentPlayer + 1} 累積 ${scoreGoal} 分，獲勝！`);
             gameEnded = true;
           } else {
-            currentPlayer = (currentPlayer + 1) % 2;
-            document.getElementById("currentPlayer").textContent = currentPlayer + 1;
+            nextTurn();
           }
         });
       }
+
       if (cellImg.includes("quiz.png")) {
-        askQuiz(proceed);
+        askQuiz(proceed, nextTurn);
       } else {
         proceed();
       }
