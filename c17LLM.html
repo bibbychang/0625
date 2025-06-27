@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>地圖編輯 + 大富翁遊戲</title>
+  <script src="https://mlc.ai/web-llm/dist/bundle.js"></script>
   <style>
     * { box-sizing: border-box; }
     body {
@@ -104,7 +105,7 @@
       height: 100%;
     }
   </style>
-  <script src="https://mlc.ai/web-llm/dist/bundle.js"></script>
+  
 </head>
 <body>
   <h1>大富翁地圖編輯器 + 遊戲</h1>
@@ -212,54 +213,6 @@ fetch("quiz.json")
         e.dataTransfer.setData('text/plain', item.dataset.img);
       };
     });
-async function askQuiz(onCorrect, onWrong) {
-  const synth = window.speechSynthesis;
-
-  const engine = new window.WebLLM.WebLLMEngine();
-  await engine.reload("Llama-3-8B-Instruct-q4f16_1");
-
-  const output = await engine.chat.completion([
-    {
-      role: "user",
-      content:
-        "請出一題地震防災相關的選擇題，提供三個選項（以 A/B/C 編號），並清楚標註正確答案，格式如下：{ \"question\": \"...\", \"options\": [\"A. ...\", \"B. ...\", \"C. ...\"], \"answer\": \"B\" }"
-    }
-  ]);
-
-  const match = output.choices?.[0]?.message?.content.match(/\{[\s\S]*\}/);
-  if (!match) return alert("無法解析題目");
-  const quiz = JSON.parse(match[0]);
-
-  const modal = document.createElement("div");
-  modal.style =
-    "position:fixed;top:0;left:0;width:100%;height:100%;background-color:rgba(0,0,0,0.7);display:flex;justify-content:center;align-items:center;z-index:9999;";
-
-  const box = document.createElement("div");
-  box.style =
-    "background:white;padding:20px;border-radius:8px;width:300px;box-shadow:0 4px 10px rgba(0,0,0,0.3);text-align:center;animation:slideIn 0.4s ease-out;";
-
-  const q = document.createElement("h3");
-  q.textContent = quiz.question;
-  box.appendChild(q);
-
-  quiz.options.forEach((opt) => {
-    const btn = document.createElement("button");
-    btn.textContent = opt;
-    btn.style =
-      "display:block;margin:8px auto;padding:8px 16px;font-size:16px;cursor:pointer;";
-    btn.onclick = () => {
-      document.body.removeChild(modal);
-      if (opt.trim().startsWith(quiz.answer)) {
-        alert("答對了！可以前進。");
-        onCorrect();
-      } else {
-        alert("答錯了！輪到下一位玩家。");
-        logQuizFail(currentPlayer, quiz.question);
-        onWrong();
-      }
-    };
-    box.appendChild(btn);
-  });
 
   const utterance = new SpeechSynthesisUtterance(
     `${quiz.question} 選項是：${quiz.options.join("、")}`
@@ -477,6 +430,59 @@ function updateMode() {
     }
 	
 </script>
-    
+    <script>
+    async function askQuiz(onCorrect, onWrong) {
+      const synth = window.speechSynthesis;
+      const engine = new window.WebLLM.WebLLMEngine();
+      await engine.reload("Llama-3-8B-Instruct-q4f16_1");
+
+      const output = await engine.chat.completion([
+        {
+          role: "user",
+          content:
+            "請出一題地震防災相關的選擇題，提供三個選項（A/B/C），並清楚標註正確答案，格式如下：{ \"question\": \"...\", \"options\": [\"A. ...\", \"B. ...\", \"C. ...\"], \"answer\": \"B\" }"
+        }
+      ]);
+
+      const match = output.choices?.[0]?.message?.content.match(/\{[\s\S]*\}/);
+      if (!match) return alert("無法解析題目");
+      const quiz = JSON.parse(match[0]);
+
+      const modal = document.createElement("div");
+      modal.style = "position:fixed;top:0;left:0;width:100%;height:100%;background-color:rgba(0,0,0,0.7);display:flex;justify-content:center;align-items:center;z-index:9999;";
+
+      const box = document.createElement("div");
+      box.style = "background:white;padding:20px;border-radius:8px;width:300px;box-shadow:0 4px 10px rgba(0,0,0,0.3);text-align:center;animation:slideIn 0.4s ease-out;";
+
+      const q = document.createElement("h3");
+      q.textContent = quiz.question;
+      box.appendChild(q);
+
+      quiz.options.forEach((opt) => {
+        const btn = document.createElement("button");
+        btn.textContent = opt;
+        btn.style = "display:block;margin:8px auto;padding:8px 16px;font-size:16px;cursor:pointer;";
+        btn.onclick = () => {
+          document.body.removeChild(modal);
+          if (opt.trim().startsWith(quiz.answer)) {
+            alert("答對了！可以前進。");
+            onCorrect();
+          } else {
+            alert("答錯了！輪到下一位玩家。");
+            logQuizFail(currentPlayer, quiz.question);
+            onWrong();
+          }
+        };
+        box.appendChild(btn);
+      });
+
+      const utterance = new SpeechSynthesisUtterance(`${quiz.question} 選項是：${quiz.options.join("、")}`);
+      utterance.lang = "zh-TW";
+      synth.speak(utterance);
+
+      modal.appendChild(box);
+      document.body.appendChild(modal);
+    }
+  </script>
 </body>
 </html>
