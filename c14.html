@@ -167,7 +167,7 @@
       <div id="game-board"></div>
       <p>
         <button onclick="rollDice()">🎲 玩家 <span id="currentPlayer">1</span> 擲骰</button>
-        擲出 <span id="diceResult">-</span>
+        <span id="people">-</span>  擲出 <span id="diceResult">-</span>
       </p>
       <p id="status"></p>
     </div>
@@ -332,6 +332,7 @@ function updateMode() {
       if (gameEnded) return;
       const dice = Math.floor(Math.random() * 6) + 1;
       document.getElementById("diceResult").textContent = dice;
+	  document.getElementById("people").textContent = playerSteps[currentPlayer];
       const prevStep = playerSteps[currentPlayer];
       let step = playerSteps[currentPlayer] + dice;
       if (step >= pathIndices.length) {
