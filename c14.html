@@ -210,14 +210,15 @@ fetch("quiz.json")
         e.dataTransfer.setData('text/plain', item.dataset.img);
       };
     });
-function askQuiz(callback) {
+function askQuiz(onCorrect, onWrong) {
       const quiz = quizQuestions[Math.floor(Math.random() * quizQuestions.length)];
       let userAnswer = prompt(`${quiz.question}\n${quiz.options.join("\n")}`);
       if (userAnswer && userAnswer.toUpperCase() === quiz.answer) {
         alert("答對了！可以前進。");
-        callback();
+        onCorrect();
       } else {
-        alert("答錯了！換下一位。");
+        alert("答錯了！輪到下一位玩家。");
+        onWrong();
       }
     }
 
@@ -332,7 +333,7 @@ function updateMode() {
       if (gameEnded) return;
       const dice = Math.floor(Math.random() * 6) + 1;
       document.getElementById("diceResult").textContent = dice;
-	  document.getElementById("people").textContent = playerSteps[currentPlayer];
+	  document.getElementById("people").textContent = currentPlayer;
       const prevStep = playerSteps[currentPlayer];
       let step = playerSteps[currentPlayer] + dice;
       if (step >= pathIndices.length) {
