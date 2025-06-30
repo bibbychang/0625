@@ -65,9 +65,12 @@
         .filter(i => i !== null);
 
       const mode = document.querySelector('input[name="mode"]:checked').value;
-      const roundGoal = document.getElementById("roundCount").value;
-      const scoreGoal = document.getElementById("scoreTarget").value;
-
+      const roundSel = document.getElementById("roundCount");
+      const scoreSel = document.getElementById("scoreTarget");
+      const roundGoal = roundSel ? roundSel.value || "1" : "1";
+      const scoreGoal = scoreSel ? scoreSel.value || "25" : "25";
+	  
+	  
       const gameConfig = {
         mapData,
         placedOrder,
