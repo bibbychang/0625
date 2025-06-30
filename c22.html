@@ -198,6 +198,18 @@ fetch("quiz.json")
   const quiz = quizQuestions[Math.floor(Math.random() * quizQuestions.length)];
   
  
+ 
+let eventList = [];
+
+fetch("event.json")
+  .then(res => res.json())
+  .then(data => {
+    eventList = data;
+    console.log("事件卡載入完成", eventList);
+  });
+  
+  
+  
   
   
   const mapEl = document.getElementById("map");
