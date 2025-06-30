@@ -202,9 +202,7 @@ fetch("quiz.json")
 
 fetch("event.json")
   .then(response => response.json())
-  .then(data => {
-    eventList = data;
-  });
+  .then(data => {eventList = data);
   
   const mapEl = document.getElementById("map");
     const gameBoard = document.getElementById("game-board");
