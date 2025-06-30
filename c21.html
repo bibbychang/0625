@@ -198,7 +198,13 @@ fetch("quiz.json")
   const quiz = quizQuestions[Math.floor(Math.random() * quizQuestions.length)];
   
   
-  
+  let eventList = [];
+
+fetch("event.json")
+  .then(response => response.json())
+  .then(data => {
+    eventList = data;
+  });
   
   const mapEl = document.getElementById("map");
     const gameBoard = document.getElementById("game-board");
@@ -443,16 +449,18 @@ function updateMode() {
           }
         }
 		if (cellImg.includes("event1.png") || cellImg.includes("event2.png")) {
-          const eventList = [
-  { desc: "E01：地震發生時，你立刻躲到堅固桌子下。幸運逃過一劫！", effect: "前進1格" },
-  { desc: "E02：地震時你跑向樓梯逃生，被警衛制止。停一回合反思。", effect: "停一回合" },
-  { desc: "E03：你忘了固定書櫃，地震時東西掉下來，請退回1格。", effect: "退回1格" },
-  { desc: "E04：地震後馬上開瓦斯煮泡麵，發生火警！", effect: "回到起點" },
-  { desc: "E05：你熟記疏散路線，迅速帶同學撤離，獲得得2分。", effect: "得2分" }
-];
-          const event = eventList[Math.floor(Math.random() * eventList.length)];
-          alert(`🎲 事件卡：\n${event.desc}\n➡ 效果：${event.effect}`);
+         
+		 if (eventList.length === 0) {
+    alert("⚠ 無法載入事件卡，請確認 event.json 檔案。");
+    return;
+  }
 
+  const event = eventList[Math.floor(Math.random() * eventList.length)];
+  alert(`🎲 事件卡：\n${event.desc}\n➡ 效果：${event.effect}`);
+		 
+		 
+		 
+         
           let newStep = step;
 
           if (event.effect === "前進1格") {
