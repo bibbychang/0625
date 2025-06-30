@@ -312,8 +312,8 @@ function updateMode() {
     const map1 = [
       { index: 0, img: 'start.png' },
       { index: 1, img: 'quiz.png' },
-      { index: 2, img: 'quiz.png' },
-      { index: 3, img: 'quiz.png' },
+      { index: 2, img: 'event1.png' },
+      { index: 3, img: 'event2.png' },
       { index: 4, img: 'quiz.png' },
       { index: 5, img: 'quiz.png' },
       { index: 6, img: 'rain3.png' },
@@ -323,12 +323,12 @@ function updateMode() {
       { index: 31, img: 'earthquake3.png' },
       { index: 30, img: 'rain2.png' },
       { index: 29, img: 'event2.png' },
-      { index: 28, img: 'warning2.png' },
+      { index: 28, img: 'event2.png' },
 	  { index: 27, img: 'underdesk.png' },
       { index: 26, img: 'event1.png' },
       { index: 25, img: 'event1.png' },
       { index: 24, img: 'event1.png' },
-	  { index: 16, img: 'event1f.png' },
+	  { index: 16, img: 'event1.png' },
       { index: 8, img: 'goal.png' },
     ];
     placedOrder = [];
@@ -396,7 +396,16 @@ function updateMode() {
     renderPlayers(true);
   }
 
+  
   function rollDice() {
+      if (playerRounds[currentPlayer] < -500) {
+        alert(`玩家${currentPlayer + 1} 這回合休息。`);
+        playerRounds[currentPlayer] = 0;
+        currentPlayer = (currentPlayer + 1) % 2;
+        document.getElementById("currentPlayer").textContent = currentPlayer + 1;
+        return;
+      }
+
       if (gameEnded) return;
       const dice = Math.floor(Math.random() * 6) + 1;
       document.getElementById("diceResult").textContent = dice;
@@ -434,6 +443,32 @@ function updateMode() {
 }
 		
 		
+        
+if (cellImg.includes("event1.png") || cellImg.includes("event2.png")) {
+  const eventList = [
+    "前進1格", "停一回合", "退回1格", "回到起點",
+    "獲得2分", "前進2格", "退2格"
+  ];
+  const event = eventList[Math.floor(Math.random() * eventList.length)];
+  alert(`🎲 事件：${event}`);
+
+  if (event === "前進1格") {
+    step = (step + 1) % pathIndices.length;
+  } else if (event === "停一回合") {
+    playerRounds[currentPlayer] -= 999;
+  } else if (event === "退回1格") {
+    step = (step - 1 + pathIndices.length) % pathIndices.length;
+  } else if (event === "回到起點") {
+    step = 0;
+  } else if (event === "獲得2分" && mode === "score") {
+    playerScores[currentPlayer] += 2;
+  } else if (event === "前進2格") {
+    step = (step + 2) % pathIndices.length;
+  } else if (event === "退2格") {
+    step = (step - 2 + pathIndices.length) % pathIndices.length;
+  }
+}
+
         animateMove(currentPlayer, fromIndex, toIndex, () => {
           updateStatus();
 		  logAction(currentPlayer, dice, toIndex);
