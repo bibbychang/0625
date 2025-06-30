@@ -455,7 +455,10 @@ function updateMode() {
           }
         }
 		if (cellImg.includes("event1.png") || cellImg.includes("event2.png")) {
-          
+          if (eventList.length === 0) {
+    alert("⚠ 無法載入事件卡，請確認 event.json 檔案。");
+    return;
+  }
 
   const event = eventList[Math.floor(Math.random() * eventList.length)];
   alert(`🎲 事件卡：\n${event.desc}\n➡ 效果：${event.effect}`);
