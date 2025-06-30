@@ -54,31 +54,31 @@
     });
 
     function goToGamePage() {
-      const mapData = [];
-      document.querySelectorAll('#map .cell').forEach(cell => {
-        const img = cell.querySelector('img');
-        mapData.push(img ? img.getAttribute('src') : null);
-      });
+  const mapData = [];
+  document.querySelectorAll('#map .cell').forEach(cell => {
+    const img = cell.querySelector('img');
+    mapData.push(img ? img.getAttribute('src') : null);
+  });
 
-      const placedOrder = [...document.querySelectorAll('#map .cell')]
-        .map((cell, i) => (cell.querySelector('img') ? i : null))
-        .filter(i => i !== null);
+  const placedOrder = [...document.querySelectorAll('#map .cell')]
+    .map((cell, i) => (cell.querySelector('img') ? i : null))
+    .filter(i => i !== null);
 
-      const mode = document.querySelector('input[name="mode"]:checked').value;
-      const roundGoal = document.getElementById("roundCount").value;
-      const scoreGoal = document.getElementById("scoreTarget").value;
+  const mode = document.querySelector('input[name="mode"]:checked').value;
+  const roundGoal = document.getElementById("roundCount").value;
+  const scoreGoal = document.getElementById("scoreTarget").value;
 
-      const gameConfig = {
-        mapData,
-        placedOrder,
-        mode,
-        roundGoal,
-        scoreGoal
-      };
+  const gameConfig = {
+    mapData,
+    placedOrder,
+    mode,
+    roundGoal,
+    scoreGoal
+  };
 
-      localStorage.setItem("gameConfig", JSON.stringify(gameConfig));
-      location.href = "game.html";
-    }
+  localStorage.setItem("gameConfig", JSON.stringify(gameConfig));
+  location.href = "game.html";
+}
   </script>
 </body>
 </html>

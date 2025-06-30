@@ -124,60 +124,7 @@
 <body>
   <h1>大富翁地圖編輯器 + 遊戲</h1>
   <div id="main">
-    <div id="editor">
-		<div>
-        <label><input type="radio" name="mode" value="round" checked onchange="updateMode()"> 回合制</label>
-        <select id="roundCount">
-          <option value="1">1圈</option>
-          <option value="2">2圈</option>
-          <option value="3">3圈</option>
-        </select>
-        <label style="margin-left: 10px"><input type="radio" name="mode" value="score" onchange="updateMode()"> 積分制</label>
-        <select id="scoreTarget" disabled>
-          <option value="25">25分</option>
-          <option value="35">35分</option>
-          <option value="45">45分</option>
-        </select>
-      </div>
-      <h3>拖曳圖片進格子</h3>
-      <div id="sidebar">
-        <img src="start.png" class="item" draggable="true" data-img="start.png">
-        <img src="goal.png" class="item" draggable="true" data-img="goal.png">
-        <img src="bag1.png" class="item" draggable="true" data-img="bag1.png">
-		<img src="bag2.png" class="item" draggable="true" data-img="bag2.png">
-		
-		<img src="card1.png" class="item" draggable="true" data-img="card1.png">
-		<img src="card2.png" class="item" draggable="true" data-img="card2.png">
-		<img src="dice.png" class="item" draggable="true" data-img="dice.png">
-		<img src="earthquake1.png" class="item" draggable="true" data-img="earthquake1.png">
-        <img src="earthquake2.png" class="item" draggable="true" data-img="earthquake2.png">
-		<img src="earthquake3.png" class="item" draggable="true" data-img="earthquake3.png">
-    <img src="event1.png" class="item" draggable="true" data-img="event1.png">
-    <img src="event2.png" class="item" draggable="true" data-img="event2.png">
-    <img src="fire1.png" class="item" draggable="true" data-img="fire1.png">
-    <img src="fire2.png" class="item" draggable="true" data-img="fire2.png">
-	<img src="firetruck.png" class="item" draggable="true" data-img="firetruck.png">
-    <img src="firstaid2.png" class="item" draggable="true" data-img="firstaid2.png">
-	<img src="light.png" class="item" draggable="true" data-img="light.png">
-	<img src="ok1.png" class="item" draggable="true" data-img="ok1.png">
-	<img src="ok2.png" class="item" draggable="true" data-img="ok2.png">
-	<img src="ok3.png" class="item" draggable="true" data-img="ok3.png">
-    <img src="quiz.png" class="item" draggable="true" data-img="quiz.png">
     
-	<img src="rain1.png" class="item" draggable="true" data-img="rain1.png">
-	<img src="rain2.png" class="item" draggable="true" data-img="rain2.png">
-	<img src="rain3.png" class="item" draggable="true" data-img="rain3.png">
-	<img src="safe.png" class="item" draggable="true" data-img="safe.png">
-	<img src="safezone.png" class="item" draggable="true" data-img="safezone.png">
-	<img src="warning1.png" class="item" draggable="true" data-img="warning1.png">
-    <img src="warning2.png" class="item" draggable="true" data-img="warning2.png">
-	<img src="underdesk.png" class="item" draggable="true" data-img="underdesk.png">
-	
-      </div>
-	  <button onclick="loadMap1()">📌 地圖1</button><button onclick="startGame()">▶ 開始遊戲</button>
-      <div id="map"></div>
-      
-    </div>
     <div id="game">
       <h3>遊戲區</h3>
       <div id="game-board"></div>
@@ -196,7 +143,17 @@ fetch("quiz.json")
   .then(res => res.json())
   .then(data => quizQuestions = data);
   const quiz = quizQuestions[Math.floor(Math.random() * quizQuestions.length)];
-  
+  const config = JSON.parse(localStorage.getItem("gameConfig"));
+if (!config) {
+  alert("請先在地圖編輯器設定地圖！");
+  location.href = "editor.html";
+}
+
+let mapData = config.mapData;
+let pathIndices = config.placedOrder;
+let mode = config.mode;
+let roundGoal = parseInt(config.roundGoal);
+let scoreGoal = parseInt(config.scoreGoal);
   
   
   
