@@ -455,17 +455,22 @@ function updateMode() {
       const isQuiz = img.includes("quiz.png");
 
       if (isQuiz) {
-        askQuiz(() => {
-          handleChain(fromIdx, callback); // 答對後繼續
-        }, () => {
-          animateMove(currentPlayer, fromIdx, currIdx, () => {
-            updateStatus();
-            logAction(currentPlayer, dice, currIdx);
-            nextTurn(); // 答錯就結束這回合
-          });
-        });
-        return;
-      }
+  askQuiz(() => {
+    // ✅ 答對後：移動到 quiz 格子，然後繼續檢查是否觸發 rain/event
+    animateMove(currentPlayer, fromIdx, currIdx, () => {
+      logAction(currentPlayer, dice, currIdx);
+      handleChain(currIdx, callback); // 遞迴處理後續事件（但不會重複 quiz）
+    });
+  }, () => {
+    // ❌ 答錯：結束回合
+    animateMove(currentPlayer, fromIdx, currIdx, () => {
+      updateStatus();
+      logAction(currentPlayer, dice, currIdx);
+      nextTurn();
+    });
+  });
+  return;
+}
 
       if (matchedKey) {
         const advance = advanceMap[matchedKey];
