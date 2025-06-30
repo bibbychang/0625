@@ -190,12 +190,32 @@
     </div>
   </div>
   <script>
+  <script>
+const config = JSON.parse(localStorage.getItem("gameConfig"));
+if (!config) {
+  alert("請先在地圖編輯器設定地圖！");
+  location.href = "editor.html";
+}
+
+let mapData = config.mapData;
+let pathIndices = config.placedOrder;
+let mode = config.mode;
+let roundGoal = parseInt(config.roundGoal);
+let scoreGoal = parseInt(config.scoreGoal);
+
+// 接下來你可以用 mapData 與 pathIndices 建立地圖與遊戲路徑
+</script>
+  
+  
+  
   let quizQuestions = [];
 
 fetch("quiz.json")
   .then(res => res.json())
   .then(data => quizQuestions = data);
   const quiz = quizQuestions[Math.floor(Math.random() * quizQuestions.length)];
+  
+  
   
   
   
