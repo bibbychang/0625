@@ -119,12 +119,26 @@
   from { transform: translateY(-30px); opacity: 0; }
   to { transform: translateY(0); opacity: 1; }
 }
+    
   </style>
 </head>
 <body>
-  <h1>大富翁地圖編輯器 + 遊戲</h1>
   <h2>大富翁遊戲開始</h2>
-  <div id="gameBoard"></div>
+    <div id="main">
+
+  <div id="map"></div>
+  <div id="game">
+      <h3>遊戲區</h3>
+      <div id="game-board"></div>
+      <p>
+        <button onclick="rollDice()">🎲 玩家 <span id="currentPlayer">1</span> 擲骰</button>
+        <span id="people">-</span>  擲出 <span id="diceResult">-</span>
+      </p>
+      <p id="status"></p>
+	  <div id="log"></div>
+    </div>
+	</div>
+	
   <script>
     const config = JSON.parse(localStorage.getItem("gameConfig"));
     if (!config) {
@@ -138,7 +152,7 @@
     const roundGoal = parseInt(config.roundGoal);
     const scoreGoal = parseInt(config.scoreGoal);
 
-    const board = document.getElementById("gameBoard");
+    const board = document.getElementById("map");
     for (let i = 0; i < 64; i++) {
       const cell = document.createElement("div");
       cell.className = "cell";
