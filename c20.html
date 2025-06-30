@@ -450,24 +450,24 @@ function updateMode() {
   { desc: "E04：地震後馬上開瓦斯煮泡麵，發生火警！", effect: "回到起點" },
   { desc: "E05：你熟記疏散路線，迅速帶同學撤離，獲得得2分。", effect: "得2分" }
 ];
-          const event = eventList[Math.floor(Math.random() * eventList.length)];
+		  const event = eventList[Math.floor(Math.random() * eventList.length)];
           alert(`🎲 事件卡：\n{event.desc}\n➡ 效果：{event.effect}`);
 
           let newStep = step;
 
-          if (event === "前進1格") {
+          if (event.effect === "前進1格") {
             newStep = (step + 1) % pathIndices.length;
-          } else if (event === "停一回合") {
+          } else if (event.effect === "停一回合") {
             playerRounds[currentPlayer] -= 999;
-          } else if (event === "退回1格") {
+          } else if (event.effect === "退回1格") {
             newStep = (step - 1 + pathIndices.length) % pathIndices.length;
-          } else if (event === "回到起點") {
+          } else if (event.effect === "回到起點") {
             newStep = 0;
-          } else if (event === "得2分" && mode === "score") {
+          } else if (event.effect === "得2分" && mode === "score") {
             playerScores[currentPlayer] += 2;
-          } else if (event === "前進2格") {
+          } else if (event.effect === "前進2格") {
             newStep = (step + 2) % pathIndices.length;
-          } else if (event === "退2格") {
+          } else if (event.effect === "退2格") {
             newStep = (step - 2 + pathIndices.length) % pathIndices.length;
           }
 
