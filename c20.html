@@ -475,14 +475,7 @@ function updateMode() {
             animateMove(currentPlayer, toIndex, newToIndex, () => {
               updateStatus();
               logAction(currentPlayer, dice, newToIndex);
-			  if (mode === "round" && playerRounds[currentPlayer] >= roundGoal) {
-            alert(`🎉 玩家 ${currentPlayer + 1} 完成 ${roundGoal} 圈，獲勝！`);
-            gameEnded = true;
-          } else if (mode === "score" && playerScores[currentPlayer] >= scoreGoal) {
-            alert(`🎉 玩家 ${currentPlayer + 1} 累積 ${scoreGoal} 分，獲勝！`);
-            gameEnded = true;
-          } else {
-            nextTurn();
+              nextTurn();
             });
             return;
           }
