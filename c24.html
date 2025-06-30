@@ -505,12 +505,16 @@ function handleEventChain(currentStep, fromIndex, originalStep) {
       currentPlayer = (currentPlayer + 1) % 2;
       document.getElementById("currentPlayer").textContent = currentPlayer + 1;
     }, () => {
+     const failBackIndex = pathIndices[originalStep];
+    playerSteps[currentPlayer] = originalStep;
+    animateMove(currentPlayer, newToIndex, failBackIndex, () => {
+      updateStatus();
       currentPlayer = (currentPlayer + 1) % 2;
       document.getElementById("currentPlayer").textContent = currentPlayer + 1;
     });
   } else {
     // 再次檢查是否是 event 格
-    handleEventChain(newStep, newToIndex);
+    handleEventChain(newStep, newToIndex, originalStep);
   }
         });
         return;
