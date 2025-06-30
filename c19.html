@@ -319,16 +319,16 @@ function updateMode() {
       { index: 6, img: 'rain3.png' },
       { index: 7, img: 'event1.png' },
       { index: 15, img: 'card2.png' },
-	  { index: 23, img: 'event2.png' },
+	  { index: 23, img: 'rain1.png' },
       { index: 31, img: 'earthquake3.png' },
       { index: 30, img: 'rain2.png' },
       { index: 29, img: 'event2.png' },
       { index: 28, img: 'warning2.png' },
 	  { index: 27, img: 'underdesk.png' },
       { index: 26, img: 'ok2.png' },
-      { index: 25, img: 'event2.png' },
+      { index: 25, img: 'safezone.png' },
       { index: 24, img: 'ok3.png' },
-	  { index: 16, img: 'warning1.png' },
+	  { index: 16, img: 'event2.png' },
       { index: 8, img: 'goal.png' },
     ];
     placedOrder = [];
@@ -396,18 +396,18 @@ function updateMode() {
     renderPlayers(true);
   }
 
-      if (playerRounds[currentPlayer] < -500) {
+  function rollDice() {
+	if (playerRounds[currentPlayer] < -500) {
         alert(`玩家${currentPlayer + 1} 這回合休息。`);
         playerRounds[currentPlayer] = 0;
         currentPlayer = (currentPlayer + 1) % 2;
         document.getElementById("currentPlayer").textContent = currentPlayer + 1;
         return;
       }
-
       if (gameEnded) return;
       const dice = Math.floor(Math.random() * 6) + 1;
       document.getElementById("diceResult").textContent = dice;
-      document.getElementById("people").textContent = currentPlayer;
+	  document.getElementById("people").textContent = currentPlayer;
       const prevStep = playerSteps[currentPlayer];
       let step = playerSteps[currentPlayer] + dice;
       if (step >= pathIndices.length) {
@@ -426,8 +426,8 @@ function updateMode() {
       function proceed() {
         playerSteps[currentPlayer] = step;
         if (mode === "score") playerScores[currentPlayer] += dice;
-
-        if (cellImg.includes("card2.png")) {
+        
+		if (cellImg.includes("card2.png")) {
           alert(`😢 玩家 ${currentPlayer + 1} 踩到 card2.png，被送回起點！`);
           const startIdx = mapData.findIndex(img => img && img.includes("start.png"));
           if (startIdx !== -1) {
@@ -439,8 +439,7 @@ function updateMode() {
             return;
           }
         }
-
-        if (cellImg.includes("event1.png") || cellImg.includes("event2.png")) {
+		if (cellImg.includes("event1.png") || cellImg.includes("event2.png")) {
           const eventList = [
             "前進1格", "停一回合", "退回1格", "回到起點",
             "得2分", "前進2格", "退2格"
@@ -478,51 +477,10 @@ function updateMode() {
             return;
           }
         }
-
-        animateMove(currentPlayer, fromIndex, toIndex, () => {
-          updateStatus();
-          logAction(currentPlayer, dice, toIndex);
-          if (mode === "round" && playerRounds[currentPlayer] >= roundGoal) {
-            alert(`🎉 玩家 ${currentPlayer + 1} 完成 ${roundGoal} 圈，獲勝！`);
-            gameEnded = true;
-          } else if (mode === "score" && playerScores[currentPlayer] >= scoreGoal) {
-            alert(`🎉 玩家 ${currentPlayer + 1} 累積 ${scoreGoal} 分，獲勝！`);
-            gameEnded = true;
-          } else {
-            nextTurn();
-          }
-        });
-      }
-
-      if (cellImg.includes("quiz.png")) {
-        askQuiz(proceed, nextTurn);
-      } else {
-        proceed();
-      }
-    }
-      if (gameEnded) return;
-      const dice = Math.floor(Math.random() * 6) + 1;
-      document.getElementById("diceResult").textContent = dice;
-	  document.getElementById("people").textContent = currentPlayer;
-      const prevStep = playerSteps[currentPlayer];
-      let step = playerSteps[currentPlayer] + dice;
-      if (step >= pathIndices.length) {
-        if (mode === "round") playerRounds[currentPlayer]++;
-        step = step % pathIndices.length;
-      }
-      const fromIndex = pathIndices[prevStep % pathIndices.length];
-      const toIndex = pathIndices[step];
-      const cellImg = mapData[toIndex] || "";
-
-      function nextTurn() {
-        currentPlayer = (currentPlayer + 1) % 2;
-        document.getElementById("currentPlayer").textContent = currentPlayer + 1;
-      }
-
-      function proceed() {
-        playerSteps[currentPlayer] = step;
-        if (mode === "score") playerScores[currentPlayer] += dice;
-        animateMove(currentPlayer, fromIndex, toIndex, () => {
+		
+		
+		
+		animateMove(currentPlayer, fromIndex, toIndex, () => {
           updateStatus();
 		  logAction(currentPlayer, dice, toIndex);
           if (mode === "round" && playerRounds[currentPlayer] >= roundGoal) {
