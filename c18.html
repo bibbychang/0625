@@ -314,8 +314,8 @@ function updateMode() {
       { index: 1, img: 'quiz.png' },
       { index: 2, img: 'event1.png' },
       { index: 3, img: 'event2.png' },
-      { index: 4, img: 'quiz.png' },
-      { index: 5, img: 'quiz.png' },
+      { index: 4, img: 'event1.png' },
+      { index: 5, img: 'event1.png' },
       { index: 6, img: 'rain3.png' },
       { index: 7, img: 'event1.png' },
       { index: 15, img: 'card2.png' },
@@ -446,8 +446,7 @@ function updateMode() {
         
 if (cellImg.includes("event1.png") || cellImg.includes("event2.png")) {
   const eventList = [
-    "前進1格", "停一回合", "退回1格", "回到起點",
-    "獲得2分", "前進2格", "退2格"
+    "前進1格", "前進2格", "退2格"
   ];
   const event = eventList[Math.floor(Math.random() * eventList.length)];
   alert(`🎲 事件：${event}`);
