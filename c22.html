@@ -197,10 +197,7 @@ fetch("quiz.json")
   .then(data => quizQuestions = data);
   const quiz = quizQuestions[Math.floor(Math.random() * quizQuestions.length)];
   
-  let eventList = [];
-fetch("event.json")
-  .then(response => response.json())
-  .then(data => {eventList = data);
+ 
   
   
   const mapEl = document.getElementById("map");
