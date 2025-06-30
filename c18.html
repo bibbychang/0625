@@ -454,20 +454,19 @@ function updateMode() {
       const matchedKey = Object.keys(advanceMap).find(key => img.includes(key));
       const isQuiz = img.includes("quiz.png");
 
-      if (isQuiz) {
+      if (isQuiz && fromIdx !== currIdx) {
   askQuiz(() => {
-    // ✅ 答對後：移動到 quiz 格子，然後繼續檢查是否觸發 rain/event
+    // 答對：才進行動畫並繼續處理事件
     animateMove(currentPlayer, fromIdx, currIdx, () => {
       logAction(currentPlayer, dice, currIdx);
-      handleChain(currIdx, callback); // 遞迴處理後續事件（但不會重複 quiz）
+      handleChain(currIdx, callback);
     });
   }, () => {
-    // ❌ 答錯：結束回合
-    animateMove(currentPlayer, fromIdx, currIdx, () => {
-      updateStatus();
-      logAction(currentPlayer, dice, currIdx);
-      nextTurn();
-    });
+    // 答錯：不前進，停在原地，不觸發任何事件
+    alert(`❌ 答錯了，停在原地！`);
+    updateStatus();
+    logQuizFail(currentPlayer, quiz.question);
+    nextTurn();
   });
   return;
 }
@@ -505,13 +504,7 @@ function updateMode() {
 
     handleChain(fromIndex); // 啟動事件鏈
   }
-
-  // 判斷初始格子是否為 quiz
-  if (cellImg.includes("quiz.png")) {
-    askQuiz(proceed, nextTurn);
-  } else {
-    proceed();
-  }
+proceed(); 
 }
 
   function animateMove(playerIdx, from, to, callback) {
