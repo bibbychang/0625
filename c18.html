@@ -397,113 +397,117 @@ function updateMode() {
   }
 
   function rollDice() {
-      if (gameEnded) return;
-      const dice = Math.floor(Math.random() * 6) + 1;
-      document.getElementById("diceResult").textContent = dice;
-	  document.getElementById("people").textContent = currentPlayer;
-      const prevStep = playerSteps[currentPlayer];
-      let step = playerSteps[currentPlayer] + dice;
-      if (step >= pathIndices.length) {
-        if (mode === "round") playerRounds[currentPlayer]++;
-        step = step % pathIndices.length;
-      }
-      const fromIndex = pathIndices[prevStep % pathIndices.length];
-      const toIndex = pathIndices[step];
-      const cellImg = mapData[toIndex] || "";
+  if (gameEnded) return;
 
-      function nextTurn() {
-        currentPlayer = (currentPlayer + 1) % 2;
-        document.getElementById("currentPlayer").textContent = currentPlayer + 1;
-      }
+  const dice = Math.floor(Math.random() * 6) + 1;
+  document.getElementById("diceResult").textContent = dice;
+  document.getElementById("people").textContent = currentPlayer;
 
-      function proceed() {
-  playerSteps[currentPlayer] = step;
-  if (mode === "score") playerScores[currentPlayer] += dice;
+  const prevStep = playerSteps[currentPlayer];
+  let step = prevStep + dice;
 
-  // card2.png: 傳送回起點
-  if (cellImg.includes("card2.png")) {
-    alert(`😢 玩家 ${currentPlayer + 1} 踩到 card2.png，被送回起點！`);
-    const startIdx = mapData.findIndex(img => img && img.includes("start.png"));
-    if (startIdx !== -1) {
-      playerSteps[currentPlayer] = 0;
-      animateMove(currentPlayer, fromIndex, startIdx, () => {
-        logAction(currentPlayer, dice, startIdx);
-        nextTurn();
-      });
-      return;
-    }
+  if (step >= pathIndices.length) {
+    if (mode === "round") playerRounds[currentPlayer]++;
+    step %= pathIndices.length;
   }
 
-  // 開始處理連鎖事件（包含 quiz 和雨）
-  function handleChain(fromIdx, callback) {
-    const currStep = playerSteps[currentPlayer];
-    const currIdx = pathIndices[currStep];
-    const img = mapData[currIdx] || "";
+  const fromIndex = pathIndices[prevStep % pathIndices.length];
+  const toIndex = pathIndices[step];
+  const cellImg = mapData[toIndex] || "";
 
-    const advanceMap = {
-      "rain1.png": 1,
-      "rain2.png": 2,
-      "rain3.png": 4,
-      "event1.png": 5
-    };
+  function nextTurn() {
+    currentPlayer = (currentPlayer + 1) % 2;
+    document.getElementById("currentPlayer").textContent = currentPlayer + 1;
+  }
 
-    const matchedKey = Object.keys(advanceMap).find(key => img.includes(key));
-    const isQuiz = img.includes("quiz.png");
+  function proceed() {
+    playerSteps[currentPlayer] = step;
+    if (mode === "score") playerScores[currentPlayer] += dice;
 
-    if (isQuiz) {
-      askQuiz(() => {
-        handleChain(fromIdx, callback); // 答對 quiz 再繼續
-      }, () => {
+    // card2.png: 傳送回起點
+    if (cellImg.includes("card2.png")) {
+      alert(`😢 玩家 ${currentPlayer + 1} 踩到 card2.png，被送回起點！`);
+      const startIdx = mapData.findIndex(img => img && img.includes("start.png"));
+      if (startIdx !== -1) {
+        playerSteps[currentPlayer] = 0;
+        animateMove(currentPlayer, fromIndex, startIdx, () => {
+          logAction(currentPlayer, dice, startIdx);
+          nextTurn();
+        });
+        return;
+      }
+    }
+
+    // 連鎖前進邏輯
+    function handleChain(fromIdx, callback) {
+      const currStep = playerSteps[currentPlayer];
+      const currIdx = pathIndices[currStep];
+      const img = mapData[currIdx] || "";
+
+      const advanceMap = {
+        "rain1.png": 1,
+        "rain2.png": 2,
+        "rain3.png": 4,
+        "event1.png": 5
+      };
+
+      const matchedKey = Object.keys(advanceMap).find(key => img.includes(key));
+      const isQuiz = img.includes("quiz.png");
+
+      if (isQuiz) {
+        askQuiz(() => {
+          handleChain(fromIdx, callback); // 答對後繼續
+        }, () => {
+          animateMove(currentPlayer, fromIdx, currIdx, () => {
+            updateStatus();
+            logAction(currentPlayer, dice, currIdx);
+            nextTurn(); // 答錯就結束這回合
+          });
+        });
+        return;
+      }
+
+      if (matchedKey) {
+        const advance = advanceMap[matchedKey];
+        alert(`⏩ 玩家 ${currentPlayer + 1} 踩到 ${matchedKey}，前進 ${advance} 格！`);
+        playerSteps[currentPlayer] += advance;
+        if (playerSteps[currentPlayer] >= pathIndices.length) {
+          if (mode === "round") playerRounds[currentPlayer]++;
+          playerSteps[currentPlayer] %= pathIndices.length;
+        }
+        const nextIdx = pathIndices[playerSteps[currentPlayer]];
+        animateMove(currentPlayer, fromIdx, nextIdx, () => {
+          logAction(currentPlayer, dice, nextIdx);
+          handleChain(nextIdx, callback);
+        });
+      } else {
+        // 沒有繼續前進，正常結束
         animateMove(currentPlayer, fromIdx, currIdx, () => {
           updateStatus();
           logAction(currentPlayer, dice, currIdx);
-          nextTurn(); // quiz 答錯換人
+          if (mode === "round" && playerRounds[currentPlayer] >= roundGoal) {
+            alert(`🎉 玩家 ${currentPlayer + 1} 完成 ${roundGoal} 圈，獲勝！`);
+            gameEnded = true;
+          } else if (mode === "score" && playerScores[currentPlayer] >= scoreGoal) {
+            alert(`🎉 玩家 ${currentPlayer + 1} 累積 ${scoreGoal} 分，獲勝！`);
+            gameEnded = true;
+          } else {
+            nextTurn();
+          }
         });
-      });
-      return;
+      }
     }
 
-    if (matchedKey) {
-      const advance = advanceMap[matchedKey];
-      alert(`⏩ 玩家 ${currentPlayer + 1} 踩到 ${matchedKey}，前進 ${advance} 格！`);
-      playerSteps[currentPlayer] += advance;
-      if (playerSteps[currentPlayer] >= pathIndices.length) {
-        if (mode === "round") playerRounds[currentPlayer]++;
-        playerSteps[currentPlayer] %= pathIndices.length;
-      }
-      const nextIdx = pathIndices[playerSteps[currentPlayer]];
-      animateMove(currentPlayer, fromIdx, nextIdx, () => {
-        logAction(currentPlayer, dice, nextIdx);
-        handleChain(nextIdx, callback); // 繼續處理下一格
-      });
-    } else {
-      // 沒有更多連鎖事件了
-      animateMove(currentPlayer, fromIdx, currIdx, () => {
-        updateStatus();
-        logAction(currentPlayer, dice, currIdx);
-        if (mode === "round" && playerRounds[currentPlayer] >= roundGoal) {
-          alert(`🎉 玩家 ${currentPlayer + 1} 完成 ${roundGoal} 圈，獲勝！`);
-          gameEnded = true;
-        } else if (mode === "score" && playerScores[currentPlayer] >= scoreGoal) {
-          alert(`🎉 玩家 ${currentPlayer + 1} 累積 ${scoreGoal} 分，獲勝！`);
-          gameEnded = true;
-        } else {
-          nextTurn();
-        }
-      });
-    }
+    handleChain(fromIndex); // 啟動事件鏈
   }
 
-  // 啟動連鎖事件處理
-  handleChain(fromIndex);
+  // 判斷初始格子是否為 quiz
+  if (cellImg.includes("quiz.png")) {
+    askQuiz(proceed, nextTurn);
+  } else {
+    proceed();
+  }
 }
-
-      if (cellImg.includes("quiz.png")) {
-        askQuiz(proceed, nextTurn);
-      } else {
-        proceed();
-      }
-    }
 
   function animateMove(playerIdx, from, to, callback) {
   const token = playerTokens[playerIdx];
