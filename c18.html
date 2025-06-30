@@ -267,10 +267,10 @@ function askQuiz(onCorrect, onWrong) {
     btn.onclick = () => {
       document.body.removeChild(modal);
       if (opt.trim().startsWith(quiz.answer)) {
-        alert("✅ 答對了！繼續前進！");
+        alert("答對了！可以前進。");
         onCorrect();
       } else {
-        alert("❌ 答錯了！換下一位玩家。");
+        alert("答錯了！輪到下一位玩家。");
         logQuizFail(currentPlayer, quiz.question);
         onWrong();
       }
@@ -280,7 +280,7 @@ function askQuiz(onCorrect, onWrong) {
 
   modal.appendChild(box);
 
-  // 使用語音朗讀
+  // 使用語音朗讀問題與選項
   const utterance = new SpeechSynthesisUtterance(`${quiz.question} 選項是：${quiz.options.join('、')}`);
   utterance.lang = 'zh-TW';
   synth.speak(utterance);
@@ -311,18 +311,18 @@ function updateMode() {
   function loadMap1() {
     const map1 = [
       { index: 0, img: 'start.png' },
-      { index: 1, img: 'rain1.png' },
-      { index: 2, img: 'rain2.png' },
-      { index: 3, img: 'rain2.png' },
-      { index: 4, img: 'rain3.png' },
+      { index: 1, img: 'quiz.png' },
+      { index: 2, img: 'quiz.png' },
+      { index: 3, img: 'quiz.png' },
+      { index: 4, img: 'quiz.png' },
       { index: 5, img: 'quiz.png' },
-      { index: 6, img: 'quiz.png' },
-      { index: 7, img: 'quiz.png' },
-      { index: 15, img: 'quiz.png' },
+      { index: 6, img: 'rain3.png' },
+      { index: 7, img: 'event1.png' },
+      { index: 15, img: 'card2.png' },
 	  { index: 23, img: 'rain1.png' },
       { index: 31, img: 'earthquake3.png' },
       { index: 30, img: 'rain2.png' },
-      { index: 29, img: 'event1.png' },
+      { index: 29, img: 'event2.png' },
       { index: 28, img: 'warning2.png' },
 	  { index: 27, img: 'underdesk.png' },
       { index: 26, img: 'event1.png' },
@@ -397,124 +397,64 @@ function updateMode() {
   }
 
   function rollDice() {
-  if (gameEnded) return;
+      if (gameEnded) return;
+      const dice = Math.floor(Math.random() * 6) + 1;
+      document.getElementById("diceResult").textContent = dice;
+	  document.getElementById("people").textContent = currentPlayer;
+      const prevStep = playerSteps[currentPlayer];
+      let step = playerSteps[currentPlayer] + dice;
+      if (step >= pathIndices.length) {
+        if (mode === "round") playerRounds[currentPlayer]++;
+        step = step % pathIndices.length;
+      }
+      const fromIndex = pathIndices[prevStep % pathIndices.length];
+      const toIndex = pathIndices[step];
+      const cellImg = mapData[toIndex] || "";
 
-  const dice = Math.floor(Math.random() * 6) + 1;
-  document.getElementById("diceResult").textContent = dice;
-  document.getElementById("people").textContent = currentPlayer;
-
-  const prevStep = playerSteps[currentPlayer];
-  let step = prevStep + dice;
-
-  if (step >= pathIndices.length) {
-    if (mode === "round") playerRounds[currentPlayer]++;
-    step %= pathIndices.length;
-  }
-
-  const fromIndex = pathIndices[prevStep % pathIndices.length];
-  const toIndex = pathIndices[step];
-  const cellImg = mapData[toIndex] || "";
-
-  function nextTurn() {
-    currentPlayer = (currentPlayer + 1) % 2;
-    document.getElementById("currentPlayer").textContent = currentPlayer + 1;
-  }
-function proceed() {
-  const advanceMap = {
-    "rain1.png": 1,
-    "rain2.png": 2,
-    "rain3.png": 4,
-    "event1.png": 5
-  };
-
-  const prevStep = playerSteps[currentPlayer];
-  let step = prevStep + dice;
-  if (step >= pathIndices.length) {
-    if (mode === "round") playerRounds[currentPlayer]++;
-    step %= pathIndices.length;
-  }
-
-  const fromIndex = pathIndices[prevStep];
-  let currStep = step;
-
-  const tryAdvance = () => {
-    while (true) {
-      const currIndex = pathIndices[currStep];
-      const img = mapData[currIndex] || "";
-
-      // card2：退回起點
-      if (img.includes("card2.png")) {
-        alert(`😢 玩家 ${currentPlayer + 1} 踩到 card2.png，被送回起點！`);
-        const startIdx = mapData.findIndex(src => src && src.includes("start.png"));
-        if (startIdx !== -1) {
-          playerSteps[currentPlayer] = 0;
-          animateMove(currentPlayer, fromIndex, startIdx, () => {
-            logAction(currentPlayer, dice, startIdx);
-            nextTurn();
-          });
-          return;
-        }
+      function nextTurn() {
+        currentPlayer = (currentPlayer + 1) % 2;
+        document.getElementById("currentPlayer").textContent = currentPlayer + 1;
       }
 
-      // quiz：先答對才能前進
-      if (img.includes("quiz.png")) {
-        askQuiz(() => {
-          // ✅ 答對，移動到 quiz 格並繼續檢查連鎖
-          animateMove(currentPlayer, fromIndex, currIndex, () => {
-            logAction(currentPlayer, dice, currIndex);
-            playerSteps[currentPlayer] = currStep;
-            tryAdvance(); // 回來檢查是否還能前進
-          });
-        }, () => {
-          // ❌ 答錯，停在原地
-          alert("❌ 答錯了，停在原地！");
-          updateStatus();
-          logQuizFail(currentPlayer, quiz.question);
-          nextTurn();
-        });
-        return; // 暫停處理，等答題結果
-      }
-
-      // rain / event1：自動前進
-      const matchedKey = Object.keys(advanceMap).find(key => img.includes(key));
-      if (matchedKey) {
-        const advance = advanceMap[matchedKey];
-        alert(`⏩ 玩家 ${currentPlayer + 1} 踩到 ${matchedKey}，前進 ${advance} 格！`);
-        currStep += advance;
-        if (currStep >= pathIndices.length) {
-          if (mode === "round") playerRounds[currentPlayer]++;
-          currStep %= pathIndices.length;
-        }
-        continue; // 檢查下一格
-      }
-
-      // 沒有特殊事件：正常移動結束
-      const currIndexFinal = pathIndices[currStep];
-      animateMove(currentPlayer, fromIndex, currIndexFinal, () => {
-        playerSteps[currentPlayer] = currStep;
-        logAction(currentPlayer, dice, currIndexFinal);
-        updateStatus();
-        if (mode === "round" && playerRounds[currentPlayer] >= roundGoal) {
-          alert(`🎉 玩家 ${currentPlayer + 1} 完成 ${roundGoal} 圈，獲勝！`);
-          gameEnded = true;
-        } else if (mode === "score" && playerScores[currentPlayer] >= scoreGoal) {
-          alert(`🎉 玩家 ${currentPlayer + 1} 累積 ${scoreGoal} 分，獲勝！`);
-          gameEnded = true;
-        } else {
-          nextTurn();
-        }
-      });
-      return;
-    }
-  };
-
-  // 分數制一開始先加分
-  if (mode === "score") {
-    playerScores[currentPlayer] += dice;
+      function proceed() {
+        playerSteps[currentPlayer] = step;
+        if (mode === "score") playerScores[currentPlayer] += dice;
+		
+		if (cellImg.includes("card2.png")) {
+  alert(`😢 玩家 ${currentPlayer + 1} 踩到 card2.png，被送回起點！`);
+  const startIdx = mapData.findIndex(img => img && img.includes("start.png"));
+  if (startIdx !== -1) {
+    playerSteps[currentPlayer] = 0;
+    animateMove(currentPlayer, fromIndex, startIdx, () => {
+      logAction(currentPlayer, dice, startIdx);
+      nextTurn();
+    });
+    return;
   }
-
-  tryAdvance();
 }
+		
+		
+        animateMove(currentPlayer, fromIndex, toIndex, () => {
+          updateStatus();
+		  logAction(currentPlayer, dice, toIndex);
+          if (mode === "round" && playerRounds[currentPlayer] >= roundGoal) {
+            alert(`🎉 玩家 ${currentPlayer + 1} 完成 ${roundGoal} 圈，獲勝！`);
+            gameEnded = true;
+          } else if (mode === "score" && playerScores[currentPlayer] >= scoreGoal) {
+            alert(`🎉 玩家 ${currentPlayer + 1} 累積 ${scoreGoal} 分，獲勝！`);
+            gameEnded = true;
+          } else {
+            nextTurn();
+          }
+        });
+      }
+
+      if (cellImg.includes("quiz.png")) {
+        askQuiz(proceed, nextTurn);
+      } else {
+        proceed();
+      }
+    }
 
   function animateMove(playerIdx, from, to, callback) {
   const token = playerTokens[playerIdx];
