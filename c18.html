@@ -311,18 +311,18 @@ function updateMode() {
   function loadMap1() {
     const map1 = [
       { index: 0, img: 'start.png' },
-      { index: 1, img: 'quiz.png' },
-      { index: 2, img: 'quiz.png' },
-      { index: 3, img: 'quiz.png' },
-      { index: 4, img: 'quiz.png' },
+      { index: 1, img: 'rain1.png' },
+      { index: 2, img: 'rain2.png' },
+      { index: 3, img: 'rain2.png' },
+      { index: 4, img: 'rain3.png' },
       { index: 5, img: 'quiz.png' },
-      { index: 6, img: 'rain3.png' },
-      { index: 7, img: 'event1.png' },
-      { index: 15, img: 'card2.png' },
+      { index: 6, img: 'quiz.png' },
+      { index: 7, img: 'quiz.png' },
+      { index: 15, img: 'quiz.png' },
 	  { index: 23, img: 'rain1.png' },
       { index: 31, img: 'earthquake3.png' },
       { index: 30, img: 'rain2.png' },
-      { index: 29, img: 'event2.png' },
+      { index: 29, img: 'event1.png' },
       { index: 28, img: 'warning2.png' },
 	  { index: 27, img: 'underdesk.png' },
       { index: 26, img: 'event1.png' },
@@ -421,33 +421,62 @@ function updateMode() {
         if (mode === "score") playerScores[currentPlayer] += dice;
 		
 		if (cellImg.includes("card2.png")) {
-  alert(`😢 玩家 ${currentPlayer + 1} 踩到 card2.png，被送回起點！`);
-  const startIdx = mapData.findIndex(img => img && img.includes("start.png"));
-  if (startIdx !== -1) {
-    playerSteps[currentPlayer] = 0;
-    animateMove(currentPlayer, fromIndex, startIdx, () => {
-      logAction(currentPlayer, dice, startIdx);
-      nextTurn();
-    });
-    return;
+    alert(`😢 玩家 ${currentPlayer + 1} 踩到 card2.png，被送回起點！`);
+    const startIdx = mapData.findIndex(img => img && img.includes("start.png"));
+    if (startIdx !== -1) {
+      playerSteps[currentPlayer] = 0;
+      animateMove(currentPlayer, fromIndex, startIdx, () => {
+        logAction(currentPlayer, dice, startIdx);
+        nextTurn();
+      });
+      return;
+    }
   }
+
+  // 自動前進格子處理（可連鎖）
+  while (true) {
+    const currentIdx = pathIndices[playerSteps[currentPlayer]];
+    const currentImg = mapData[currentIdx] || "";
+    let advance = 0;
+
+    if (currentImg.includes("rain1.png")) {
+      advance = 1;
+      alert(`🌧 玩家 ${currentPlayer + 1} 踩到 rain1.png，前進 1 格`);
+    } else if (currentImg.includes("rain2.png")) {
+      advance = 2;
+      alert(`🌧 玩家 ${currentPlayer + 1} 踩到 rain2.png，前進 2 格`);
+    } else if (currentImg.includes("rain3.png")) {
+      advance = 4;
+      alert(`🌧 玩家 ${currentPlayer + 1} 踩到 rain3.png，前進 4 格`);
+    } else if (currentImg.includes("event1.png")) {
+      advance = 5;
+      alert(`⚡ 玩家 ${currentPlayer + 1} 踩到 event1.png，前進 5 格`);
+    } else {
+      break; // 沒有要前進的就結束
+    }
+
+    playerSteps[currentPlayer] += advance;
+    if (playerSteps[currentPlayer] >= pathIndices.length) {
+      if (mode === "round") playerRounds[currentPlayer]++;
+      playerSteps[currentPlayer] %= pathIndices.length;
+    }
+  }
+
+  const finalIndex = pathIndices[playerSteps[currentPlayer]];
+  animateMove(currentPlayer, fromIndex, finalIndex, () => {
+    updateStatus();
+    logAction(currentPlayer, dice, finalIndex);
+    if (mode === "round" && playerRounds[currentPlayer] >= roundGoal) {
+      alert(`🎉 玩家 ${currentPlayer + 1} 完成 ${roundGoal} 圈，獲勝！`);
+      gameEnded = true;
+    } else if (mode === "score" && playerScores[currentPlayer] >= scoreGoal) {
+      alert(`🎉 玩家 ${currentPlayer + 1} 累積 ${scoreGoal} 分，獲勝！`);
+      gameEnded = true;
+    } else {
+      nextTurn();
+    }
+  });
 }
-		
-		
-        animateMove(currentPlayer, fromIndex, toIndex, () => {
-          updateStatus();
-		  logAction(currentPlayer, dice, toIndex);
-          if (mode === "round" && playerRounds[currentPlayer] >= roundGoal) {
-            alert(`🎉 玩家 ${currentPlayer + 1} 完成 ${roundGoal} 圈，獲勝！`);
-            gameEnded = true;
-          } else if (mode === "score" && playerScores[currentPlayer] >= scoreGoal) {
-            alert(`🎉 玩家 ${currentPlayer + 1} 累積 ${scoreGoal} 分，獲勝！`);
-            gameEnded = true;
-          } else {
-            nextTurn();
-          }
-        });
-      }
 
       if (cellImg.includes("quiz.png")) {
         askQuiz(proceed, nextTurn);
