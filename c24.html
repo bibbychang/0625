@@ -493,60 +493,67 @@ function handleEventChain(currentStep, fromIndex, originalStep) {
         playerRounds[currentPlayer] -= 999;
       }
 
-      if (newStep !== currentStep) {
-        playerSteps[currentPlayer] = newStep;
-        const newToIndex = pathIndices[newStep];
-        animateMove(currentPlayer, fromIndex, newToIndex, () => {
-          updateStatus();
-          logAction(currentPlayer, dice, newToIndex);
-          // 再次檢查是否是事件卡
-          if (mapData[newToIndex]?.includes("quiz.png")) {
-    askQuiz(() => {
-      currentPlayer = (currentPlayer + 1) % 2;
-      document.getElementById("currentPlayer").textContent = currentPlayer + 1;
-    }, () => {
-     const failBackIndex = pathIndices[originalStep];
-    playerSteps[currentPlayer] = originalStep;
-    animateMove(currentPlayer, newToIndex, failBackIndex, () => {
-      updateStatus();
-      currentPlayer = (currentPlayer + 1) % 2;
-      document.getElementById("currentPlayer").textContent = currentPlayer + 1;
-    });
-  } else {
-    // 再次檢查是否是 event 格
-    handleEventChain(newStep, newToIndex, originalStep);
-  }
-        });
-        return;
-      }
-    }
+     if (newStep !== currentStep) {
+      playerSteps[currentPlayer] = newStep;
+      const newToIndex = pathIndices[newStep];
 
-    // 如果不是 event，正常移動完成
-    animateMove(currentPlayer, fromIndex, toIndex, () => {
-      updateStatus();
-      logAction(currentPlayer, dice, toIndex);
-      if (mode === "round" && playerRounds[currentPlayer] >= roundGoal) {
-        alert(`🎉 玩家 ${currentPlayer + 1} 完成 ${roundGoal} 圈，獲勝！`);
-        gameEnded = true;
-      } else if (mode === "score" && playerScores[currentPlayer] >= scoreGoal) {
-        alert(`🎉 玩家 ${currentPlayer + 1} 累積 ${scoreGoal} 分，獲勝！`);
-        gameEnded = true;
-      } else {
+      animateMove(currentPlayer, fromIndex, newToIndex, () => {
+        updateStatus();
+        logAction(currentPlayer, dice, newToIndex);
+
+        const newCellImg = mapData[newToIndex] || "";
+
+        // 如果是 quiz
+        if (newCellImg.includes("quiz.png")) {
+          askQuiz(() => {
+            currentPlayer = (currentPlayer + 1) % 2;
+            document.getElementById("currentPlayer").textContent = currentPlayer + 1;
+          }, () => {
+            // 答錯退回事件格
+            const failBackIndex = pathIndices[originalStep];
+            playerSteps[currentPlayer] = originalStep;
+            animateMove(currentPlayer, newToIndex, failBackIndex, () => {
+              updateStatus();
+              currentPlayer = (currentPlayer + 1) % 2;
+              document.getElementById("currentPlayer").textContent = currentPlayer + 1;
+            });
+          });
+        } else {
+          // 若還是事件格，繼續處理事件
+          handleEventChain(newStep, newToIndex, originalStep);
+        }
+      });
+      return;
+    }
+  }
+
+  // 正常移動
+  animateMove(currentPlayer, fromIndex, toIndex, () => {
+    updateStatus();
+    logAction(currentPlayer, dice, toIndex);
+
+    const finalImg = mapData[toIndex] || "";
+
+    if (finalImg.includes("quiz.png")) {
+      askQuiz(() => {
         currentPlayer = (currentPlayer + 1) % 2;
         document.getElementById("currentPlayer").textContent = currentPlayer + 1;
-      }
-    });
-  }
-
-  handleEventChain(step, fromIndex);
-}
-
-      if (cellImg.includes("quiz.png")) {
-        askQuiz(proceed, nextTurn);
-      } else {
-        proceed();
-      }
+      }, () => {
+        // 答錯退回
+        const failBackIndex = pathIndices[originalStep];
+        playerSteps[currentPlayer] = originalStep;
+        animateMove(currentPlayer, toIndex, failBackIndex, () => {
+          updateStatus();
+          currentPlayer = (currentPlayer + 1) % 2;
+          document.getElementById("currentPlayer").textContent = currentPlayer + 1;
+        });
+      });
+    } else {
+      currentPlayer = (currentPlayer + 1) % 2;
+      document.getElementById("currentPlayer").textContent = currentPlayer + 1;
     }
+  });
+}
 
   function animateMove(playerIdx, from, to, callback) {
   const token = playerTokens[playerIdx];
