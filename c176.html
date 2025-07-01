@@ -343,17 +343,17 @@ function updateMode() {
       { index: 6, img: 'event2.png' },
       { index: 7, img: 'quiz.png' },
       { index: 15, img: 'quiz.png' },
-	  { index: 23, img: 'quiz.png' },
-      { index: 31, img: 'quiz.png' },
+	  { index: 23, img: 'underdesk.png' },
+      { index: 31, img: 'underdesk.png' },
       { index: 30, img: 'event2.png' },
       { index: 29, img: 'quiz.png' },
       { index: 28, img: 'warning2.png' },
 	  { index: 27, img: 'underdesk.png' },
       { index: 26, img: 'event2.png' },
       { index: 25, img: 'event2.png' },
-      { index: 24, img: 'event2.png' },
+      { index: 24, img: 'underdesk.png' },
 	  { index: 16, img: 'event2.png' },
-      { index: 8, img: 'goal.png' },
+      { index: 8, img: 'underdesk.png' },
     ];
     placedOrder = [];
     map1.forEach(({ index, img }) => {
@@ -579,8 +579,8 @@ if (cellImg.includes("underdesk.png")) {
     }
 	
 	function handleEventEffect(event, fromStep) {
-	alert(`🎲 事件卡：\n${event.desc}\n➡ 效果：${event.effect}`);
-	
+  alert(`🎲 事件卡：\n${event.desc}\n➡ 效果：${event.effect}`);
+
   const log = document.getElementById("log");
   log.innerText += `\n觸發事件：「${event.desc}」\n`;
   log.scrollTop = log.scrollHeight;
@@ -604,15 +604,40 @@ if (cellImg.includes("underdesk.png")) {
     skipTurn[currentPlayer] = true;
   }
 
-  // 移動到新位置
   const fromIndex = pathIndices[fromStep];
   const toIndex = pathIndices[newStep];
   playerSteps[currentPlayer] = newStep;
 
   animateMove(currentPlayer, fromIndex, toIndex, () => {
     updateStatus();
-    currentPlayer = (currentPlayer + 1) % 2;
-    document.getElementById("currentPlayer").textContent = currentPlayer + 1;
+
+    const img = mapData[toIndex] || "";
+    if (img.includes("underdesk.png")) {
+      alert("📢 你走到了 underdesk！被書壓倒，退回起點！");
+      const underdeskFrom = toIndex;
+      const toStart = pathIndices[0];
+      playerSteps[currentPlayer] = 0;
+      animateMove(currentPlayer, underdeskFrom, toStart, () => {
+        updateStatus();
+        currentPlayer = (currentPlayer + 1) % 2;
+        document.getElementById("currentPlayer").textContent = currentPlayer + 1;
+      });
+    } else if (img.includes("quiz.png")) {
+      askQuiz(currentPlayer, () => {
+        currentPlayer = (currentPlayer + 1) % 2;
+        document.getElementById("currentPlayer").textContent = currentPlayer + 1;
+      }, () => {
+        currentPlayer = (currentPlayer + 1) % 2;
+        document.getElementById("currentPlayer").textContent = currentPlayer + 1;
+      });
+    } else if (img.includes("event1.png") || img.includes("event2.png")) {
+      const nextEvent = eventList[Math.floor(Math.random() * eventList.length)];
+      handleEventEffect(nextEvent, newStep);  // ⬅️ 遞迴觸發下一張事件
+    } else {
+      // 沒有特殊格子，就正常換人
+      currentPlayer = (currentPlayer + 1) % 2;
+      document.getElementById("currentPlayer").textContent = currentPlayer + 1;
+    }
   });
 }
 	
