@@ -373,11 +373,11 @@ function updateMode() {
     // 限時制：啟動倒數計時
     timeLeft = parseInt(document.getElementById("timeLimit").value);
     const status = document.getElementById("status");
-    status.textContent = `限時制：倒數 ${timeLeft} 秒`;
+    status.textContent = `限時制：倒數 ${timeLeft} 秒 玩家a1: ${playerScores[0]}分 / 玩家2: ${playerScores[1]}分`;
 
     timer = setInterval(() => {
       timeLeft--;
-      status.textContent = `限時制：倒數 ${timeLeft} 秒`;
+      status.textContent = `限時制：倒數 ${timeLeft} 秒 玩家b1: ${playerScores[0]}分 / 玩家2: ${playerScores[1]}分`;
 
       if (timeLeft <= 0) {
         clearInterval(timer);
@@ -399,9 +399,9 @@ function updateMode() {
   function updateStatus() {
   const status = document.getElementById("status");
   if (mode === "time") {
-	status.textContent = `限時制：倒數 ${timeLeft} 秒  玩家1: ${playerScores[0]}分 / 玩家2: ${playerScores[1]}分`;
+	status.textContent = `限時制：倒數 ${timeLeft} 秒  玩家c1: ${playerScores[0]}分 / 玩家2: ${playerScores[1]}分`;
   } else {
-    status.textContent = `玩家1: ${playerScores[0]}分 / 玩家2: ${playerScores[1]}分`;
+    status.textContent = `玩家d1: ${playerScores[0]}分 / 玩家2: ${playerScores[1]}分`;
   }
 }
 
