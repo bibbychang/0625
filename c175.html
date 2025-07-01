@@ -495,6 +495,7 @@ function updateMode() {
   askQuiz(currentPlayer, proceed, nextTurn);
 } else if (cellImg.includes("event1.png") || cellImg.includes("event2.png")) {
   const randomEvent = eventList[Math.floor(Math.random() * eventList.length)];
+  playerSteps[currentPlayer] = step;
   handleEventEffect(randomEvent, step);  // 傳入目前 step 作為 fromStep
 } else {
   proceed();
