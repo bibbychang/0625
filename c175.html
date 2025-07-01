@@ -555,6 +555,8 @@ function updateMode() {
     }
 	
 	function handleEventEffect(event, fromStep) {
+	alert(`🎲 事件卡：\n${event.desc}\n➡ 效果：${event.effect}`);
+	
   const log = document.getElementById("log");
   log.innerText += `\n觸發事件：「${event.desc}」\n`;
   log.scrollTop = log.scrollHeight;
