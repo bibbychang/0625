@@ -272,18 +272,18 @@ fetch("quiz.json")
 
   // 如果位置有改變，要重新移動
   if (newStep !== currentStep) {
-    playerSteps[currentPlayer] = newStep;
-    animateMove(currentPlayer, fromIndex, pathIndices[newStep], () => {
-      updateStatus();
-      logAction(currentPlayer, dice, pathIndices[newStep]);
-      onFinish();
-    });
-  } else {
-    // 沒有移動格數（得分/停回合）
+  playerSteps[currentPlayer] = newStep;
+  const newToIndex = pathIndices[newStep];
+  animateMove(currentPlayer, fromIndex, newToIndex, () => {
     updateStatus();
-    logAction(currentPlayer, dice, toIndex);
+    logAction(currentPlayer, dice, newToIndex);
     onFinish();
-  }
+  });
+} else {
+  updateStatus();
+  logAction(currentPlayer, dice, toIndex);
+  onFinish();
+}
 }
 	
 	
@@ -532,21 +532,17 @@ function updateMode() {
 		// ✅ 事件格處理
   if (cellImg.includes("event1.png") || cellImg.includes("event2.png")) {
   handleEvent(step, fromIndex, toIndex, () => {
-    // 補上原本的移動動畫
-    animateMove(currentPlayer, pathIndices[step], toIndex, () => {
-      updateStatus();
-      logAction(currentPlayer, dice, toIndex);
-      if (mode === "score" && playerScores[currentPlayer] >= scoreGoal) {
-        alert(`🎉 玩家 ${currentPlayer + 1} 累積 ${scoreGoal} 分，獲勝！`);
-        gameEnded = true;
-        clearInterval(timer);
-      } else {
-        nextTurn();
-      }
-    });
-  });
-  return;
-}
+  // 所有事件內會更新 playerSteps，自動完成移動與結束
+  // 我們只需要進行分數檢查與換人
+  updateStatus();
+  if (mode === "score" && playerScores[currentPlayer] >= scoreGoal) {
+    alert(`🎉 玩家 ${currentPlayer + 1} 累積 ${scoreGoal} 分，獲勝！`);
+    gameEnded = true;
+    clearInterval(timer);
+  } else {
+    nextTurn();
+  }
+});
 		
 		
 		
