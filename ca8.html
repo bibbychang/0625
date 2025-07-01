@@ -464,23 +464,11 @@ function updateMode() {
       document.getElementById("diceResult").textContent = dice;
 	  document.getElementById("people").textContent = currentPlayer+1;
       const prevStep = playerSteps[currentPlayer];
-	  const pathLength = pathIndices.length;
       let step = playerSteps[currentPlayer] + dice;
-      
-	  //if (step >= pathIndices.length) {
-       // if (mode === "round") playerRounds[currentPlayer]++;
-        //step = step % pathIndices.length;
-      //}
-	  / ✅ 若玩家走超過最後一格 → 加1分
-  if ((prevStep < pathLength) && (step >= pathLength)) {
-    if (mode === "score") {
-      playerScores[currentPlayer] += 1;
-      updateStatus();
-      alert("🎉 完成一圈，加1分！");
-    }
-  }
-	  step = step % pathIndices.length;
-	  
+      if (step >= pathIndices.length) {
+        if (mode === "round") playerRounds[currentPlayer]++;
+        step = step % pathIndices.length;
+      }
       const fromIndex = pathIndices[prevStep % pathIndices.length];
       const toIndex = pathIndices[step];
       const cellImg = mapData[toIndex] || "";
@@ -491,7 +479,7 @@ function updateMode() {
       }
 
       function proceed() {
-	  
+	
 	  
 	  
         playerSteps[currentPlayer] = step;
