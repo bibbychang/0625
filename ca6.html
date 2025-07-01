@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <title>地圖編輯 + 大富翁遊戲</title>
+  <script src="https://mlc.ai/web-llm/dist/bundle.js"></script>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: sans-serif;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+    #main {
+      display: flex;
+      flex: 1;
+    }
+    #editor, #game {
+      flex: 1;
+      overflow: auto;
+      padding: 10px;
+    }
+    #editor {
+      border-right: 2px solid #ccc;
+    }
+    #sidebar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 10px;
+    }
+    #sidebar img {
+      width: 60px;
+      height: 60px;
+      cursor: grab;
+      border: 1px solid #aaa;
+      background: white;
+      border-radius: 6px;
+    }
+    #map {
+      display: grid;
+      grid-template-columns: repeat(8, 60px);
+      grid-template-rows: repeat(8, 60px);
+      gap: 2px;
+      background-color: #fff;
+    }
+    .cell {
+      width: 60px;
+      height: 60px;
+      background: #fff;
+      border: 1px solid #aaa;
+      position: relative;
+      overflow: hidden;
+    }
+    .cell img {
+      width: 60px;
+      height: 60px;
+      position: absolute;
+      top: 0;
+      left: 0;
+      object-fit: contain;
+    }
+    .cell .order-number {
+      position: absolute;
+      bottom: 2px;
+      right: 4px;
+      font-size: 10px;
+      color: black;
+      background: rgba(255,255,255,0.7);
+      padding: 1px 3px;
+      border-radius: 4px;
+      z-index: 3;
+    }
+    .start-cell {
+      border: 2px solid green !important;
+    }
+    .goal-cell {
+      border: 2px solid gold !important;
+    }
+    #game-board {
+      display: grid;
+      grid-template-columns: repeat(8, 60px);
+      grid-template-rows: repeat(8, 60px);
+      gap: 2px;
+    }
+    .player {
+      width: 40px;
+      height: 40px;
+      position: absolute;
+      z-index: 5;
+      transition: transform 0.4s ease;
+    }
+    .player1 {
+      top: 4px;
+      left: 4px;
+    }
+    .player2 {
+      top: 4px;
+      right: 4px;
+    }
+    .player img {
+      width: 100%;
+      height: 100%;
+    }
+	#log {
+      margin-top: 10px;
+      font-size: 14px;
+      white-space: pre-line;
+      background: #f9f9f9;
+      padding: 6px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      max-height: 200px;
+      overflow-y: auto;
+    }
+	@keyframes slideIn {
+  from { transform: translateY(-30px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+  </style>
+</head>
+<body>
+  <h1>大富翁地圖編輯器 + 遊戲</h1>
+  <div id="main">
+    <div id="editor">
+		<div>
+       <label><input type="radio" name="mode" value="time" checked onchange="updateMode()"> 限時制</label>
+      <select id="timeLimit">
+        <option value="20">20 秒</option>
+        <option value="50">50 秒</option>
+        <option value="120">2 分鐘</option>
+      </select>
+      <label style="margin-left: 10px"><input type="radio" name="mode" value="score" onchange="updateMode()"> 積分制</label>
+      <select id="scoreTarget" disabled>
+        <option value="25">25 分</option>
+        <option value="35">35 分</option>
+        <option value="45">45 分</option>
+      </select>
+      </div>
+      <h3>拖曳圖片進格子</h3>
+      <div id="sidebar">
+        <img src="start.png" class="item" draggable="true" data-img="start.png">
+        <img src="goal.png" class="item" draggable="true" data-img="goal.png">
+        <img src="bag1.png" class="item" draggable="true" data-img="bag1.png">
+		<img src="bag2.png" class="item" draggable="true" data-img="bag2.png">
+		
+		<img src="card1.png" class="item" draggable="true" data-img="card1.png">
+		<img src="card2.png" class="item" draggable="true" data-img="card2.png">
+		<img src="dice.png" class="item" draggable="true" data-img="dice.png">
+		<img src="earthquake1.png" class="item" draggable="true" data-img="earthquake1.png">
+        <img src="earthquake2.png" class="item" draggable="true" data-img="earthquake2.png">
+		<img src="earthquake3.png" class="item" draggable="true" data-img="earthquake3.png">
+    <img src="event1.png" class="item" draggable="true" data-img="event1.png">
+    <img src="event2.png" class="item" draggable="true" data-img="event2.png">
+    <img src="fire1.png" class="item" draggable="true" data-img="fire1.png">
+    <img src="fire2.png" class="item" draggable="true" data-img="fire2.png">
+	<img src="firetruck.png" class="item" draggable="true" data-img="firetruck.png">
+    <img src="firstaid2.png" class="item" draggable="true" data-img="firstaid2.png">
+	<img src="light.png" class="item" draggable="true" data-img="light.png">
+	<img src="ok1.png" class="item" draggable="true" data-img="ok1.png">
+	<img src="ok2.png" class="item" draggable="true" data-img="ok2.png">
+	<img src="ok3.png" class="item" draggable="true" data-img="ok3.png">
+    <img src="quiz.png" class="item" draggable="true" data-img="quiz.png">
+    
+	<img src="rain1.png" class="item" draggable="true" data-img="rain1.png">
+	<img src="rain2.png" class="item" draggable="true" data-img="rain2.png">
+	<img src="rain3.png" class="item" draggable="true" data-img="rain3.png">
+	<img src="safe.png" class="item" draggable="true" data-img="safe.png">
+	<img src="safezone.png" class="item" draggable="true" data-img="safezone.png">
+	<img src="warning1.png" class="item" draggable="true" data-img="warning1.png">
+    <img src="warning2.png" class="item" draggable="true" data-img="warning2.png">
+	<img src="underdesk.png" class="item" draggable="true" data-img="underdesk.png">
+	
+      </div>
+	  <button onclick="loadMap1()">📌 地圖1</button><button onclick="startGame()">▶ 開始遊戲</button>
+      <div id="map"></div>
+      
+    </div>
+    <div id="game">
+      <h3>遊戲區</h3>
+      <div id="game-board"></div>
+      <p>
+        <button onclick="rollDice()">🎲 玩家 <span id="currentPlayer">1</span> 擲骰</button>
+        剛剛<span id="people">-</span>  擲出 <span id="diceResult">-</span>
+      </p>
+      <p id="status"></p>
+	  <div id="log"></div>
+    </div>
+  </div>
+  <script>
+  let timer = null;
+let timeLeft = 0;
+  let quizQuestions = [];
+
+fetch("quiz.json")
+  .then(res => res.json())
+  .then(data => quizQuestions = data);
+  const quiz = quizQuestions[Math.floor(Math.random() * quizQuestions.length)];
+  
+  let skipTurn = [false, false];
+const eventList = [
+  { desc: "E01：地震發生時，你立刻躲到堅固桌子下。幸運逃過一劫！", effect: "前進1格" },
+  { desc: "E02：地震時你跑向樓梯逃生，被警衛制止。停一回合反思。", effect: "停一回合" },
+  { desc: "E03：你忘了固定書櫃，地震時東西掉下來，請退回1格。", effect: "退回1格" },
+  { desc: "E04：地震後馬上開瓦斯煮泡麵，發生火警！", effect: "回到起點" },
+  { desc: "E05：你熟記疏散路線，迅速帶同學撤離，獲得得2分。", effect: "得2分" },
+  { desc: "E06：你用防災包中的哨子呼救，成功獲救！", effect: "前進2格" },
+  { desc: "E07：你冷靜躲避並幫助同學逃離，表現優秀！", effect: "前進2格" },
+  { desc: "E08：地震後打電話報平安，電話擁塞中。", effect: "停一回合" },
+  { desc: "E09：地震時窗戶破裂你被碎玻璃劃傷。", effect: "退回1格" },
+  { desc: "E10：你參加防震演練，熟悉避難路線！", effect: "得2分" },
+  { desc: "E11：你躲在書櫃旁邊，被書壓倒。", effect: "回到起點" },
+  { desc: "E12：地震時你大喊「不要動」讓大家驚慌。", effect: "退回1格" },
+  { desc: "E13：你躲在廁所裡，被卡住了！", effect: "停一回合" },
+  { desc: "E14：你跟朋友開玩笑說「地震快來」，結果真的搖了！", effect: "退回1格" },
+  { desc: "E15：地震時，你拍影片上傳，反而絆倒被困住。", effect: "回到起點" },
+  { desc: "E16：你幫老師搬防災物資，有備無患。", effect: "前進2格" },
+  { desc: "E17：地震包裡有水和哨子，你冷靜等待救援！", effect: "前進1格" },
+  { desc: "E18：你聽從廣播指示前往空地避難。", effect: "得2分" }
+];
+
+  
+  
+  const mapEl = document.getElementById("map");
+    const gameBoard = document.getElementById("game-board");
+    let mapData = [], pathIndices = [], placedOrder = [];
+    let playerSteps = [0, 0];
+    let currentPlayer = 0;
+    let gameEnded = false;
+    let playerTokens = [null, null];
+    let mode = "time";
+    let roundGoal = 1;
+    //let playerRounds = [0, 0];
+    let playerScores = [0, 0];
+    let scoreGoal = 25;
+
+  for (let i = 0; i < 64; i++) {
+      const cell = document.createElement("div");
+      cell.className = "cell";
+      cell.dataset.cell = i;
+      cell.ondragover = e => e.preventDefault();
+      cell.ondrop = drop;
+      mapEl.appendChild(cell);
+    }
+
+    document.querySelectorAll('.item').forEach(item => {
+      item.ondragstart = e => {
+        e.dataTransfer.setData('text/plain', item.dataset.img);
+      };
+    });
+function askQuiz(playerIndex,onCorrect, onWrong) {
+  const synth = window.speechSynthesis;
+  const quiz = quizQuestions[Math.floor(Math.random() * quizQuestions.length)];
+
+  const modal = document.createElement("div");
+  modal.style.position = "fixed";
+  modal.style.top = "0";
+  modal.style.left = "0";
+  modal.style.width = "100%";
+  modal.style.height = "100%";
+  modal.style.backgroundColor = "rgba(0,0,0,0.7)";
+  modal.style.display = "flex";
+  modal.style.justifyContent = "center";
+  modal.style.alignItems = "center";
+  modal.style.zIndex = "9999";
+
+  const box = document.createElement("div");
+  box.style.background = "white";
+  box.style.padding = "20px";
+  box.style.borderRadius = "8px";
+  box.style.width = "300px";
+  box.style.boxShadow = "0 4px 10px rgba(0,0,0,0.3)";
+  box.style.textAlign = "center";
+  box.style.animation = "slideIn 0.4s ease-out";
+
+  const q = document.createElement("h3");
+  q.textContent = quiz.question;
+  box.appendChild(q);
+
+  quiz.options.forEach(opt => {
+    const btn = document.createElement("button");
+    btn.textContent = opt;
+    btn.style.display = "block";
+    btn.style.margin = "8px auto";
+    btn.style.padding = "8px 16px";
+    btn.style.fontSize = "16px";
+    btn.style.cursor = "pointer";
+    btn.onclick = () => {
+      document.body.removeChild(modal);
+      if (opt.trim().startsWith(quiz.answer)) {
+        alert("答對了！加3分。");
+        playerScores[playerIndex] += 3;   // ✅ 答對加 3 分
+		updateStatus();
+      } else {
+        alert("答錯了！輪到下一位玩家。但仍會前進。");
+        logQuizFail(playerIndex, quiz.question);       
+      }
+    };
+    onCorrect();
+	box.appendChild(btn);
+  });
+
+  modal.appendChild(box);
+
+  // 使用語音朗讀問題與選項
+  const utterance = new SpeechSynthesisUtterance(`${quiz.question} 選項是：${quiz.options.join('、')}`);
+  utterance.lang = 'zh-TW';
+  synth.speak(utterance);
+
+  document.body.appendChild(modal);
+}
+
+
+  function drop(e) {
+    e.preventDefault();
+      const filename = e.dataTransfer.getData('text/plain');
+      const cell = e.target.closest('.cell');
+      const index = parseInt(cell.dataset.cell);
+      cell.innerHTML = '';
+      const img = new Image();
+      img.src = filename;
+      img.width = img.height = 60;
+      cell.appendChild(img);
+      if (!placedOrder.includes(index)) placedOrder.push(index);
+  }
+function updateMode() {
+      const timeSel = document.getElementById("timeLimit");
+  const scoreSel = document.getElementById("scoreTarget");
+  mode = document.querySelector('input[name="mode"]:checked').value;
+  timeSel.disabled = mode !== "time";
+  scoreSel.disabled = mode !== "score";
+    }
+  function loadMap1() {
+    const map1 = [
+      { index: 0, img: 'start.png' },
+      { index: 1, img: 'event1.png' },
+      { index: 2, img: 'event1.png' },
+      { index: 3, img: 'event1.png' },
+      { index: 4, img: 'event1.png' },
+      { index: 5, img: 'event1.png' },
+      { index: 6, img: 'event2.png' },
+      { index: 7, img: 'event1.png' },
+      { index: 15, img: 'quiz.png' },
+	  { index: 23, img: 'underdesk.png' },
+      { index: 31, img: 'event1.png' },
+      { index: 30, img: 'event2.png' },
+      { index: 29, img: 'quiz.png' },
+      { index: 28, img: 'warning2.png' },
+	  { index: 27, img: 'event1.png' },
+      { index: 26, img: 'event2.png' },
+      { index: 25, img: 'event2.png' },
+      { index: 24, img: 'event1.png' },
+	  { index: 16, img: 'event2.png' },
+      { index: 8, img: 'underdesk.png' },
+    ];
+    placedOrder = [];
+    map1.forEach(({ index, img }) => {
+      const cell = mapEl.querySelector(`.cell[data-cell="${index}"]`);
+      cell.innerHTML = '';
+      const image = new Image();
+      image.src = img;
+      image.width = image.height = 60;
+      cell.appendChild(image);
+      placedOrder.push(index);
+    });
+  }
+
+  function startGame() {
+  // 重設遊戲狀態
+  playerSteps = [0, 0];
+  playerScores = [0, 0];
+  currentPlayer = 0;
+  gameEnded = false;
+  updateStatus();
+	gameBoard.innerHTML = '';
+      mapData = [];
+      pathIndices = [...placedOrder];
+      const cells = mapEl.querySelectorAll('.cell');
+      cells.forEach((cell, index) => {
+        const img = cell.querySelector('img');
+        mapData.push(img ? img.src : null);
+      });
+	  
+	   buildGame(); 
+  // 清除舊的計時器
+  clearInterval(timer);
+
+  // 模式切換處理
+  if (mode === "score") {
+    // 积分制：設定目標分數
+    scoreGoal = parseInt(document.getElementById("scoreTarget").value);
+  } else if (mode === "time") {
+    // 限時制：啟動倒數計時
+    timeLeft = parseInt(document.getElementById("timeLimit").value);
+    const status = document.getElementById("status");
+    status.textContent = `限時制：倒數 ${timeLeft} 秒 玩家a1: ${playerScores[0]}分 / 玩家2: ${playerScores[1]}分`;
+
+    timer = setInterval(() => {
+      timeLeft--;
+      status.textContent = `限時制：倒數 ${timeLeft} 秒 玩家b1: ${playerScores[0]}分 / 玩家2: ${playerScores[1]}分`;
+
+      if (timeLeft <= 0) {
+        clearInterval(timer);
+        gameEnded = true;
+
+        // 比較雙方分數
+        if (playerScores[0] > playerScores[1]) {
+          alert(`⌛ 時間到！🎉 玩家 1 以 ${playerScores[0]} 分獲勝`);
+        } else if (playerScores[1] > playerScores[0]) {
+          alert(`⌛ 時間到！🎉 玩家 2 以 ${playerScores[1]} 分獲勝`);
+        } else {
+          alert(`⌛ 時間到！🤝 雙方平手，各得 ${playerScores[0]} 分！`);
+        }
+      }
+    }, 1000);
+  }
+}
+  
+  function updateStatus() {
+  const status = document.getElementById("status");
+  if (mode === "time") {
+	status.textContent = `限時制：倒數 ${timeLeft} 秒  玩家c1: ${playerScores[0]}分 / 玩家2: ${playerScores[1]}分`;
+  } else {
+    status.textContent = `玩家d1: ${playerScores[0]}分 / 玩家2: ${playerScores[1]}分`;
+  }
+}
+
+  function buildGame() {
+    for (let i = 0; i < 64; i++) {
+      const cell = document.createElement("div");
+      cell.className = "cell";
+      if (mapData[i]) {
+        const img = new Image();
+        img.src = mapData[i];
+        cell.appendChild(img);
+      }
+      if (pathIndices.includes(i)) {
+        const orderNum = pathIndices.indexOf(i) + 1;
+        const label = document.createElement("div");
+        label.className = "order-number";
+        label.textContent = orderNum;
+        cell.appendChild(label);
+      }
+      if (mapData[i]?.includes("start.png")) cell.classList.add("start-cell");
+      if (mapData[i]?.includes("goal.png")) cell.classList.add("goal-cell");
+      gameBoard.appendChild(cell);
+    }
+    renderPlayers(true);
+  }
+
+  function rollDice() {
+      if (gameEnded) return;
+	  if (skipTurn[currentPlayer]) {
+    alert(`🛑 玩家 ${currentPlayer + 1} 停一回合`);
+    skipTurn[currentPlayer] = false;  // 重設跳過狀態
+    currentPlayer = (currentPlayer + 1) % 2;  // 換下一位
+    document.getElementById("currentPlayer").textContent = currentPlayer + 1;
+    return;
+  }
+      const dice = Math.floor(Math.random() * 6) + 1;
+	  alert(`玩家${currentPlayer + 1} 擲出${dice}`);
+      document.getElementById("diceResult").textContent = dice;
+	  document.getElementById("people").textContent = currentPlayer+1;
+      const prevStep = playerSteps[currentPlayer];
+      let step = playerSteps[currentPlayer] + dice;
+      if (step >= pathIndices.length) {
+        if (mode === "round") playerRounds[currentPlayer]++;
+        step = step % pathIndices.length;
+      }
+      const fromIndex = pathIndices[prevStep % pathIndices.length];
+      const toIndex = pathIndices[step];
+      const cellImg = mapData[toIndex] || "";
+
+      function nextTurn() {
+        currentPlayer = (currentPlayer + 1) % 2;
+        document.getElementById("currentPlayer").textContent = currentPlayer + 1;
+      }
+
+      function proceed() {
+        playerSteps[currentPlayer] = step;
+        //if (mode === "score") playerScores[currentPlayer] += dice;
+        animateMove(currentPlayer, fromIndex, toIndex, () => {
+          updateStatus();
+		  logAction(currentPlayer, dice, toIndex);
+			if (mode === "score" && playerScores[currentPlayer] >= scoreGoal) {
+			  gameEnded = true;
+			  alert(`🎉 玩家 ${currentPlayer + 1} 達到 ${scoreGoal} 分，獲勝！`);
+			  clearInterval(timer);
+			  return;
+			}else if (mode === "score" && playerScores[currentPlayer] >= scoreGoal) {
+            alert(`🎉 玩家 ${currentPlayer + 1} 累積 ${scoreGoal} 分，獲勝！`);
+            gameEnded = true;
+          } else {
+            nextTurn();
+          }
+        });
+      }
+
+if (cellImg.includes("underdesk.png")) {
+  alert("📢 你躲到書櫃旁邊，被書壓倒！退回起點！");
+  const fromIndex = toIndex;
+  const toStartIndex = pathIndices[0];
+  playerSteps[currentPlayer] = 0;
+
+  animateMove(currentPlayer, fromIndex, toStartIndex, () => {
+    updateStatus();
+    currentPlayer = (currentPlayer + 1) % 2;
+    document.getElementById("currentPlayer").textContent = currentPlayer + 1;
+  });
+} else if (cellImg.includes("quiz.png")) {
+  askQuiz(currentPlayer, proceed, nextTurn);
+} else if (cellImg.includes("event1.png") || cellImg.includes("event2.png")) {
+  const randomEvent = eventList[Math.floor(Math.random() * eventList.length)];
+  playerSteps[currentPlayer] = step;
+  animateMove(currentPlayer, fromIndex, toIndex, () => {
+    handleEventEffect(randomEvent, step);  // ✅ 動畫結束後再執行事件
+  });
+} else {
+  proceed();
+}
+
+
+
+
+
+    }
+
+  function animateMove(playerIdx, from, to, callback) {
+  const token = playerTokens[playerIdx];
+      if (!token) return;
+      const rectFrom = gameBoard.children[from].getBoundingClientRect();
+      const rectTo = gameBoard.children[to].getBoundingClientRect();
+      const clone = token.cloneNode(true);
+      clone.style.position = 'fixed';
+      clone.style.zIndex = '9999';
+      clone.style.left = `${rectFrom.left}px`;
+      clone.style.top = `${rectFrom.top}px`;
+      clone.style.transition = 'all 0.4s ease';
+      document.body.appendChild(clone);
+      setTimeout(() => {
+        clone.style.left = `${rectTo.left}px`;
+        clone.style.top = `${rectTo.top}px`;
+      }, 10);
+      setTimeout(() => {
+        document.body.removeChild(clone);
+        gameBoard.children[to].appendChild(token);
+        if (callback) callback();
+      }, 450);
+    }
+
+  function renderPlayers(initial = false) {
+    document.querySelectorAll(".player").forEach(p => p.remove());
+      playerSteps.forEach((step, index) => {
+        const cellIndex = pathIndices[step];
+        const cell = gameBoard.children[cellIndex];
+        if (!cell) return;
+        const token = document.createElement("div");
+        token.className = `player player${index + 1}`;
+        const car = new Image();
+        car.src = index === 0 ? "car_red.png" : "car_blue.png";
+        token.appendChild(car);
+        cell.appendChild(token);
+        playerTokens[index] = token;
+      });
+    }
+	function logAction(player, dice, pos) {
+      const log = document.getElementById("log");
+      const stepNum = pathIndices.indexOf(pos) + 1;
+      const imgSrc = mapData[pos] || "";
+      const imgName = imgSrc.split('/').pop();
+      log.innerText += `玩家${player + 1} 擲出 ${dice}，移動到第 ${stepNum} 格（${imgName}）`;
+      log.scrollTop = log.scrollHeight;
+    }
+
+    function logQuizFail(player, question) {
+      const log = document.getElementById("log");
+      log.innerText += `玩家${player + 1} 答錯題目：「${question}」，失去前進機會`;
+      log.scrollTop = log.scrollHeight;
+    }
+	
+	function handleEventEffect(event, fromStep) {
+  const moveEffects = ["前進1格", "前進2格", "退回1格", "退2格", "回到起點"];
+  const log = document.getElementById("log");
+  log.innerText += `\n觸發事件：「${event.desc}」\n`;
+  log.scrollTop = log.scrollHeight;
+
+  let newStep = playerSteps[currentPlayer];
+
+  // 計算移動目標
+  if (event.effect === "前進1格") {
+    newStep = (newStep + 1) % pathIndices.length;
+  } else if (event.effect === "前進2格") {
+    newStep = (newStep + 2) % pathIndices.length;
+  } else if (event.effect === "退回1格") {
+    newStep = (newStep - 1 + pathIndices.length) % pathIndices.length;
+  } else if (event.effect === "退2格") {
+    newStep = (newStep - 2 + pathIndices.length) % pathIndices.length;
+  } else if (event.effect === "回到起點") {
+    newStep = 0;
+  }
+
+  // 非移動效果直接執行
+  if (event.effect === "得2分" && mode === "score") {
+    playerScores[currentPlayer] += 2;
+    updateStatus();
+  } else if (event.effect === "停一回合") {
+    skipTurn[currentPlayer] = true;
+  }
+
+  // 💬 先彈出事件框（這是你要的）
+  alert(`🎲 事件卡：\n${event.desc}\n➡ 效果：${event.effect}`);
+
+  const fromIndex = pathIndices[fromStep];
+  const toIndex = pathIndices[newStep];
+  playerSteps[currentPlayer] = newStep;
+
+  animateMove(currentPlayer, fromIndex, toIndex, () => {
+    updateStatus();
+    const img = mapData[toIndex] || "";
+
+    if (img.includes("underdesk.png")) {
+      alert("📢 你走到了 underdesk！被書壓倒，退回起點！");
+      const toStart = pathIndices[0];
+      playerSteps[currentPlayer] = 0;
+      animateMove(currentPlayer, toIndex, toStart, () => {
+        updateStatus();
+        currentPlayer = (currentPlayer + 1) % 2;
+        document.getElementById("currentPlayer").textContent = currentPlayer + 1;
+      });
+      return;
+    }
+
+    if (img.includes("quiz.png")) {
+      askQuiz(currentPlayer, () => {
+        currentPlayer = (currentPlayer + 1) % 2;
+        document.getElementById("currentPlayer").textContent = currentPlayer + 1;
+      }, () => {
+        currentPlayer = (currentPlayer + 1) % 2;
+        document.getElementById("currentPlayer").textContent = currentPlayer + 1;
+      });
+      return;
+    }
+
+    // 事件連鎖（只限移動型事件）
+    if ((img.includes("event1.png") || img.includes("event2.png")) && moveEffects.includes(event.effect)) {
+      const nextEvent = eventList[Math.floor(Math.random() * eventList.length)];
+      setTimeout(() => {
+        handleEventEffect(nextEvent, newStep);
+      }, 200);
+    } else {
+      currentPlayer = (currentPlayer + 1) % 2;
+      document.getElementById("currentPlayer").textContent = currentPlayer + 1;
+    }
+  });
+}
+
+
+
+	
+	
+</script>
+    
+</body>
+</html>
