@@ -293,12 +293,14 @@ function askQuiz(playerIndex,onCorrect, onWrong) {
         alert("答對了！加3分。");
         playerScores[playerIndex] += 3;   // ✅ 答對加 3 分
 		updateStatus();
+		onCorrect();
       } else {
         alert("答錯了！輪到下一位玩家。但仍會前進。");
-        logQuizFail(playerIndex, quiz.question);       
+        logQuizFail(playerIndex, quiz.question);    
+		onWrong();	
       }
     };
-    onCorrect();
+    
 	box.appendChild(btn);
   });
 
