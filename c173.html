@@ -200,13 +200,6 @@ fetch("quiz.json")
   const quiz = quizQuestions[Math.floor(Math.random() * quizQuestions.length)];
   
   
-  let eventList = [];
-
-fetch("event.json")
-  .then(res => res.json())
-  .then(data => {
-    eventList = data;
-  });
   
   const mapEl = document.getElementById("map");
     const gameBoard = document.getElementById("game-board");
@@ -237,10 +230,26 @@ fetch("event.json")
     });
 	
 	function handleEvent(currentStep, fromIndex, toIndex, onFinish) {
-  if (!eventList.length) {
-    alert("⚠️ 無法載入事件卡資料！");
-    return onFinish();
-  }
+   const eventList = [
+  { desc: "E01：地震發生時，你立刻躲到堅固桌子下。幸運逃過一劫！", effect: "前進1格" },
+  { desc: "E02：地震時你跑向樓梯逃生，被警衛制止。停一回合反思。", effect: "停一回合" },
+  { desc: "E03：你忘了固定書櫃，地震時東西掉下來，請退回1格。", effect: "退回1格" },
+  { desc: "E04：地震後馬上開瓦斯煮泡麵，發生火警！", effect: "回到起點" },
+  { desc: "E05：你熟記疏散路線，迅速帶同學撤離，獲得得2分。", effect: "得2分" },
+  { desc: "E06：你用防災包中的哨子呼救，成功獲救！", effect: "前進2格" },
+  { desc: "E07：你冷靜躲避並幫助同學逃離，表現優秀！", effect: "前進2格" },
+  { desc: "E08：地震後打電話報平安，電話擁塞中。", effect: "停一回合" },
+  { desc: "E09：地震時窗戶破裂你被碎玻璃劃傷。", effect: "退回1格" },
+  { desc: "E10：你參加防震演練，熟悉避難路線！", effect: "得2分" },
+  { desc: "E11：你躲在書櫃旁邊，被書壓倒。", effect: "回到起點" },
+  { desc: "E12：地震時你大喊「不要動」讓大家驚慌。", effect: "退回1格" },
+  { desc: "E13：你躲在廁所裡，被卡住了！", effect: "停一回合" },
+  { desc: "E14：你跟朋友開玩笑說「地震快來」，結果真的搖了！", effect: "退回1格" },
+  { desc: "E15：地震時，你拍影片上傳，反而絆倒被困住。", effect: "回到起點" },
+  { desc: "E16：你幫老師搬防災物資，有備無患。", effect: "前進2格" },
+  { desc: "E17：地震包裡有水和哨子，你冷靜等待救援！", effect: "前進1格" },
+  { desc: "E18：你聽從廣播指示前往空地避難。", effect: "得2分" }     
+];
 
   const event = eventList[Math.floor(Math.random() * eventList.length)];
   alert(`🎴 事件卡：${event.desc}\n➡ 效果：${event.effect}`);
@@ -534,12 +543,10 @@ function updateMode() {
         });
       }
 
-      if (cellImg.includes("quiz.png")) {
-  askQuiz(currentPlayer, () => proceed(false), nextTurn);
-} else if (cellImg.includes("event1.png") || cellImg.includes("event2.png")) {
-  handleEvent(step, fromIndex, toIndex, nextTurn);
+ if (cellImg.includes("quiz.png")) {
+  askQuiz(currentPlayer, () => proceed(false), nextTurn); // quiz 不加骰子分數
 } else {
-  proceed();
+  proceed(); // 這裡就會由 proceed() 自己判斷是不是 event.png
 }
     }
 
