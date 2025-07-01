@@ -251,6 +251,7 @@ const eventList = [
       };
     });
 function askQuiz(playerIndex,onCorrect, onWrong) {
+  if (document.querySelector('.quiz-modal')) return;
   const synth = window.speechSynthesis;
   const quiz = quizQuestions[Math.floor(Math.random() * quizQuestions.length)];
 
