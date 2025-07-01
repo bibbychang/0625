@@ -479,7 +479,13 @@ function updateMode() {
       }
 
       function proceed() {
-	
+	  // ✅ 加圈數判斷：從上一次的位置走到下一圈
+  const pathLength = pathIndices.length;
+  const prev = playerSteps[currentPlayer];
+  if ((prev + dice) >= pathLength) {
+    playerScores[currentPlayer] += 1;
+    alert("🎉 完成一圈，加1分！");
+  }
 	  
 	  
         playerSteps[currentPlayer] = step;
