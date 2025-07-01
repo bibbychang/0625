@@ -352,7 +352,16 @@ function updateMode() {
   currentPlayer = 0;
   gameEnded = false;
   updateStatus();
-
+	gameBoard.innerHTML = '';
+      mapData = [];
+      pathIndices = [...placedOrder];
+      const cells = mapEl.querySelectorAll('.cell');
+      cells.forEach((cell, index) => {
+        const img = cell.querySelector('img');
+        mapData.push(img ? img.src : null);
+      });
+	  
+	   buildGame(); 
   // 清除舊的計時器
   clearInterval(timer);
 
