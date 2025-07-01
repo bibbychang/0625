@@ -398,11 +398,9 @@ function updateMode() {
   
   function updateStatus() {
   const status = document.getElementById("status");
-  if (mode === "round") {
-    status.textContent = `玩家1: ${playerRounds[0]}圈 / 玩家2: ${playerRounds[1]}圈`;
-  } else {
+  
     status.textContent = `玩家1: ${playerScores[0]}分 / 玩家2: ${playerScores[1]}分`;
-  }
+ 
 }
 
   function buildGame() {
