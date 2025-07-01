@@ -578,7 +578,7 @@ if (cellImg.includes("underdesk.png")) {
       log.scrollTop = log.scrollHeight;
     }
 	
-	function handleEventEffect(event, fromStep) {
+	function handleEventEffect(event, fromStep,allowEvent = true) {
   alert(`🎲 事件卡：\n${event.desc}\n➡ 效果：${event.effect}`);
 
   const log = document.getElementById("log");
@@ -639,7 +639,7 @@ if (cellImg.includes("underdesk.png")) {
     else if (img.includes("event1.png") || img.includes("event2.png")) {
       // ✅ 遞迴處理新的事件卡，但要稍微延遲以保證動畫執行完畢
       setTimeout(() => {
-  triggerByStep(newStep, true);  // 👇 用下面新增的封裝函數來做判斷
+  triggerByStep(newStep, allowEvent);  // 👇 用下面新增的封裝函數來做判斷
 }, 100); // 等動畫完成再觸發下一個事件
     }
 
@@ -677,7 +677,7 @@ if (cellImg.includes("underdesk.png")) {
 
   else if ((img.includes("event1.png") || img.includes("event2.png")) && allowEvent) {
     const nextEvent = eventList[Math.floor(Math.random() * eventList.length)];
-    handleEventEffect(nextEvent, step);
+    handleEventEffect(nextEvent, step,false);
   }
 
   else {
