@@ -200,7 +200,13 @@ fetch("quiz.json")
   const quiz = quizQuestions[Math.floor(Math.random() * quizQuestions.length)];
   
   
-  
+  let eventList = [];
+
+fetch("event.json")
+  .then(res => res.json())
+  .then(data => {
+    eventList = data;
+  });
   
   const mapEl = document.getElementById("map");
     const gameBoard = document.getElementById("game-board");
@@ -229,6 +235,49 @@ fetch("quiz.json")
         e.dataTransfer.setData('text/plain', item.dataset.img);
       };
     });
+	
+	function handleEvent(currentStep, fromIndex, toIndex, onFinish) {
+  if (!eventList.length) {
+    alert("⚠️ 無法載入事件卡資料！");
+    return onFinish();
+  }
+
+  const event = eventList[Math.floor(Math.random() * eventList.length)];
+  alert(`🎴 事件卡：${event.desc}\n➡ 效果：${event.effect}`);
+
+  let newStep = currentStep;
+
+  if (event.effect === "前進1格") {
+    newStep = (currentStep + 1) % pathIndices.length;
+  } else if (event.effect === "前進2格") {
+    newStep = (currentStep + 2) % pathIndices.length;
+  } else if (event.effect === "退回1格") {
+    newStep = (currentStep - 1 + pathIndices.length) % pathIndices.length;
+  } else if (event.effect === "回到起點") {
+    newStep = 0;
+  } else if (event.effect === "得2分") {
+    playerScores[currentPlayer] += 2;
+  } else if (event.effect === "停一回合") {
+    playerRounds[currentPlayer] -= 999; // 讓他下一回合跳過
+  }
+
+  // 如果位置有改變，要重新移動
+  if (newStep !== currentStep) {
+    playerSteps[currentPlayer] = newStep;
+    animateMove(currentPlayer, fromIndex, pathIndices[newStep], () => {
+      updateStatus();
+      logAction(currentPlayer, dice, pathIndices[newStep]);
+      onFinish();
+    });
+  } else {
+    // 沒有移動格數（得分/停回合）
+    updateStatus();
+    logAction(currentPlayer, dice, toIndex);
+    onFinish();
+  }
+}
+	
+	
 function askQuiz(playerIndex,onCorrect, onWrong) {
   const synth = window.speechSynthesis;
   const quiz = quizQuestions[Math.floor(Math.random() * quizQuestions.length)];
@@ -486,10 +535,12 @@ function updateMode() {
       }
 
       if (cellImg.includes("quiz.png")) {
-        askQuiz(currentPlayer, proceed, nextTurn);
-      } else {
-        proceed();
-      }
+  askQuiz(currentPlayer, () => proceed(false), nextTurn);
+} else if (cellImg.includes("event1.png") || cellImg.includes("event2.png")) {
+  handleEvent(step, fromIndex, toIndex, nextTurn);
+} else {
+  proceed();
+}
     }
 
   function animateMove(playerIdx, from, to, callback) {
