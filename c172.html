@@ -452,7 +452,7 @@ function updateMode() {
 
       function proceed() {
         playerSteps[currentPlayer] = step;
-        if (mode === "score") playerScores[currentPlayer] += dice;
+        //if (mode === "score") playerScores[currentPlayer] += dice;
         animateMove(currentPlayer, fromIndex, toIndex, () => {
           updateStatus();
 		  logAction(currentPlayer, dice, toIndex);
