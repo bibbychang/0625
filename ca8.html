@@ -465,10 +465,13 @@ function updateMode() {
 	  document.getElementById("people").textContent = currentPlayer+1;
       const prevStep = playerSteps[currentPlayer];
       let step = playerSteps[currentPlayer] + dice;
-      if (step >= pathIndices.length) {
-        if (mode === "round") playerRounds[currentPlayer]++;
+      if ((prevStep < pathIndices.length) && (step >= pathIndices.length)) {
+        playerScores[currentPlayer] += 1;
+		alert("🎉 完成一圈，加1分！");
+		updateStatus();
         step = step % pathIndices.length;
       }
+	  
       const fromIndex = pathIndices[prevStep % pathIndices.length];
       const toIndex = pathIndices[step];
       const cellImg = mapData[toIndex] || "";
