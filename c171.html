@@ -126,18 +126,18 @@
   <div id="main">
     <div id="editor">
 		<div>
-        <label><input type="radio" name="mode" value="time" checked onchange="updateMode()"> 限時制</label>
-			<select id="timeLimit">
-			  <option value="20">20 秒</option>
-			  <option value="50">50 秒</option>
-			  <option value="120">2 分鐘</option>
-			</select>
-			<label style="margin-left: 10px"><input type="radio" name="mode" value="score" onchange="updateMode()"> 積分制</label>
-			<select id="scoreTarget" disabled>
-			  <option value="25">25分</option>
-			  <option value="35">35分</option>
-			  <option value="45">45分</option>
-			</select>
+       <label><input type="radio" name="mode" value="time" checked onchange="updateMode()"> 限時制</label>
+      <select id="timeLimit">
+        <option value="20">20 秒</option>
+        <option value="50">50 秒</option>
+        <option value="120">2 分鐘</option>
+      </select>
+      <label style="margin-left: 10px"><input type="radio" name="mode" value="score" onchange="updateMode()"> 積分制</label>
+      <select id="scoreTarget" disabled>
+        <option value="25">25 分</option>
+        <option value="35">35 分</option>
+        <option value="45">45 分</option>
+      </select>
       </div>
       <h3>拖曳圖片進格子</h3>
       <div id="sidebar">
@@ -190,6 +190,8 @@
     </div>
   </div>
   <script>
+  let timer = null;
+let timeLeft = 0;
   let quizQuestions = [];
 
 fetch("quiz.json")
@@ -207,9 +209,9 @@ fetch("quiz.json")
     let currentPlayer = 0;
     let gameEnded = false;
     let playerTokens = [null, null];
-    let mode = "round";
+    let mode = "time";
     let roundGoal = 1;
-    let playerRounds = [0, 0];
+    //let playerRounds = [0, 0];
     let playerScores = [0, 0];
     let scoreGoal = 25;
 
@@ -302,12 +304,12 @@ function askQuiz(onCorrect, onWrong) {
       if (!placedOrder.includes(index)) placedOrder.push(index);
   }
 function updateMode() {
-  const timeSel = document.getElementById("timeLimit");
+      const timeSel = document.getElementById("timeLimit");
   const scoreSel = document.getElementById("scoreTarget");
   mode = document.querySelector('input[name="mode"]:checked').value;
   timeSel.disabled = mode !== "time";
   scoreSel.disabled = mode !== "score";
-}
+    }
   function loadMap1() {
     const map1 = [
       { index: 0, img: 'start.png' },
@@ -344,51 +346,46 @@ function updateMode() {
   }
 
   function startGame() {
-	let timer = null;
-	let timeLeft = 0;
-    gameBoard.innerHTML = '';
-      mapData = [];
-      pathIndices = [...placedOrder];
-      const cells = mapEl.querySelectorAll('.cell');
-      cells.forEach((cell, index) => {
-        const img = cell.querySelector('img');
-        mapData.push(img ? img.src : null);
-      });
-      roundGoal = parseInt(document.getElementById("roundCount").value);
-      scoreGoal = parseInt(document.getElementById("scoreTarget").value);
-      playerSteps = [0, 0];
-      playerTokens = [null, null];
-      currentPlayer = 0;
-      gameEnded = false;
-      playerRounds = [0, 0];
-      playerScores = [0, 0];
-	  clearInterval(timer);
-		if (mode === "time") {
-		  timeLeft = parseInt(document.getElementById("timeLimit").value);
-		  const status = document.getElementById("status");
-		  status.textContent = `限時制：倒數 ${timeLeft} 秒`;
-		  timer = setInterval(() => {
-			timeLeft--;
-			status.textContent = `限時制：倒數 ${timeLeft} 秒`;
-			if (timeLeft <= 0) {
-			  clearInterval(timer);
-			  gameEnded = true;
-			  if (playerScores[0] > playerScores[1]) {
-				alert(`⌛ 時間到！🎉 玩家 1 以 ${playerScores[0]} 分獲勝！`);
-			  } else if (playerScores[1] > playerScores[0]) {
-				alert(`⌛ 時間到！🎉 玩家 2 以 ${playerScores[1]} 分獲勝！`);
-			  } else {
-				alert(`⌛ 時間到！🤝 雙方平手，各得 ${playerScores[0]} 分！`);
-			  }
-			}
-		  }, 1000);
-		}
-	  
-	  
-	  
-      buildGame();
-      updateStatus();
+  // 重設遊戲狀態
+  playerSteps = [0, 0];
+  playerScores = [0, 0];
+  currentPlayer = 0;
+  gameEnded = false;
+  updateStatus();
+
+  // 清除舊的計時器
+  clearInterval(timer);
+
+  // 模式切換處理
+  if (mode === "score") {
+    // 积分制：設定目標分數
+    scoreGoal = parseInt(document.getElementById("scoreTarget").value);
+  } else if (mode === "time") {
+    // 限時制：啟動倒數計時
+    timeLeft = parseInt(document.getElementById("timeLimit").value);
+    const status = document.getElementById("status");
+    status.textContent = `限時制：倒數 ${timeLeft} 秒`;
+
+    timer = setInterval(() => {
+      timeLeft--;
+      status.textContent = `限時制：倒數 ${timeLeft} 秒`;
+
+      if (timeLeft <= 0) {
+        clearInterval(timer);
+        gameEnded = true;
+
+        // 比較雙方分數
+        if (playerScores[0] > playerScores[1]) {
+          alert(`⌛ 時間到！🎉 玩家 1 以 ${playerScores[0]} 分獲勝`);
+        } else if (playerScores[1] > playerScores[0]) {
+          alert(`⌛ 時間到！🎉 玩家 2 以 ${playerScores[1]} 分獲勝`);
+        } else {
+          alert(`⌛ 時間到！🤝 雙方平手，各得 ${playerScores[0]} 分！`);
+        }
+      }
+    }, 1000);
   }
+}
   
   function updateStatus() {
   const status = document.getElementById("status");
@@ -448,10 +445,12 @@ function updateMode() {
         animateMove(currentPlayer, fromIndex, toIndex, () => {
           updateStatus();
 		  logAction(currentPlayer, dice, toIndex);
-          if (mode === "round" && playerRounds[currentPlayer] >= roundGoal) {
-            alert(`🎉 玩家 ${currentPlayer + 1} 完成 ${roundGoal} 圈，獲勝！`);
-            gameEnded = true;
-          } else if (mode === "score" && playerScores[currentPlayer] >= scoreGoal) {
+			if (mode === "score" && playerScores[currentPlayer] >= scoreGoal) {
+			  gameEnded = true;
+			  alert(`🎉 玩家 ${currentPlayer + 1} 達到 ${scoreGoal} 分，獲勝！`);
+			  clearInterval(timer);
+			  return;
+			}else if (mode === "score" && playerScores[currentPlayer] >= scoreGoal) {
             alert(`🎉 玩家 ${currentPlayer + 1} 累積 ${scoreGoal} 分，獲勝！`);
             gameEnded = true;
           } else {
