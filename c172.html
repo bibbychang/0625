@@ -229,7 +229,7 @@ fetch("quiz.json")
         e.dataTransfer.setData('text/plain', item.dataset.img);
       };
     });
-function askQuiz(onCorrect, onWrong) {
+function askQuiz(playerIndex,onCorrect, onWrong) {
   const synth = window.speechSynthesis;
   const quiz = quizQuestions[Math.floor(Math.random() * quizQuestions.length)];
 
@@ -270,11 +270,11 @@ function askQuiz(onCorrect, onWrong) {
       document.body.removeChild(modal);
       if (opt.trim().startsWith(quiz.answer)) {
         alert("答對了！加3分。");
-        playerScores[currentPlayer] += 3;  // ✅ 答對加 3 分
+        playerScores[playerIndex] += 3;   // ✅ 答對加 3 分
 		updateStatus();
       } else {
         alert("答錯了！輪到下一位玩家。但仍會前進。");
-        logQuizFail(currentPlayer, quiz.question);       
+        logQuizFail(playerIndex, quiz.question);       
       }
     };
     onCorrect();
@@ -314,24 +314,24 @@ function updateMode() {
   function loadMap1() {
     const map1 = [
       { index: 0, img: 'start.png' },
-      { index: 1, img: 'quiz.png' },
-      { index: 2, img: 'quiz.png' },
-      { index: 3, img: 'quiz.png' },
+      { index: 1, img: 'event1.png' },
+      { index: 2, img: 'event1.png' },
+      { index: 3, img: 'event1.png' },
       { index: 4, img: 'quiz.png' },
       { index: 5, img: 'quiz.png' },
-      { index: 6, img: 'rain3.png' },
-      { index: 7, img: 'event1.png' },
-      { index: 15, img: 'card2.png' },
-	  { index: 23, img: 'rain1.png' },
-      { index: 31, img: 'earthquake3.png' },
-      { index: 30, img: 'rain2.png' },
-      { index: 29, img: 'event2.png' },
+      { index: 6, img: 'event2.png' },
+      { index: 7, img: 'quiz.png' },
+      { index: 15, img: 'quiz.png' },
+	  { index: 23, img: 'quiz.png' },
+      { index: 31, img: 'quiz.png' },
+      { index: 30, img: 'event2.png' },
+      { index: 29, img: 'quiz.png' },
       { index: 28, img: 'warning2.png' },
 	  { index: 27, img: 'underdesk.png' },
-      { index: 26, img: 'ok2.png' },
-      { index: 25, img: 'safezone.png' },
-      { index: 24, img: 'ok3.png' },
-	  { index: 16, img: 'warning1.png' },
+      { index: 26, img: 'event2.png' },
+      { index: 25, img: 'event2.png' },
+      { index: 24, img: 'event2.png' },
+	  { index: 16, img: 'event2.png' },
       { index: 8, img: 'goal.png' },
     ];
     placedOrder = [];
@@ -471,7 +471,7 @@ function updateMode() {
       }
 
       if (cellImg.includes("quiz.png")) {
-        askQuiz(proceed, nextTurn);
+        askQuiz(currentPlayer, proceed, nextTurn);
       } else {
         proceed();
       }
