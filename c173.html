@@ -525,6 +525,26 @@ function updateMode() {
   }
 	  
         playerSteps[currentPlayer] = step;
+		
+		
+		
+		
+		// ✅ 事件格處理
+  if (cellImg.includes("event1.png") || cellImg.includes("event2.png")) {
+    handleEvent(step, fromIndex, toIndex, () => {
+      if (mode === "score" && playerScores[currentPlayer] >= scoreGoal) {
+        alert(`🎉 玩家 ${currentPlayer + 1} 累積 ${scoreGoal} 分，獲勝！`);
+        gameEnded = true;
+        clearInterval(timer);
+      } else {
+        nextTurn();
+      }
+    });
+    return;
+  }
+		
+		
+		
         //if (mode === "score") playerScores[currentPlayer] += dice;
         animateMove(currentPlayer, fromIndex, toIndex, () => {
           updateStatus();
