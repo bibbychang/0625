@@ -465,20 +465,10 @@ function updateMode() {
 	  document.getElementById("people").textContent = currentPlayer+1;
       const prevStep = playerSteps[currentPlayer];
       let step = playerSteps[currentPlayer] + dice;
-	  
-	  const pathLength = pathIndices.length;
-
-  // ✅ 若玩家走超過最後一格 → 加1分
-  if ((prevStep < pathLength) && (step >= pathLength)) {
-    
-      playerScores[currentPlayer] += 1;
-      updateStatus();
-      alert("🎉 完成一圈，加1分！");
-      }
-	  
-	  
-	  
+      if (step >= pathIndices.length) {
+        if (mode === "round") playerRounds[currentPlayer]++;
         step = step % pathIndices.length;
+      }
       const fromIndex = pathIndices[prevStep % pathIndices.length];
       const toIndex = pathIndices[step];
       const cellImg = mapData[toIndex] || "";
