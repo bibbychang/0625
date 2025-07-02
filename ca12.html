@@ -499,7 +499,7 @@ function updateMode() {
 		// ✅ 確保只加一次分
 		if (completedLapFlag[currentPlayer]) {
     playerScores[currentPlayer] += 1;
-    alert("🎉 完成一圈，加1分！");
+    alert("🎉 完成一圈bbbb，加1分！");
     completedLapFlag[currentPlayer] = false;
   }
           updateStatus();
@@ -659,8 +659,7 @@ function didCompleteLap(prevStep, newStep, pathLength) {
     const img = mapData[toIndex] || "";
 if (didCompleteLap(fromStep, newStep, pathIndices.length) ) {
     playerScores[currentPlayer] += 1;
-    alert("🎉 你經過起點，加1分！");
-	completedLapFlag[currentPlayer] = false;
+    alert("🎉 你經過起點abcde，加1分！");	
     updateStatus();
   }
 
