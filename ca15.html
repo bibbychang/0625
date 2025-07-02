@@ -454,15 +454,21 @@ function updateMode() {
 
   function rollDice() {
       if (gameEnded) return;
+	  const log = document.getElementById("log");
+	  
 	  if (skipTurn[currentPlayer]) {
     alert(`🛑 玩家 ${currentPlayer + 1} 停一回合`);
+	log.innerText += `\n🎯 玩家${currentPlayer + 1} 停一回合`;
     skipTurn[currentPlayer] = false;  // 重設跳過狀態
     currentPlayer = (currentPlayer + 1) % 2;  // 換下一位
     document.getElementById("currentPlayer").textContent = currentPlayer + 1;
     return;
   }
       const dice = Math.floor(Math.random() * 6) + 1;
-	  lastDiceRoll[currentPlayer] = dice;
+	
+	log.innerText += `\n🎯 玩家${currentPlayer + 1} 擲出${dice}`;
+		
+	lastDiceRoll[currentPlayer] = dice;
 	  alert(`玩家${currentPlayer + 1} 擲出${dice}`);
       document.getElementById("diceResult").textContent = dice;
 	  document.getElementById("people").textContent = currentPlayer+1;
@@ -622,7 +628,7 @@ function didCompleteLap(prevStep, newStep, pathLength) {
   const log = document.getElementById("log");
   //log.innerText += `\n觸發事件：「${event.desc} ${event.effect}」\n`;
   const lastRoll = lastDiceRoll[currentPlayer];
-log.innerText += `\n🎯 玩家${currentPlayer + 1} 上次擲出 ${lastRoll}，觸發事件：「${event.desc} ${event.effect}」\n`;
+log.innerText += `\t\t🎯 玩家${currentPlayer + 1} 觸發事件：「${event.desc} ${event.effect}」`;
 
   log.scrollTop = log.scrollHeight;
 
