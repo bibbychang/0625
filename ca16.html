@@ -524,18 +524,19 @@ function updateMode() {
         });
       }
 		if (cellImg.includes("dice.png")) {
-		  alert("🎲 恭喜！你踩到骰子格，可以再擲一次！");
-		  log.innerText += `\n🎯 玩家${currentPlayer + 1} 你踩到骰子格，可以再擲一次！`;
+		  
 		  const fromIndex = toIndex;
 		  const toStartIndex = pathIndices[0];
-		  playerSteps[currentPlayer] = 0;
-		  animateMove(currentPlayer, fromIndex, toStartIndex, () => {
-			updateStatus();	
-			});
-		  setTimeout(() => {
-			rollDice();  // ✅ 讓玩家再擲一次
-		  }, 300); // 稍微延遲避免 alert 跟 UI 重疊
-		  return; // ❗ 避免繼續執行換人邏輯
+		  
+				  animateMove(currentPlayer, fromIndex, toIndex, () => {
+			updateStatus();
+			alert("🎲 恭喜！你踩到骰子格，可以再擲一次！");
+			log.innerText += `\n🎯 玩家${currentPlayer + 1} 踩到骰子格，可以再擲一次！`;
+			setTimeout(() => {
+			  rollDice();  // ✅ 再擲一次
+			}, 300);
+		  });
+		  return;
 		}
 
 
