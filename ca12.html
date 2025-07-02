@@ -194,7 +194,7 @@
   let timer = null;
 let timeLeft = 0;
   let quizQuestions = [];
-
+let passedStart = false;
 fetch("quiz.json")
   .then(res => res.json())
   .then(data => quizQuestions = data);
@@ -467,12 +467,13 @@ function updateMode() {
       const prevStep = playerSteps[currentPlayer];
       let step = playerSteps[currentPlayer] + dice;
 	  
-      if ((prevStep < pathIndices.length) && (step >= pathIndices.length)) {
-        completedLap = true;
-		//alert("🎉 完成一圈，加1分！");
-		//updateStatus();
-        step = step % pathIndices.length;
-      }
+			  
+		const pathLen = pathIndices.length;
+
+		if ((prevStep < pathLen) && (step >= pathLen)) {
+		  passedStart = true;
+		}
+		step = step % pathLen;
 	  
       const fromIndex = pathIndices[prevStep % pathIndices.length];
       const toIndex = pathIndices[step];
@@ -489,9 +490,11 @@ function updateMode() {
 	  const prev = playerSteps[currentPlayer];
 	  const newStep = step;
 	  // ✅ 加分用旗標，避免重複加分
-  if ((prevStep < pathIndices.length) && (step >= pathIndices.length)) {
-  completedLapFlag[currentPlayer] = true;
-}
+  if (passedStart ) {
+    playerScores[currentPlayer] += 1;
+    alert("🎉 完成一圈，加1分！");
+    passedStart = false;
+  }
 	  
         playerSteps[currentPlayer] = step;
         //if (mode === "score") playerScores[currentPlayer] += dice;
