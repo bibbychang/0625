@@ -527,7 +527,7 @@ function updateMode() {
 		  
 		  const fromIndex = toIndex;
 		  const toStartIndex = pathIndices[0];
-		  
+		  playerSteps[currentPlayer] = step;
 				  animateMove(currentPlayer, fromIndex, toIndex, () => {
 			updateStatus();
 			alert("🎲 恭喜！你踩到骰子格，可以再擲一次！");
@@ -684,13 +684,21 @@ if (passedStart) {
     updateStatus();
   }
 
-if (img.includes("dice.png")) {
-  alert("🎲 恭喜！你踩到骰子格，可以再擲一次！");
-  setTimeout(() => {
-    rollDice();  // ✅ 讓玩家再擲一次
-  }, 300); // 稍微延遲避免 alert 跟 UI 重疊
-  return; // ❗ 避免繼續執行換人邏輯
-}
+if (cellImg.includes("dice.png")) {
+		  
+		  const fromIndex = toIndex;
+		  const toStartIndex = pathIndices[0];
+		  
+				  animateMove(currentPlayer, fromIndex, toIndex, () => {
+			updateStatus();
+			alert("🎲 恭喜！你踩到骰子格，可以再擲一次aaaaa！");
+			log.innerText += `\n🎯 玩家${currentPlayer + 1} 踩到骰子格，可以再擲一次！`;
+			setTimeout(() => {
+			  rollDice();  // ✅ 再擲一次
+			}, 300);
+		  });
+		  return;
+		}
 
 
     if (img.includes("underdesk.png")) {
