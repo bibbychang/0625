@@ -660,7 +660,12 @@ function didCompleteLap(prevStep, newStep, pathLength) {
   animateMove(currentPlayer, fromIndex, toIndex, () => {
     updateStatus();
     const img = mapData[toIndex] || "";
-
+if (passedStart) {
+    playerScores[currentPlayer] += 1;
+    alert("🎉 完成一圈abcabc，加1分！");
+    passedStart = false;
+    updateStatus();
+  }
 
     if (img.includes("underdesk.png")) {
       alert("📢 你走到了 underdesk！被書壓倒，退回起點！");
