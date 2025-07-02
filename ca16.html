@@ -529,6 +529,9 @@ function updateMode() {
 				alert("🎲 太幸運了！再擲一次！");
 				log.innerText += `玩家${currentPlayer + 1} 踩到 dice.png 再擲一次！`;
 				updateStatus();
+				setTimeout(() => {
+				rollDice();  // ✅ 讓當前玩家立刻再擲一次
+				}, 500); // 稍微延遲一下，避免 alert 擋住
 				// 不切換玩家，讓當前玩家繼續
 			  } else {
 				nextTurn();  // 原本的換人動作
