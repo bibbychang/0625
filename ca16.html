@@ -729,6 +729,21 @@ if (passedStart) {
       currentPlayer = (currentPlayer + 1) % 2;
       document.getElementById("currentPlayer").textContent = currentPlayer + 1;
     }
+	
+	if (img.includes("dice.png")) {
+    alert("🎲 太幸運了！再擲一次！");
+    log.innerText += `\n🎯 玩家${currentPlayer + 1} 因事件移動踩到 dice.png 再擲一次！`;
+    setTimeout(() => {
+      rollDice(); // 不切換玩家，讓他再骰
+    }, 500);
+  } else {
+    // 正常換人
+    currentPlayer = (currentPlayer + 1) % 2;
+    document.getElementById("currentPlayer").textContent = currentPlayer + 1;
+  }
+	
+	
+	
   });
 }
 
