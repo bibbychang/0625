@@ -337,13 +337,13 @@ function updateMode() {
   function loadMap1() {
     const map1 = [
       { index: 0, img: 'start.png' },
-      { index: 1, img: 'dice.png' },
-      { index: 2, img: 'dice.png' },
-      { index: 3, img: 'dice.png' },
-      { index: 4, img: 'event2.png' },
-      { index: 5, img: 'event2.png' },
-      { index: 6, img: 'event2.png' },
-      { index: 7, img: 'dice.png' },
+      { index: 1, img: 'event1.png' },
+      { index: 2, img: 'event1.png' },
+      { index: 3, img: 'event1.png' },
+      { index: 4, img: 'event1.png' },
+      { index: 5, img: 'event1.png' },
+      { index: 6, img: 'warning2.png' },
+      { index: 7, img: 'event1.png' },
       { index: 15, img: 'quiz.png' },
 	  { index: 23, img: 'ok1.png' },
       { index: 31, img: 'event1.png' },
@@ -352,9 +352,9 @@ function updateMode() {
       { index: 28, img: 'warning2.png' },
 	  { index: 27, img: 'event1.png' },
       { index: 26, img: 'event2.png' },
-      { index: 25, img: 'dice.png' },
-      { index: 24, img: 'dice.png' },
-	  { index: 16, img: 'dice.png' },
+      { index: 25, img: 'event2.png' },
+      { index: 24, img: 'event1.png' },
+	  { index: 16, img: 'event2.png' },
       { index: 8, img: 'ok2.png' },
     ];
     placedOrder = [];
@@ -498,22 +498,16 @@ function updateMode() {
 	  const prev = playerSteps[currentPlayer];
 	  const newStep = step;
 	  // ✅ 加分用旗標，避免重複加分
-  if (passedStart ) {
-    playerScores[currentPlayer] += 1;
-    alert("🎉這邊是套圈終點是一般格的加分   完成一圈，加1分！"); //yes
-	log.innerText += `\n🎯 玩家${currentPlayer + 1} 完成一圈，加1分`;
-    passedStart = false;
-  }
+	  if (passedStart ) {
+		playerScores[currentPlayer] += 1;
+		alert("🎉這邊是套圈終點是一般格的加分   完成一圈，加1分！"); //yes
+		log.innerText += `\n🎯 玩家${currentPlayer + 1} 完成一圈，加1分`;
+		passedStart = false;
+	  }
 	  
         playerSteps[currentPlayer] = step;
-        //if (mode === "score") playerScores[currentPlayer] += dice;
         animateMove(currentPlayer, fromIndex, toIndex, () => {
-		// ✅ 確保只加一次分
-		//if (completedLapFlag[currentPlayer]) {
-    //playerScores[currentPlayer] += 1;
-    //alert("🎉  有執行到嗎   bbbb，加1分！");
-    //completedLapFlag[currentPlayer] = false;
-  //}
+		
           updateStatus();
 		  logAction(currentPlayer, dice, toIndex);
 			if (mode === "score" && playerScores[currentPlayer] >= scoreGoal) {
@@ -525,20 +519,18 @@ function updateMode() {
             alert(`🎉 玩家 ${currentPlayer + 1} 累積 ${scoreGoal} 分，獲勝！`);
             gameEnded = true;
           } else {
-			  if (cellImg.includes("dice.png")) {
-				alert("🎲 太幸運了！再擲一次！");
-				log.innerText += `玩家${currentPlayer + 1} 踩到 dice.png 再擲一次！`;
-				updateStatus();
-				setTimeout(() => {
-				rollDice();  // ✅ 讓當前玩家立刻再擲一次
-				}, 500); // 稍微延遲一下，避免 alert 擋住
-				// 不切換玩家，讓當前玩家繼續
-			  } else {
-				nextTurn();  // 原本的換人動作
-			  }
+            nextTurn();
           }
         });
       }
+if (cellImg.includes("dice.png")) {
+  alert("🎲 恭喜！你踩到骰子格，可以再擲一次！");
+  setTimeout(() => {
+    rollDice();  // ✅ 讓玩家再擲一次
+  }, 300); // 稍微延遲避免 alert 跟 UI 重疊
+  return; // ❗ 避免繼續執行換人邏輯
+}
+
 
 if (cellImg.includes("underdesk.png")) {
   alert("📢 你躲到書櫃旁邊，被書壓倒！退回起點！");
@@ -549,11 +541,7 @@ if (cellImg.includes("underdesk.png")) {
 
   animateMove(currentPlayer, fromIndex, toStartIndex, () => {
     updateStatus();
-	//if (completedLapFlag[currentPlayer] ) {
-  //playerScores[currentPlayer] += 1;
-  //alert("🎉 完成一圈AAA，加1分！");
-  //completedLapFlag[currentPlayer] = false;
-//}
+	
 	
 	
     currentPlayer = (currentPlayer + 1) % 2;
@@ -568,10 +556,6 @@ if (cellImg.includes("underdesk.png")) {
     handleEventEffect(randomEvent, step);  // ✅ 動畫結束後再執行事件
   });
 } else {
-
-
-
-
   proceed();
 }
 
@@ -696,6 +680,15 @@ if (passedStart) {
     updateStatus();
   }
 
+if (img.includes("dice.png")) {
+  alert("🎲 恭喜！你踩到骰子格，可以再擲一次！");
+  setTimeout(() => {
+    rollDice();  // ✅ 讓玩家再擲一次
+  }, 300); // 稍微延遲避免 alert 跟 UI 重疊
+  return; // ❗ 避免繼續執行換人邏輯
+}
+
+
     if (img.includes("underdesk.png")) {
       alert("📢 你走到了 underdesk！被書壓倒，退回起點！");
       const toStart = pathIndices[0];
@@ -729,21 +722,6 @@ if (passedStart) {
       currentPlayer = (currentPlayer + 1) % 2;
       document.getElementById("currentPlayer").textContent = currentPlayer + 1;
     }
-	
-	if (img.includes("dice.png")) {
-    alert("🎲 太幸運了！再擲一次！");
-    log.innerText += `\n🎯 玩家${currentPlayer + 1} 因事件移動踩到 dice.png 再擲一次！`;
-    setTimeout(() => {
-      rollDice(); // 不切換玩家，讓他再骰
-    }, 500);
-  } else {
-    // 正常換人
-    currentPlayer = (currentPlayer + 1) % 2;
-    document.getElementById("currentPlayer").textContent = currentPlayer + 1;
-  }
-	
-	
-	
   });
 }
 
