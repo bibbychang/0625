@@ -684,21 +684,16 @@ if (passedStart) {
     updateStatus();
   }
 
-if (cellImg.includes("dice.png")) {
-		  
-		  const fromIndex = toIndex;
-		  const toStartIndex = pathIndices[0];
-		  
-				  animateMove(currentPlayer, fromIndex, toIndex, () => {
-			updateStatus();
-			alert("🎲 恭喜！你踩到骰子格，可以再擲一次aaaaa！");
-			log.innerText += `\n🎯 玩家${currentPlayer + 1} 踩到骰子格，可以再擲一次！`;
-			setTimeout(() => {
-			  rollDice();  // ✅ 再擲一次
-			}, 300);
-		  });
-		  return;
-		}
+if (img.includes("dice.png")) {
+    alert("🎲 恭喜！你踩到骰子格，可以再擲一次！");
+    log.innerText += `\n🎯 玩家${currentPlayer + 1} 踩到骰子格，可以再擲一次！（事件後）`;
+    setTimeout(() => {
+      rollDice();
+    }, 300);
+    return; // ❗防止繼續執行換人
+  }
+
+
 
 
     if (img.includes("underdesk.png")) {
