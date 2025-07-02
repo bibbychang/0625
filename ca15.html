@@ -501,6 +501,7 @@ function updateMode() {
   if (passedStart ) {
     playerScores[currentPlayer] += 1;
     alert("🎉這邊是套圈終點是一般格的加分   完成一圈，加1分！"); //yes
+	log.innerText += `\n🎯 玩家${currentPlayer + 1} 完成一圈，加1分`;
     passedStart = false;
   }
 	  
@@ -531,6 +532,7 @@ function updateMode() {
 
 if (cellImg.includes("underdesk.png")) {
   alert("📢 你躲到書櫃旁邊，被書壓倒！退回起點！");
+  log.innerText += `\n🎯 玩家${currentPlayer + 1} 被書壓倒！退回起點`;
   const fromIndex = toIndex;
   const toStartIndex = pathIndices[0];
   playerSteps[currentPlayer] = 0;
@@ -608,7 +610,8 @@ if (cellImg.includes("underdesk.png")) {
       const stepNum = pathIndices.indexOf(pos) + 1;
       const imgSrc = mapData[pos] || "";
       const imgName = imgSrc.split('/').pop();
-      log.innerText += `玩家${player + 1} 擲出 ${dice}，移動到第 ${stepNum} 格（${imgName}）`;
+      //log.innerText += `玩家${player + 1} 擲出 ${dice}，移動到第 ${stepNum} 格（${imgName}）`;
+	  log.innerText += ` 移動到第 ${stepNum} 格（${imgName}）`;
       log.scrollTop = log.scrollHeight;
     }
 
@@ -674,6 +677,7 @@ log.innerText += `\t\t🎯 玩家${currentPlayer + 1} 觸發事件：「${event.
 if (passedStart) {
     playerScores[currentPlayer] += 1;
     alert("🎉 完成一圈，加1分(這邊是套圈後  走到event的加分  但如果是event連鎖前進是不加分的)！");
+	log.innerText += `\n🎯 玩家${currentPlayer + 1} 完成一圈，加1分`;
     passedStart = false;
     updateStatus();
   }
