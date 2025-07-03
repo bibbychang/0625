@@ -5,6 +5,8 @@
   <title>大富翁遊戲</title>
   <style>
     body { font-family: sans-serif; margin: 0; padding: 1rem; }
+	#left-panel { flex: 1; }
+    #right-panel { width: 250px; margin-left: 10px; }
     #game-board {
       display: grid;
       grid-template-columns: repeat(8, 60px);
@@ -51,15 +53,20 @@
   </style>
 </head>
 <body>
+<div id="left-panel">
   <h2>🎲 遊戲開始！</h2><div id="configInfo"></div>
   <div id="game-board"></div>
   <p>
     <button onclick="rollDice()">擲骰 🎲 玩家 <span id="currentPlayer">1</span></button>
     剛剛<span id="people">-</span> 擲出 <span id="diceResult">-</span>
   </p>
-  <p id="status"></p>
+  
+</div>
+<div id="right-panel">
+    <h2>紀錄</h2>
+    <p id="status"></p>
   <div id="log"></div>
-
+  </div>
 <script>
 
 
