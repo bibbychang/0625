@@ -197,15 +197,16 @@ function getTooltipText(filename) {
       const image = new Image();
       image.src = img;
       image.width = image.height = 60;
-      cell.appendChild(image);
-      placedOrder.push(index);
+      
 	  
 	  const tooltip = document.createElement("div");
 tooltip.className = "tooltip";
 tooltip.textContent = getTooltipText(img);
 cell.appendChild(image);
 cell.appendChild(tooltip);
-	  
+	  cell.appendChild(image);
+	  cell.appendChild(tooltip);
+      placedOrder.push(index);
 	  
     });
   }
