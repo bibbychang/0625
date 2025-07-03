@@ -461,116 +461,7 @@ function didCompleteLap(prevStep, newStep, pathLength) {
       log.scrollTop = log.scrollHeight;
     }
 	
-	function handleEventEffect(event, fromStep) {
-	showEventCard(event, () => 
-	{ const moveEffects = ["前進1格", "前進2格", "退回1格", "退回2格", "回到起點"];
-  const log = document.getElementById("log");
-  
-  
-  //log.innerText += `\n觸發事件：「${event.desc} ${event.effect}」\n`;
-  const lastRoll = lastDiceRoll[currentPlayer];
-  
-  log.innerText += `\n🎯🎯🎯🎯觸發事件：「${event.desc} ${event.effect}」\n`;
 
-  log.scrollTop = log.scrollHeight;
-
-  let newStep = playerSteps[currentPlayer];
-
-  // 計算移動目標
-  if (event.effect === "前進1格") {
-    newStep = (newStep + 1) % pathIndices.length;
-  } else if (event.effect === "前進2格") {
-    newStep = (newStep + 2) % pathIndices.length;
-  } else if (event.effect === "退回1格") {
-    newStep = (newStep - 1 + pathIndices.length) % pathIndices.length;
-  } else if (event.effect === "退回2格") {
-    newStep = (newStep - 2 + pathIndices.length) % pathIndices.length;
-  } else if (event.effect === "回到起點") {
-    newStep = 0;
-  }
-
-  // 非移動效果直接執行
-  if (event.effect === "得2分") {
-    playerScores[currentPlayer] += 2;
-    updateStatus();
-  }else if (event.effect === "得1分") {
-    playerScores[currentPlayer] += 1;
-    updateStatus();
-  }
-  
-  
-  else if (event.effect === "停一回合") {
-    skipTurn[currentPlayer] = true;
-  }
-
-  // 💬 先彈出事件框（這是你要的）
-  //aaaa//alert(`🎲 事件卡：\n${event.desc}\n➡ 效果：${event.effect}`);
-
-  const fromIndex = pathIndices[fromStep];
-  const toIndex = pathIndices[newStep];
-  playerSteps[currentPlayer] = newStep;
-
-  animateMove(currentPlayer, fromIndex, toIndex, () => {
-    updateStatus();
-    const img = mapData[toIndex] || "";
-if (passedStart) {
-    playerScores[currentPlayer] += 1;
-    alert("🎉 完成一圈，加1分(這邊是套圈後  走到event的加分  但如果是event連鎖前進是不加分的)！");
-	log.innerText += `\n🎯 玩家${currentPlayer + 1} 完成一圈，加1分`;
-    passedStart = false;
-    updateStatus();
-  }
-
-if (img.includes("dice.png")) {
-    alert("🎲 恭喜！你踩到骰子格，可以再擲一次！");
-    log.innerText += `\n🎯 玩家${currentPlayer + 1} 踩到骰子格，可以再擲一次！（事件後）`;
-    setTimeout(() => {
-      rollDice();
-    }, 300);
-    return; // ❗防止繼續執行換人
-  }
-
-
-
-
-    if (img.includes("underdesk.png")) {
-      alert("📢 你走到了 underdesk！被書壓倒，退回起點！");
-      const toStart = pathIndices[0];
-      playerSteps[currentPlayer] = 0;
-      animateMove(currentPlayer, toIndex, toStart, () => {
-        updateStatus();
-        currentPlayer = (currentPlayer + 1) % 2;
-        document.getElementById("currentPlayer").textContent = currentPlayer + 1;
-      });
-      return;
-    }
-
-    if (img.includes("quiz.png")) {
-      askQuiz(currentPlayer, () => {
-        currentPlayer = (currentPlayer + 1) % 2;
-        document.getElementById("currentPlayer").textContent = currentPlayer + 1;
-      }, () => {
-        currentPlayer = (currentPlayer + 1) % 2;
-        document.getElementById("currentPlayer").textContent = currentPlayer + 1;
-      });
-      return;
-    }
-
-    // 事件連鎖（只限移動型事件）
-    if ((img.includes("event1.png") || img.includes("event2.png")) && moveEffects.includes(event.effect)) {
-      const nextEvent = eventList[Math.floor(Math.random() * eventList.length)];
-      setTimeout(() => {
-        handleEventEffect(nextEvent, newStep);
-      }, 200);
-    } else {
-      currentPlayer = (currentPlayer + 1) % 2;
-      document.getElementById("currentPlayer").textContent = currentPlayer + 1;
-    }
-  });}
-	
-	
- 
-}
 function showEventCard(event, callback) {
   const card = document.getElementById("event-card-display");
   card.innerHTML = `
@@ -589,6 +480,101 @@ function showEventCard(event, callback) {
 function hideEventCard() {
   document.getElementById("event-card-display").classList.remove("show");
 }
+
+function handleEventEffect(event, fromStep) {
+  showEventCard(event, () => {
+    const moveEffects = ["前進1格", "前進2格", "退回1格", "退回2格", "回到起點"];
+    const log = document.getElementById("log");
+    const lastRoll = lastDiceRoll[currentPlayer];
+    log.innerText += `\n🎯🎯🎯🎯觸發事件：「${event.desc} ${event.effect}」\n`;
+    log.scrollTop = log.scrollHeight;
+
+    let newStep = playerSteps[currentPlayer];
+
+    if (event.effect === "前進1格") {
+      newStep = (newStep + 1) % pathIndices.length;
+    } else if (event.effect === "前進2格") {
+      newStep = (newStep + 2) % pathIndices.length;
+    } else if (event.effect === "退回1格") {
+      newStep = (newStep - 1 + pathIndices.length) % pathIndices.length;
+    } else if (event.effect === "退回2格") {
+      newStep = (newStep - 2 + pathIndices.length) % pathIndices.length;
+    } else if (event.effect === "回到起點") {
+      newStep = 0;
+    }
+
+    if (event.effect === "得2分") {
+      playerScores[currentPlayer] += 2;
+      updateStatus();
+    } else if (event.effect === "得1分") {
+      playerScores[currentPlayer] += 1;
+      updateStatus();
+    } else if (event.effect === "停一回合") {
+      skipTurn[currentPlayer] = true;
+    }
+
+    const fromIndex = pathIndices[fromStep];
+    const toIndex = pathIndices[newStep];
+    playerSteps[currentPlayer] = newStep;
+
+    animateMove(currentPlayer, fromIndex, toIndex, () => {
+      updateStatus();
+      const img = mapData[toIndex] || "";
+
+      if (passedStart) {
+        playerScores[currentPlayer] += 1;
+        alert("🎉 完成一圈，加1分(這邊是套圈後  走到event的加分  但如果是event連鎖前進是不加分的)！");
+        log.innerText += `\n🎯 玩家${currentPlayer + 1} 完成一圈，加1分`;
+        passedStart = false;
+        updateStatus();
+      }
+
+      if (img.includes("dice.png")) {
+        alert("🎲 恭喜！你踩到骰子格，可以再擲一次！");
+        log.innerText += `\n🎯 玩家${currentPlayer + 1} 踩到骰子格，可以再擲一次！（事件後）`;
+        setTimeout(() => {
+          rollDice();
+        }, 300);
+        return;
+      }
+
+      if (img.includes("underdesk.png")) {
+        alert("📢 你走到了 underdesk！被書壓倒，退回起點！");
+        const toStart = pathIndices[0];
+        playerSteps[currentPlayer] = 0;
+        animateMove(currentPlayer, toIndex, toStart, () => {
+          updateStatus();
+          currentPlayer = (currentPlayer + 1) % 2;
+          document.getElementById("currentPlayer").textContent = currentPlayer + 1;
+        });
+        return;
+      }
+
+      if (img.includes("quiz.png")) {
+        askQuiz(currentPlayer, () => {
+          currentPlayer = (currentPlayer + 1) % 2;
+          document.getElementById("currentPlayer").textContent = currentPlayer + 1;
+        }, () => {
+          currentPlayer = (currentPlayer + 1) % 2;
+          document.getElementById("currentPlayer").textContent = currentPlayer + 1;
+        });
+        return;
+      }
+
+      if ((img.includes("event1.png") || img.includes("event2.png")) && moveEffects.includes(event.effect)) {
+        const nextEvent = eventList[Math.floor(Math.random() * eventList.length)];
+        setTimeout(() => {
+          handleEventEffect(nextEvent, newStep);
+        }, 200);
+      } else {
+        currentPlayer = (currentPlayer + 1) % 2;
+        document.getElementById("currentPlayer").textContent = currentPlayer + 1;
+      }
+    });
+  });
+}
+
+
 </script>
 </body>
 </html>
