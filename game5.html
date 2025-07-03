@@ -49,7 +49,27 @@
       font-size: 14px;
 	  width:200px;
     }
-	
+	#event-card-display {
+      position: fixed;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 280px; height: 380px;
+      background: white;
+      border: 2px solid #444;
+      border-radius: 8px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.4);
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      z-index: 9999;
+      padding: 20px;
+      animation: fadeIn 0.4s ease;
+    }
+    #event-card-display.show {
+      display: flex;
+    }
 	
   </style>
 </head>
@@ -68,7 +88,9 @@
     <h2>紀錄</h2>
     <p id="status"></p>
   <div id="log"></div>
+  <div id="event-card-display"></div>
   </div>
+  
 <script>
 
 
