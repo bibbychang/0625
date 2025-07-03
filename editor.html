@@ -2,83 +2,95 @@
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8">
-  <title>地圖編輯器</title>
+  <title>編輯地圖</title>
   <style>
-    body { font-family: sans-serif; padding: 20px; }
-    #map { display: grid; grid-template-columns: repeat(8, 60px); gap: 2px; }
-    .cell { width: 60px; height: 60px; border: 1px solid #aaa; position: relative; }
-    .cell img { width: 100%; height: 100%; position: absolute; object-fit: contain; }
-    #sidebar img { width: 60px; height: 60px; margin: 5px; border: 1px solid #aaa; cursor: grab; }
+    body { font-family: sans-serif; margin: 0; padding: 1rem; }
+    #map { display: grid; grid-template-columns: repeat(8, 60px); grid-template-rows: repeat(8, 60px); gap: 2px; }
+    .cell { width: 60px; height: 60px; border: 1px solid #aaa; position: relative; overflow: hidden; background: white; }
+    .cell img { width: 100%; height: 100%; object-fit: contain; position: absolute; top: 0; left: 0; }
+    .order-number { position: absolute; bottom: 2px; right: 4px; font-size: 10px; background: rgba(255,255,255,0.7); padding: 1px 3px; border-radius: 4px; }
+    #sidebar img { width: 60px; height: 60px; cursor: grab; border: 1px solid #aaa; border-radius: 6px; margin: 3px; background: white; }
   </style>
 </head>
 <body>
-  <h2>地圖編輯器</h2>
-  <div id="sidebar">
-    <img src="start.jpg">
-    <img src="event1.png">
-    <img src="fire1.png">
-    <img src="firstaid2.png">
-    <img src="quiz.png">
-    <img src="goal.jpg">
-  </div>
+  <h2>🧩 編輯地圖與設定</h2>
+  <label><input type="radio" name="mode" value="time" checked onchange="updateMode()"> 限時制</label>
+  <select id="timeLimit">
+    <option value="20">20 秒</option>
+    <option value="50">50 秒</option>
+    <option value="120">2 分鐘</option>
+  </select>
+  <label style="margin-left: 10px"><input type="radio" name="mode" value="score" onchange="updateMode()"> 積分制</label>
+  <select id="scoreTarget" disabled>
+    <option value="25">25 分</option>
+    <option value="35">35 分</option>
+    <option value="45">45 分</option>
+  </select>
+
+  <div id="sidebar"></div>
   <div id="map"></div>
-  <br>
-  <label><input type="radio" name="mode" value="round" checked> 回合制</label>
-  <select id="roundCount"><option>1</option><option>2</option><option>3</option></select>
-  <br>
-  <label><input type="radio" name="mode" value="score"> 積分制</label>
-  <select id="scoreTarget"><option>25</option><option>35</option><option>45</option></select>
-  <br><br>
-  <button onclick="goToGamePage()">▶ 開始遊戲</button>
+  <button onclick="saveAndStart()">▶ 開始遊戲</button>
 
-  <script>
-    const map = document.getElementById("map");
-    for (let i = 0; i < 64; i++) {
-      const cell = document.createElement("div");
-      cell.className = "cell";
-      cell.ondragover = e => e.preventDefault();
-      cell.ondrop = e => {
-        e.preventDefault();
-        const src = e.dataTransfer.getData("img");
-        const img = document.createElement("img");
-        img.src = src;
-        cell.innerHTML = '';
-        cell.appendChild(img);
-      };
-      map.appendChild(cell);
-    }
+<script>
+const images = ["start.png","goal.png","quiz.png","event1.png","event2.png","underdesk.png"];
+const sidebar = document.getElementById("sidebar");
+images.forEach(src => {
+  const img = new Image();
+  img.src = src;
+  img.className = "item";
+  img.draggable = true;
+  img.dataset.img = src;
+  sidebar.appendChild(img);
+});
 
-    document.querySelectorAll("#sidebar img").forEach(img => {
-      img.draggable = true;
-      img.ondragstart = e => e.dataTransfer.setData("img", img.src);
-    });
-
-    function goToGamePage() {
-  const mapData = [];
-  document.querySelectorAll('#map .cell').forEach(cell => {
-    const img = cell.querySelector('img');
-    mapData.push(img ? img.getAttribute('src') : null);
-  });
-
-  const placedOrder = [...document.querySelectorAll('#map .cell')]
-    .map((cell, i) => (cell.querySelector('img') ? i : null))
-    .filter(i => i !== null);
-
-  const mode = document.querySelector('input[name="mode"]:checked').value;
-  const roundGoal = document.getElementById("roundCount").value;
-  const scoreGoal = document.getElementById("scoreTarget").value;
-
-  const gameConfig = {
-    mapData,
-    placedOrder,
-    mode,
-    roundGoal,
-    scoreGoal
-  };
-
-  localStorage.setItem("gameConfig", JSON.stringify(gameConfig));
-  location.href = "game.html";
+const mapEl = document.getElementById("map");
+let placedOrder = [];
+for (let i = 0; i < 64; i++) {
+  const cell = document.createElement("div");
+  cell.className = "cell";
+  cell.dataset.cell = i;
+  cell.ondragover = e => e.preventDefault();
+  cell.ondrop = drop;
+  mapEl.appendChild(cell);
 }
-  </script>
+function drop(e) {
+  e.preventDefault();
+  const filename = e.dataTransfer.getData('text/plain');
+  const cell = e.target.closest('.cell');
+  const index = parseInt(cell.dataset.cell);
+  cell.innerHTML = '';
+  const img = new Image();
+  img.src = filename;
+  cell.appendChild(img);
+  if (!placedOrder.includes(index)) placedOrder.push(index);
+}
+function updateMode() {
+  const timeSel = document.getElementById("timeLimit");
+  const scoreSel = document.getElementById("scoreTarget");
+  const mode = document.querySelector('input[name="mode"]:checked').value;
+  timeSel.disabled = mode !== "time";
+  scoreSel.disabled = mode !== "score";
+}
+function saveAndStart() {
+  const mode = document.querySelector('input[name="mode"]:checked').value;
+  const timeLimit = parseInt(document.getElementById("timeLimit").value);
+  const scoreTarget = parseInt(document.getElementById("scoreTarget").value);
+  const cells = mapEl.querySelectorAll(".cell");
+  const mapData = [];
+  cells.forEach(cell => {
+    const img = cell.querySelector("img");
+    mapData.push(img ? img.src : null);
+  });
+  const config = {
+    mode,
+    timeLimit,
+    scoreTarget,
+    mapData,
+    pathIndices: placedOrder
+  };
+  localStorage.setItem("gameConfig", JSON.stringify(config));
+  window.location.href = "game.html";
+}
+</script>
 </body>
 </html>

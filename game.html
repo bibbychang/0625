@@ -2,456 +2,190 @@
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8">
-  <title>地圖編輯 + 大富翁遊戲</title>
-  <script src="https://mlc.ai/web-llm/dist/bundle.js"></script>
+  <title>大富翁遊戲</title>
   <style>
-    * { box-sizing: border-box; }
-    body {
-      font-family: sans-serif;
-      margin: 0;
-      display: flex;
-      flex-direction: column;
-      height: 100vh;
-    }
-    #main {
-      display: flex;
-      flex: 1;
-    }
-    #editor, #game {
-      flex: 1;
-      overflow: auto;
-      padding: 10px;
-    }
-    #editor {
-      border-right: 2px solid #ccc;
-    }
-    #sidebar {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      margin-bottom: 10px;
-    }
-    #sidebar img {
-      width: 60px;
-      height: 60px;
-      cursor: grab;
-      border: 1px solid #aaa;
-      background: white;
-      border-radius: 6px;
-    }
-    #map {
-      display: grid;
-      grid-template-columns: repeat(8, 60px);
-      grid-template-rows: repeat(8, 60px);
-      gap: 2px;
-      background-color: #fff;
-    }
-    .cell {
-      width: 60px;
-      height: 60px;
-      background: #fff;
-      border: 1px solid #aaa;
-      position: relative;
-      overflow: hidden;
-    }
-    .cell img {
-      width: 60px;
-      height: 60px;
-      position: absolute;
-      top: 0;
-      left: 0;
-      object-fit: contain;
-    }
-    .cell .order-number {
-      position: absolute;
-      bottom: 2px;
-      right: 4px;
-      font-size: 10px;
-      color: black;
-      background: rgba(255,255,255,0.7);
-      padding: 1px 3px;
-      border-radius: 4px;
-      z-index: 3;
-    }
-    .start-cell {
-      border: 2px solid green !important;
-    }
-    .goal-cell {
-      border: 2px solid gold !important;
-    }
+    body { font-family: sans-serif; margin: 0; padding: 1rem; }
     #game-board {
       display: grid;
       grid-template-columns: repeat(8, 60px);
       grid-template-rows: repeat(8, 60px);
       gap: 2px;
     }
+    .cell {
+      width: 60px; height: 60px; border: 1px solid #aaa;
+      position: relative; background: white;
+    }
+    .cell img {
+      width: 100%; height: 100%; object-fit: contain;
+      position: absolute; top: 0; left: 0;
+    }
+    .order-number {
+      position: absolute; bottom: 2px; right: 4px;
+      font-size: 10px; background: rgba(255,255,255,0.7);
+      padding: 1px 3px; border-radius: 4px;
+    }
     .player {
-      width: 40px;
-      height: 40px;
-      position: absolute;
+      width: 40px; height: 40px; position: absolute;
       z-index: 5;
-      transition: transform 0.4s ease;
     }
-    .player1 {
-      top: 4px;
-      left: 4px;
+    .player1 { top: 4px; left: 4px; }
+    .player2 { top: 4px; right: 4px; }
+    .player img { width: 100%; height: 100%; }
+    #log {
+      margin-top: 10px; white-space: pre-line; font-size: 14px;
+      background: #f5f5f5; border: 1px solid #ccc; padding: 6px;
+      max-height: 180px; overflow-y: auto;
     }
-    .player2 {
-      top: 4px;
-      right: 4px;
-    }
-    .player img {
-      width: 100%;
-      height: 100%;
-    }
-	#log {
-      margin-top: 10px;
-      font-size: 14px;
-      white-space: pre-line;
-      background: #f9f9f9;
-      padding: 6px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      max-height: 200px;
-      overflow-y: auto;
-    }
-	@keyframes slideIn {
-  from { transform: translateY(-30px); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
-}
   </style>
 </head>
 <body>
-  <h1>大富翁地圖編輯器 + 遊戲</h1>
-  <div id="main">
-    
-    <div id="game">
-      <h3>遊戲區</h3>
-      <div id="game-board"></div>
-      <p>
-        <button onclick="rollDice()">🎲 玩家 <span id="currentPlayer">1</span> 擲骰</button>
-        <span id="people">-</span>  擲出 <span id="diceResult">-</span>
-      </p>
-      <p id="status"></p>
-	  <div id="log"></div>
-    </div>
-  </div>
-  <script>
-  let quizQuestions = [];
+  <h2>🎲 遊戲開始！</h2>
+  <div id="game-board"></div>
+  <p>
+    <button onclick="rollDice()">擲骰 🎲 玩家 <span id="currentPlayer">1</span></button>
+    剛剛<span id="people">-</span> 擲出 <span id="diceResult">-</span>
+  </p>
+  <p id="status"></p>
+  <div id="log"></div>
 
-fetch("quiz.json")
-  .then(res => res.json())
-  .then(data => quizQuestions = data);
-  const quiz = quizQuestions[Math.floor(Math.random() * quizQuestions.length)];
-  const config = JSON.parse(localStorage.getItem("gameConfig"));
-if (!config) {
-  alert("請先在地圖編輯器設定地圖！");
-  location.href = "editor.html";
-}
+<script>
+const config = JSON.parse(localStorage.getItem("gameConfig") || '{}');
+const { mode, timeLimit, scoreTarget, mapData, pathIndices } = config;
 
-let mapData = config.mapData;
-let pathIndices = config.placedOrder;
-let mode = config.mode;
-let roundGoal = parseInt(config.roundGoal);
-let scoreGoal = parseInt(config.scoreGoal);
-  
-  
-  
-  const mapEl = document.getElementById("map");
-    const gameBoard = document.getElementById("game-board");
-    let mapData = [], pathIndices = [], placedOrder = [];
-    let playerSteps = [0, 0];
-    let currentPlayer = 0;
-    let gameEnded = false;
-    let playerTokens = [null, null];
-    let mode = "round";
-    let roundGoal = 1;
-    let playerRounds = [0, 0];
-    let playerScores = [0, 0];
-    let scoreGoal = 25;
+const gameBoard = document.getElementById("game-board");
+const logEl = document.getElementById("log");
+let playerSteps = [0, 0];
+let playerScores = [0, 0];
+let currentPlayer = 0;
+let playerTokens = [null, null];
+let gameEnded = false;
+let timer = null;
+let timeLeft = timeLimit;
 
+function buildBoard() {
   for (let i = 0; i < 64; i++) {
-      const cell = document.createElement("div");
-      cell.className = "cell";
-      cell.dataset.cell = i;
-      cell.ondragover = e => e.preventDefault();
-      cell.ondrop = drop;
-      mapEl.appendChild(cell);
-    }
-
-    document.querySelectorAll('.item').forEach(item => {
-      item.ondragstart = e => {
-        e.dataTransfer.setData('text/plain', item.dataset.img);
-      };
-    });
-function askQuiz(onCorrect, onWrong) {
-  const synth = window.speechSynthesis;
-  const quiz = quizQuestions[Math.floor(Math.random() * quizQuestions.length)];
-
-  const modal = document.createElement("div");
-  modal.style.position = "fixed";
-  modal.style.top = "0";
-  modal.style.left = "0";
-  modal.style.width = "100%";
-  modal.style.height = "100%";
-  modal.style.backgroundColor = "rgba(0,0,0,0.7)";
-  modal.style.display = "flex";
-  modal.style.justifyContent = "center";
-  modal.style.alignItems = "center";
-  modal.style.zIndex = "9999";
-
-  const box = document.createElement("div");
-  box.style.background = "white";
-  box.style.padding = "20px";
-  box.style.borderRadius = "8px";
-  box.style.width = "300px";
-  box.style.boxShadow = "0 4px 10px rgba(0,0,0,0.3)";
-  box.style.textAlign = "center";
-  box.style.animation = "slideIn 0.4s ease-out";
-
-  const q = document.createElement("h3");
-  q.textContent = quiz.question;
-  box.appendChild(q);
-
-  quiz.options.forEach(opt => {
-    const btn = document.createElement("button");
-    btn.textContent = opt;
-    btn.style.display = "block";
-    btn.style.margin = "8px auto";
-    btn.style.padding = "8px 16px";
-    btn.style.fontSize = "16px";
-    btn.style.cursor = "pointer";
-    btn.onclick = () => {
-      document.body.removeChild(modal);
-      if (opt.trim().startsWith(quiz.answer)) {
-        alert("答對了！可以前進。");
-        onCorrect();
-      } else {
-        alert("答錯了！輪到下一位玩家。");
-        logQuizFail(currentPlayer, quiz.question);
-        onWrong();
-      }
-    };
-    box.appendChild(btn);
-  });
-
-  modal.appendChild(box);
-
-  // 使用語音朗讀問題與選項
-  const utterance = new SpeechSynthesisUtterance(`${quiz.question} 選項是：${quiz.options.join('、')}`);
-  utterance.lang = 'zh-TW';
-  synth.speak(utterance);
-
-  document.body.appendChild(modal);
-}
-
-
-  function drop(e) {
-    e.preventDefault();
-      const filename = e.dataTransfer.getData('text/plain');
-      const cell = e.target.closest('.cell');
-      const index = parseInt(cell.dataset.cell);
-      cell.innerHTML = '';
+    const cell = document.createElement("div");
+    cell.className = "cell";
+    if (mapData[i]) {
       const img = new Image();
-      img.src = filename;
-      img.width = img.height = 60;
+      img.src = mapData[i];
       cell.appendChild(img);
-      if (!placedOrder.includes(index)) placedOrder.push(index);
-  }
-function updateMode() {
-      const roundSel = document.getElementById("roundCount");
-      const scoreSel = document.getElementById("scoreTarget");
-      mode = document.querySelector('input[name="mode"]:checked').value;
-      roundSel.disabled = mode !== "round";
-      scoreSel.disabled = mode !== "score";
     }
-  function loadMap1() {
-    const map1 = [
-      { index: 0, img: 'start.png' },
-      { index: 1, img: 'quiz.png' },
-      { index: 2, img: 'quiz.png' },
-      { index: 3, img: 'quiz.png' },
-      { index: 4, img: 'quiz.png' },
-      { index: 5, img: 'quiz.png' },
-      { index: 6, img: 'rain3.png' },
-      { index: 7, img: 'event1.png' },
-      { index: 15, img: 'card2.png' },
-	  { index: 23, img: 'rain1.png' },
-      { index: 31, img: 'earthquake3.png' },
-      { index: 30, img: 'rain2.png' },
-      { index: 29, img: 'event2.png' },
-      { index: 28, img: 'warning2.png' },
-	  { index: 27, img: 'underdesk.png' },
-      { index: 26, img: 'ok2.png' },
-      { index: 25, img: 'safezone.png' },
-      { index: 24, img: 'ok3.png' },
-	  { index: 16, img: 'warning1.png' },
-      { index: 8, img: 'goal.png' },
-    ];
-    placedOrder = [];
-    map1.forEach(({ index, img }) => {
-      const cell = mapEl.querySelector(`.cell[data-cell="${index}"]`);
-      cell.innerHTML = '';
-      const image = new Image();
-      image.src = img;
-      image.width = image.height = 60;
-      cell.appendChild(image);
-      placedOrder.push(index);
-    });
+    if (pathIndices.includes(i)) {
+      const label = document.createElement("div");
+      label.className = "order-number";
+      label.textContent = pathIndices.indexOf(i) + 1;
+      cell.appendChild(label);
+    }
+    gameBoard.appendChild(cell);
   }
+  renderPlayers();
+}
 
-  function startGame() {
-    gameBoard.innerHTML = '';
-      mapData = [];
-      pathIndices = [...placedOrder];
-      const cells = mapEl.querySelectorAll('.cell');
-      cells.forEach((cell, index) => {
-        const img = cell.querySelector('img');
-        mapData.push(img ? img.src : null);
-      });
-      roundGoal = parseInt(document.getElementById("roundCount").value);
-      scoreGoal = parseInt(document.getElementById("scoreTarget").value);
-      playerSteps = [0, 0];
-      playerTokens = [null, null];
-      currentPlayer = 0;
-      gameEnded = false;
-      playerRounds = [0, 0];
-      playerScores = [0, 0];
-      buildGame();
-      updateStatus();
-  }
-  
-  function updateStatus() {
+function renderPlayers() {
+  document.querySelectorAll(".player").forEach(p => p.remove());
+  playerSteps.forEach((step, idx) => {
+    const cellIndex = pathIndices[step];
+    const cell = gameBoard.children[cellIndex];
+    const token = document.createElement("div");
+    token.className = `player player${idx+1}`;
+    const car = new Image();
+    car.src = idx === 0 ? "car_red.png" : "car_blue.png";
+    token.appendChild(car);
+    cell.appendChild(token);
+    playerTokens[idx] = token;
+  });
+}
+
+function rollDice() {
+  if (gameEnded) return;
+  const dice = Math.floor(Math.random() * 6) + 1;
+  const prev = playerSteps[currentPlayer];
+  let step = (prev + dice) % pathIndices.length;
+  const fromIdx = pathIndices[prev];
+  const toIdx = pathIndices[step];
+
+  document.getElementById("diceResult").textContent = dice;
+  document.getElementById("people").textContent = currentPlayer + 1;
+
+  playerSteps[currentPlayer] = step;
+  playerScores[currentPlayer] += 3; // 可依需求調整分數增減
+
+  moveToken(currentPlayer, fromIdx, toIdx, () => {
+    updateStatus();
+    log(`玩家${currentPlayer+1} 擲出 ${dice}，移動至第${step+1} 格`);
+    checkWin();
+    currentPlayer = (currentPlayer + 1) % 2;
+    document.getElementById("currentPlayer").textContent = currentPlayer + 1;
+  });
+}
+
+function moveToken(playerIdx, from, to, cb) {
+  const token = playerTokens[playerIdx];
+  const rectFrom = gameBoard.children[from].getBoundingClientRect();
+  const rectTo = gameBoard.children[to].getBoundingClientRect();
+  const clone = token.cloneNode(true);
+  clone.style.position = 'fixed';
+  clone.style.zIndex = '999';
+  clone.style.left = `${rectFrom.left}px`;
+  clone.style.top = `${rectFrom.top}px`;
+  clone.style.transition = 'all 0.4s ease';
+  document.body.appendChild(clone);
+
+  setTimeout(() => {
+    clone.style.left = `${rectTo.left}px`;
+    clone.style.top = `${rectTo.top}px`;
+  }, 10);
+
+  setTimeout(() => {
+    document.body.removeChild(clone);
+    gameBoard.children[to].appendChild(token);
+    if (cb) cb();
+  }, 450);
+}
+
+function updateStatus() {
   const status = document.getElementById("status");
-  if (mode === "round") {
-    status.textContent = `玩家1: ${playerRounds[0]}圈 / 玩家2: ${playerRounds[1]}圈`;
+  if (mode === "time") {
+    status.textContent = `限時：${timeLeft} 秒，玩家1: ${playerScores[0]}分，玩家2: ${playerScores[1]}分`;
   } else {
-    status.textContent = `玩家1: ${playerScores[0]}分 / 玩家2: ${playerScores[1]}分`;
+    status.textContent = `積分制：玩家1: ${playerScores[0]}分，玩家2: ${playerScores[1]}分`;
   }
 }
 
-  function buildGame() {
-    for (let i = 0; i < 64; i++) {
-      const cell = document.createElement("div");
-      cell.className = "cell";
-      if (mapData[i]) {
-        const img = new Image();
-        img.src = mapData[i];
-        cell.appendChild(img);
-      }
-      if (pathIndices.includes(i)) {
-        const orderNum = pathIndices.indexOf(i) + 1;
-        const label = document.createElement("div");
-        label.className = "order-number";
-        label.textContent = orderNum;
-        cell.appendChild(label);
-      }
-      if (mapData[i]?.includes("start.png")) cell.classList.add("start-cell");
-      if (mapData[i]?.includes("goal.png")) cell.classList.add("goal-cell");
-      gameBoard.appendChild(cell);
-    }
-    renderPlayers(true);
+function log(msg) {
+  logEl.innerText += msg + "\n";
+  logEl.scrollTop = logEl.scrollHeight;
+}
+
+function checkWin() {
+  if (mode === "score" && playerScores[currentPlayer] >= scoreTarget) {
+    gameEnded = true;
+    alert(`🎉 玩家 ${currentPlayer + 1} 達到 ${scoreTarget} 分，獲勝！`);
   }
+}
 
-  function rollDice() {
-      if (gameEnded) return;
-      const dice = Math.floor(Math.random() * 6) + 1;
-      document.getElementById("diceResult").textContent = dice;
-	  document.getElementById("people").textContent = currentPlayer;
-      const prevStep = playerSteps[currentPlayer];
-      let step = playerSteps[currentPlayer] + dice;
-      if (step >= pathIndices.length) {
-        if (mode === "round") playerRounds[currentPlayer]++;
-        step = step % pathIndices.length;
-      }
-      const fromIndex = pathIndices[prevStep % pathIndices.length];
-      const toIndex = pathIndices[step];
-      const cellImg = mapData[toIndex] || "";
-
-      function nextTurn() {
-        currentPlayer = (currentPlayer + 1) % 2;
-        document.getElementById("currentPlayer").textContent = currentPlayer + 1;
-      }
-
-      function proceed() {
-        playerSteps[currentPlayer] = step;
-        if (mode === "score") playerScores[currentPlayer] += dice;
-        animateMove(currentPlayer, fromIndex, toIndex, () => {
-          updateStatus();
-		  logAction(currentPlayer, dice, toIndex);
-          if (mode === "round" && playerRounds[currentPlayer] >= roundGoal) {
-            alert(`🎉 玩家 ${currentPlayer + 1} 完成 ${roundGoal} 圈，獲勝！`);
-            gameEnded = true;
-          } else if (mode === "score" && playerScores[currentPlayer] >= scoreGoal) {
-            alert(`🎉 玩家 ${currentPlayer + 1} 累積 ${scoreGoal} 分，獲勝！`);
-            gameEnded = true;
-          } else {
-            nextTurn();
-          }
-        });
-      }
-
-      if (cellImg.includes("quiz.png")) {
-        askQuiz(proceed, nextTurn);
+if (mode === "time") {
+  updateStatus();
+  timer = setInterval(() => {
+    timeLeft--;
+    updateStatus();
+    if (timeLeft <= 0) {
+      clearInterval(timer);
+      gameEnded = true;
+      if (playerScores[0] > playerScores[1]) {
+        alert(`⌛ 玩家 1 以 ${playerScores[0]} 分獲勝！`);
+      } else if (playerScores[1] > playerScores[0]) {
+        alert(`⌛ 玩家 2 以 ${playerScores[1]} 分獲勝！`);
       } else {
-        proceed();
+        alert("⌛ 時間到！雙方平手！");
       }
     }
+  }, 1000);
+}
 
-  function animateMove(playerIdx, from, to, callback) {
-  const token = playerTokens[playerIdx];
-      if (!token) return;
-      const rectFrom = gameBoard.children[from].getBoundingClientRect();
-      const rectTo = gameBoard.children[to].getBoundingClientRect();
-      const clone = token.cloneNode(true);
-      clone.style.position = 'fixed';
-      clone.style.zIndex = '9999';
-      clone.style.left = `${rectFrom.left}px`;
-      clone.style.top = `${rectFrom.top}px`;
-      clone.style.transition = 'all 0.4s ease';
-      document.body.appendChild(clone);
-      setTimeout(() => {
-        clone.style.left = `${rectTo.left}px`;
-        clone.style.top = `${rectTo.top}px`;
-      }, 10);
-      setTimeout(() => {
-        document.body.removeChild(clone);
-        gameBoard.children[to].appendChild(token);
-        if (callback) callback();
-      }, 450);
-    }
-
-  function renderPlayers(initial = false) {
-    document.querySelectorAll(".player").forEach(p => p.remove());
-      playerSteps.forEach((step, index) => {
-        const cellIndex = pathIndices[step];
-        const cell = gameBoard.children[cellIndex];
-        if (!cell) return;
-        const token = document.createElement("div");
-        token.className = `player player${index + 1}`;
-        const car = new Image();
-        car.src = index === 0 ? "car_red.png" : "car_blue.png";
-        token.appendChild(car);
-        cell.appendChild(token);
-        playerTokens[index] = token;
-      });
-    }
-	function logAction(player, dice, pos) {
-      const log = document.getElementById("log");
-      const stepNum = pathIndices.indexOf(pos) + 1;
-      const imgSrc = mapData[pos] || "";
-      const imgName = imgSrc.split('/').pop();
-      log.innerText += `玩家${player + 1} 擲出 ${dice}，移動到第 ${stepNum} 格（${imgName}）`;
-      log.scrollTop = log.scrollHeight;
-    }
-
-    function logQuizFail(player, question) {
-      const log = document.getElementById("log");
-      log.innerText += `玩家${player + 1} 答錯題目：「${question}」，失去前進機會`;
-      log.scrollTop = log.scrollHeight;
-    }
-	
+buildBoard();
+updateStatus();
 </script>
-    
 </body>
 </html>
