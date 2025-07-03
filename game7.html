@@ -255,7 +255,7 @@ function renderPlayers() {
 function rollDice() {
       if (gameEnded) return;
 	  const log = document.getElementById("log");
-	  checkWin();
+	  
 	  if (skipTurn[currentPlayer]) {
 		alert(`🛑 玩家 ${currentPlayer + 1} 停一回合`);
 		log.innerText += `\n🎯 玩家${currentPlayer + 1} 停一回合`;
@@ -416,23 +416,7 @@ function log(msg) {
 }
 
 function checkWin() {
- if (mode === "score") {
-    // 积分制：設定目標分數
-    scoreGoal = parseInt(document.getElementById("scoreTarget").value);
-  } else if (mode === "time") {
-    // 限時制：啟動倒數計時
-    timeLeft = parseInt(document.getElementById("timeLimit").value);
-    const status = document.getElementById("status");
-    status.textContent = `限時制：倒數 ${timeLeft} 秒 玩家a1: ${playerScores[0]}分 / 玩家2: ${playerScores[1]}分`;
-
-      
-  }
-
-
-
-
-
-
+ 
 
   if (mode === "score" && playerScores[currentPlayer] >= scoreTarget) {
     gameEnded = true;
@@ -587,7 +571,7 @@ function handleEventEffect(event, fromStep) {
       } else {
         currentPlayer = (currentPlayer + 1) % 2;
         document.getElementById("currentPlayer").textContent = currentPlayer + 1;
-		checkWin();
+		
       }
     });
   });
