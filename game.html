@@ -36,10 +36,20 @@
       background: #f5f5f5; border: 1px solid #ccc; padding: 6px;
       max-height: 180px; overflow-y: auto;
     }
+	 #configInfo {
+      background: #e8f4ff;
+      padding: 10px;
+      border: 1px solid #89b;
+      border-radius: 4px;
+      margin-bottom: 10px;
+      font-size: 14px;
+    }
+	
+	
   </style>
 </head>
 <body>
-  <h2>🎲 遊戲開始！</h2>
+  <h2>🎲 遊戲開始！</h2><div id="configInfo"></div>
   <div id="game-board"></div>
   <p>
     <button onclick="rollDice()">擲骰 🎲 玩家 <span id="currentPlayer">1</span></button>
@@ -51,7 +61,10 @@
 <script>
 const config = JSON.parse(localStorage.getItem("gameConfig") || '{}');
 const { mode, timeLimit, scoreTarget, mapData, pathIndices } = config;
-
+document.getElementById("configInfo").innerText =
+  mode === "time"
+    ? `🎯 模式：限時制（${timeLimit} 秒）`
+    : `🎯 模式：積分制（${scoreTarget} 分）`;
 const gameBoard = document.getElementById("game-board");
 const logEl = document.getElementById("log");
 let playerSteps = [0, 0];
