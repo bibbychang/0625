@@ -135,9 +135,37 @@ function drop(e) {
   cell.innerHTML = '';
   const img = new Image();
   img.src = filename;
+  img.style.width = "100%";
+  img.style.height = "100%";
+  img.style.objectFit = "contain";
+  
+  // 建立 tooltip 元素
+  const tooltip = document.createElement("div");
+  tooltip.className = "tooltip";
+  tooltip.textContent = getTooltipText(filename);  // 取得說明文字
+  
   cell.appendChild(img);
+  cell.appendChild(tooltip);
   if (!placedOrder.includes(index)) placedOrder.push(index);
 }
+function getTooltipText(filename) {
+  const name = filename.split("/").pop();
+  const map = {
+    "start.png": "起點：玩家從這裡開始",
+    "goal.png": "終點：遊戲的目標點",
+    "quiz.png": "答題格：答對可得分",
+    "event1.png": "事件卡1：隨機事件",
+    "event2.png": "事件卡2：更多事件",
+    "underdesk.png": "危險格：退回起點",
+    "dice.png": "骰子格：可以再擲一次",
+    "warning1.png": "警告標示",
+    "safe.png": "安全區域",
+    // ... 加其他圖片說明
+  };
+  return map[name] || `圖片：${name}`;
+}
+
+
 
  function loadMap1() {
     const map1 = [
@@ -171,6 +199,14 @@ function drop(e) {
       image.width = image.height = 60;
       cell.appendChild(image);
       placedOrder.push(index);
+	  
+	  const tooltip = document.createElement("div");
+tooltip.className = "tooltip";
+tooltip.textContent = getTooltipText(img);
+cell.appendChild(image);
+cell.appendChild(tooltip);
+	  
+	  
     });
   }
 
