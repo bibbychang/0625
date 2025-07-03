@@ -84,7 +84,7 @@
 	
   </div>
   <fieldset style="margin-top: 10px; border: 1px solid #ccc; padding: 10px;">
-  <div style="border: 2px solid red;">
+  
   <legend>🎯 指定骰子點數（Debug 用）</legend>
   <label style="margin-right: 8px;"><input type="radio" name="diceOverride" value="0" checked> 不指定</label>
   <label style="margin-right: 8px;"><input type="radio" name="diceOverride" value="1"> 1</label>
@@ -93,7 +93,7 @@
   <label style="margin-right: 8px;"><input type="radio" name="diceOverride" value="4"> 4</label>
   <label style="margin-right: 8px;"><input type="radio" name="diceOverride" value="5"> 5</label>
   <label style="margin-right: 8px;"><input type="radio" name="diceOverride" value="6"> 6</label>
-</fieldset></div>
+</fieldset>
   <div id="game-board"></div>
   
   
@@ -168,11 +168,11 @@ updateStatus();
     // 限時制：啟動倒數計時
     timeLeft = config.timeLimit;
     const status = document.getElementById("status");
-    status.textContent = `限時制：倒數 ${timeLeft} 秒 玩家a1: ${playerScores[0]}分 / 玩家2: ${playerScores[1]}分`;
+    status.textContent = `限時制：倒數 ${timeLeft} 秒 玩家: ${playerScores[0]}分 / 玩家2: ${playerScores[1]}分`;
 
     timer = setInterval(() => {
       timeLeft--;
-      status.textContent = `限時制：倒數 ${timeLeft} 秒 玩家b1: ${playerScores[0]}分 / 玩家2: ${playerScores[1]}分`;
+      status.textContent = `限時制：倒數 ${timeLeft} 秒 玩家: ${playerScores[0]}分 / 玩家2: ${playerScores[1]}分`;
 
       if (timeLeft <= 0) {
         clearInterval(timer);
