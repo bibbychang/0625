@@ -95,6 +95,8 @@ let skipTurn = [false, false];
 buildBoard();
 updateStatus();
 
+
+
 function buildBoard() {
   for (let i = 0; i < 64; i++) {
     const cell = document.createElement("div");
@@ -113,6 +115,9 @@ function buildBoard() {
     gameBoard.appendChild(cell);
   }
   renderPlayers();
+  if (!pathIndices || pathIndices.length === 0) {
+  alert("⚠️ 請先從 editor.html 設定移動順序並開始遊戲！");
+}
 }
 function askQuiz(playerIndex,onCorrect, onWrong) {
   const synth = window.speechSynthesis;
@@ -226,13 +231,19 @@ function rollDice() {
       const toIndex = pathIndices[step];
       const cellImg = mapData[toIndex] || "";
 
+if (fromIndex === undefined || toIndex === undefined) {
+  alert("⚠️ 找不到對應的格子，可能是地圖尚未正確設定。");
+  return;
+}
+
+
       function nextTurn() {
         currentPlayer = (currentPlayer + 1) % 2;
         document.getElementById("currentPlayer").textContent = currentPlayer + 1;
       }
 
       function proceed() {
-	  
+	  log.innerText += `proceed`;
 	  const pathLength = pathIndices.length;
 	  const prev = playerSteps[currentPlayer];
 	  const newStep = step;
@@ -246,7 +257,7 @@ function rollDice() {
 	  
         playerSteps[currentPlayer] = step;
         animateMove(currentPlayer, fromIndex, toIndex, () => {
-		
+		log.innerText += `animateMove`;
           updateStatus();
 		  logAction(currentPlayer, dice, toIndex);
 			if (mode === "score" && playerScores[currentPlayer] >= scoreGoal) {
@@ -310,7 +321,9 @@ function rollDice() {
 
   function animateMove(playerIdx, from, to, callback) {
   const token = playerTokens[playerIdx];
+  log.innerText += `ccc`;
       if (!token) return;
+	  log.innerText += `eee`;
       const rectFrom = gameBoard.children[from].getBoundingClientRect();
       const rectTo = gameBoard.children[to].getBoundingClientRect();
       const clone = token.cloneNode(true);
