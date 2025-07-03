@@ -6,7 +6,7 @@
   <style>
     body { font-family: sans-serif; margin: 0; padding: 1rem; display: flex; }
 	#left-panel { flex: 1; }
-    #right-panel { width: 550px; margin-left: 10px; }
+    #right-panel { width: 750px; margin-left: 10px; }
     #game-board {
       display: grid;
       grid-template-columns: repeat(8, 60px);
@@ -482,7 +482,9 @@ function didCompleteLap(prevStep, newStep, pathLength) {
 
   // 💬 先彈出事件框（這是你要的）
   alert(`🎲 事件卡：\n${event.desc}\n➡ 效果：${event.effect}`);
-
+showEventCard(event, () => {
+  // 原本 alert 後的程式碼放這裡
+});
   const fromIndex = pathIndices[fromStep];
   const toIndex = pathIndices[newStep];
   playerSteps[currentPlayer] = newStep;
