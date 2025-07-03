@@ -426,14 +426,12 @@ function didCompleteLap(prevStep, newStep, pathLength) {
 	function handleEventEffect(event, fromStep) {
   const moveEffects = ["前進1格", "前進2格", "退回1格", "退回2格", "回到起點"];
   const log = document.getElementById("log");
-  const match = landedImg.src.match(/(E\\d+)/);
-  const eventId = match ? match[1] : "事件";
+  
+  
   //log.innerText += `\n觸發事件：「${event.desc} ${event.effect}」\n`;
   const lastRoll = lastDiceRoll[currentPlayer];
   
   log.innerText += `\n🎯🎯🎯🎯觸發事件：「${event.desc} ${event.effect}」\n`;
-
-	log.innerText += `\t\t🎯 玩家${currentPlayer + 1} 觸發：「${eventId} ${event.effect}」`;
 
   log.scrollTop = log.scrollHeight;
 
