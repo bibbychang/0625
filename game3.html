@@ -169,6 +169,7 @@ function askQuiz(playerIndex,onCorrect, onWrong) {
 
   quiz.options.forEach(opt => {
     const btn = document.createElement("button");
+	const log = document.getElementById("log");
     btn.textContent = opt;
     btn.style.display = "block";
     btn.style.margin = "8px auto";
@@ -176,15 +177,16 @@ function askQuiz(playerIndex,onCorrect, onWrong) {
     btn.style.fontSize = "16px";
     btn.style.cursor = "pointer";
     btn.onclick = () => {
-      document.body.removeChild(modal);
+      document.body.removeChild(modal); 
       if (opt.trim().startsWith(quiz.answer)) {
         alert("答對了！加3分。");
-		log.innerText += `答對了！加3分。`;
+		log.innerText += `玩家${playerIndex + 1} 答對題目：「${quiz.question}」`;
+		log.scrollTop = log.scrollHeight;
         playerScores[playerIndex] += 3;   // ✅ 答對加 3 分
 		updateStatus();
       } else {
         alert("答錯了！輪到下一位玩家。");
-		log.innerText += `答錯了`;
+		
         logQuizFail(playerIndex, quiz.question);       
       }
     };
@@ -252,10 +254,10 @@ function rollDice() {
       const toIndex = pathIndices[step];
       const cellImg = mapData[toIndex] || "";
 
-if (fromIndex === undefined || toIndex === undefined) {
-  alert("⚠️ 找不到對應的格子，可能是地圖尚未正確設定。");
-  return;
-}
+		if (fromIndex === undefined || toIndex === undefined) {
+		  alert("⚠️ 找不到對應的格子，可能是地圖尚未正確設定。");
+		  return;
+		}
 
 
       function nextTurn() {
@@ -278,7 +280,7 @@ if (fromIndex === undefined || toIndex === undefined) {
 	  
         playerSteps[currentPlayer] = step;
         animateMove(currentPlayer, fromIndex, toIndex, () => {
-		log.innerText += `animateMove`;
+		log.innerText += `animateMove???`;
           updateStatus();
 		  logAction(currentPlayer, dice, toIndex);
 			if (mode === "score" && playerScores[currentPlayer] >= scoreGoal) {
