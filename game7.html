@@ -86,7 +86,7 @@
 </div>
 <div id="right-panel">
     <h2>紀錄</h2>
-    <p id="status"></p>
+    <div id="status"></div>
   <div id="log"></div>
   <div id="event-card-display"></div>
   </div>
@@ -415,33 +415,6 @@ function log(msg) {
   logEl.scrollTop = logEl.scrollHeight;
 }
 
-function checkWin() {
- 
-
-  if (mode === "score" && playerScores[currentPlayer] >= scoreTarget) {
-    gameEnded = true;
-    alert(`🎉 玩家 ${currentPlayer + 1} 達到 ${scoreTarget} 分，獲勝！`);
-  }
-}
-
-if (mode === "time") {
-  updateStatus();
-  timer = setInterval(() => {
-    timeLeft--;
-    updateStatus();
-    if (timeLeft <= 0) {
-      clearInterval(timer);
-      gameEnded = true;
-      if (playerScores[0] > playerScores[1]) {
-        alert(`⌛ 玩家 1 以 ${playerScores[0]} 分獲勝！`);
-      } else if (playerScores[1] > playerScores[0]) {
-        alert(`⌛ 玩家 2 以 ${playerScores[1]} 分獲勝！`);
-      } else {
-        alert("⌛ 時間到！雙方平手！");
-      }
-    }
-  }, 1000);
-}
 function logAction(player, dice, pos) {
       const log = document.getElementById("log");
       const stepNum = pathIndices.indexOf(pos) + 1;
@@ -571,7 +544,6 @@ function handleEventEffect(event, fromStep) {
       } else {
         currentPlayer = (currentPlayer + 1) % 2;
         document.getElementById("currentPlayer").textContent = currentPlayer + 1;
-		
       }
     });
   });
