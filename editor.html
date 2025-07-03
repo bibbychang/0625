@@ -27,21 +27,46 @@
     <option value="45">45 分</option>
   </select>
 
-  <div id="sidebar"></div>
+  <div id="sidebar">
+        <img src="start.png" class="item" draggable="true" data-img="start.png">
+        <img src="goal.png" class="item" draggable="true" data-img="goal.png">
+        <img src="bag1.png" class="item" draggable="true" data-img="bag1.png">
+		<img src="bag2.png" class="item" draggable="true" data-img="bag2.png">
+		
+		<img src="card1.png" class="item" draggable="true" data-img="card1.png">
+		<img src="card2.png" class="item" draggable="true" data-img="card2.png">
+		<img src="dice.png" class="item" draggable="true" data-img="dice.png">
+		<img src="earthquake1.png" class="item" draggable="true" data-img="earthquake1.png">
+        <img src="earthquake2.png" class="item" draggable="true" data-img="earthquake2.png">
+		<img src="earthquake3.png" class="item" draggable="true" data-img="earthquake3.png">
+    <img src="event1.png" class="item" draggable="true" data-img="event1.png">
+    <img src="event2.png" class="item" draggable="true" data-img="event2.png">
+    <img src="fire1.png" class="item" draggable="true" data-img="fire1.png">
+    <img src="fire2.png" class="item" draggable="true" data-img="fire2.png">
+	<img src="firetruck.png" class="item" draggable="true" data-img="firetruck.png">
+    <img src="firstaid2.png" class="item" draggable="true" data-img="firstaid2.png">
+	<img src="light.png" class="item" draggable="true" data-img="light.png">
+	<img src="ok1.png" class="item" draggable="true" data-img="ok1.png">
+	<img src="ok2.png" class="item" draggable="true" data-img="ok2.png">
+	<img src="ok3.png" class="item" draggable="true" data-img="ok3.png">
+    <img src="quiz.png" class="item" draggable="true" data-img="quiz.png">
+    
+	<img src="rain1.png" class="item" draggable="true" data-img="rain1.png">
+	<img src="rain2.png" class="item" draggable="true" data-img="rain2.png">
+	<img src="rain3.png" class="item" draggable="true" data-img="rain3.png">
+	<img src="safe.png" class="item" draggable="true" data-img="safe.png">
+	<img src="safezone.png" class="item" draggable="true" data-img="safezone.png">
+	<img src="warning1.png" class="item" draggable="true" data-img="warning1.png">
+    <img src="warning2.png" class="item" draggable="true" data-img="warning2.png">
+	<img src="underdesk.png" class="item" draggable="true" data-img="underdesk.png">
+	
+      </div>
+	  <button onclick="loadMap1()">📌 地圖1</button><button onclick="saveAndStart()">▶ 開始遊戲</button>
   <div id="map"></div>
-  <button onclick="saveAndStart()">▶ 開始遊戲</button>
+  
 
 <script>
-const images = ["start.png","goal.png","quiz.png","event1.png","event2.png","underdesk.png"];
-const sidebar = document.getElementById("sidebar");
-images.forEach(src => {
-  const img = new Image();
-  img.src = src;
-  img.className = "item";
-  img.draggable = true;
-  img.dataset.img = src;
-  sidebar.appendChild(img);
-});
+
 
 const mapEl = document.getElementById("map");
 let placedOrder = [];
@@ -53,6 +78,11 @@ for (let i = 0; i < 64; i++) {
   cell.ondrop = drop;
   mapEl.appendChild(cell);
 }
+
+  
+
+
+
 function drop(e) {
   e.preventDefault();
   const filename = e.dataTransfer.getData('text/plain');
