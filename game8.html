@@ -153,7 +153,7 @@ updateStatus();
     scoreGoal = parseInt(document.getElementById("scoreTarget").value);
   } else if (mode === "time") {
     // 限時制：啟動倒數計時
-    timeLeft = parseInt(document.getElementById("timeLimit").value);
+    timeLeft = config.timeLimit;
     const status = document.getElementById("status");
     status.textContent = `限時制：倒數 ${timeLeft} 秒 玩家a1: ${playerScores[0]}分 / 玩家2: ${playerScores[1]}分`;
 
