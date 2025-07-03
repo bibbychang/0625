@@ -77,10 +77,21 @@
 <div id="left-panel">
   <h2>🎲 遊戲開始！</h2><div id="configInfo"></div>
    <div id="status" style="margin: 10px 0;"></div>
-  <p>
+  <div>
     <button onclick="rollDice()">擲骰 🎲 玩家 <span id="currentPlayer">1</span></button>
+	
     剛剛<span id="people">-</span> 擲出 <span id="diceResult">-</span>
-  </p>
+	
+  </div>
+  <div>
+  <label><input type="radio" name="diceOverride" value="0" checked> 不指定</label>
+  <label><input type="radio" name="diceOverride" value="1"> 1</label>
+  <label><input type="radio" name="diceOverride" value="2"> 2</label>
+  <label><input type="radio" name="diceOverride" value="3"> 3</label>
+  <label><input type="radio" name="diceOverride" value="4"> 4</label>
+  <label><input type="radio" name="diceOverride" value="5"> 5</label>
+  <label><input type="radio" name="diceOverride" value="6"> 6</label>
+</div>
   <div id="game-board"></div>
   
   
@@ -284,7 +295,17 @@ function renderPlayers() {
 function rollDice() {
       if (gameEnded) return;
 	  const log = document.getElementById("log");
-	  
+	  const selected = document.querySelector('input[name="diceOverride"]:checked');
+		let dice = 0;
+		
+		if (selected && selected.value !== "0") {
+    dice = parseInt(selected.value);
+  } else {
+    dice = Math.floor(Math.random() * 6) + 1;
+  }
+		
+		
+		
 	  if (skipTurn[currentPlayer]) {
 		alert(`🛑 玩家 ${currentPlayer + 1} 停一回合`);
 		log.innerText += `\n🎯 玩家${currentPlayer + 1} 停一回合`;
@@ -293,7 +314,7 @@ function rollDice() {
 		document.getElementById("currentPlayer").textContent = currentPlayer + 1;
 		return;
 	  }
-      const dice = Math.floor(Math.random() * 6) + 1;
+      //const dice = Math.floor(Math.random() * 6) + 1;
 	
 		log.innerText += `\n🎯 玩家${currentPlayer + 1} 擲出${dice}`;
 		
