@@ -415,49 +415,6 @@ function log(msg) {
   logEl.scrollTop = logEl.scrollHeight;
 }
 
-function checkWin() {
- if (mode === "score") {
-    // 积分制：設定目標分數
-    scoreGoal = parseInt(document.getElementById("scoreTarget").value);
-  } else if (mode === "time") {
-    // 限時制：啟動倒數計時
-    timeLeft = parseInt(document.getElementById("timeLimit").value);
-    const status = document.getElementById("status");
-    status.textContent = `限時制：倒數 ${timeLeft} 秒 玩家a1: ${playerScores[0]}分 / 玩家2: ${playerScores[1]}分`;
-
-      
-  }
-
-
-
-
-
-
-
-  if (mode === "score" && playerScores[currentPlayer] >= scoreTarget) {
-    gameEnded = true;
-    alert(`🎉 玩家 ${currentPlayer + 1} 達到 ${scoreTarget} 分，獲勝！`);
-  }
-}
-
-if (mode === "time") {
-  updateStatus();
-  timer = setInterval(() => {
-    timeLeft--;
-    updateStatus();
-    if (timeLeft <= 0) {
-      clearInterval(timer);
-      gameEnded = true;
-      if (playerScores[0] > playerScores[1]) {
-        alert(`⌛ 玩家 1 以 ${playerScores[0]} 分獲勝！`);
-      } else if (playerScores[1] > playerScores[0]) {
-        alert(`⌛ 玩家 2 以 ${playerScores[1]} 分獲勝！`);
-      } else {
-        alert("⌛ 時間到！雙方平手！");
-      }
-    }
-  }, 1000);
-}
 function logAction(player, dice, pos) {
       const log = document.getElementById("log");
       const stepNum = pathIndices.indexOf(pos) + 1;
