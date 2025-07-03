@@ -49,27 +49,7 @@
       font-size: 14px;
 	  width:200px;
     }
-	#event-card-display {
-      position: fixed;
-      top: 50%; left: 50%;
-      transform: translate(-50%, -50%);
-      width: 280px; height: 380px;
-      background: white;
-      border: 2px solid #444;
-      border-radius: 8px;
-      box-shadow: 0 0 20px rgba(0,0,0,0.4);
-      display: none;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      text-align: center;
-      z-index: 9999;
-      padding: 20px;
-      animation: fadeIn 0.4s ease;
-    }
-    #event-card-display.show {
-      display: flex;
-    }
+	
 	
   </style>
 </head>
@@ -89,7 +69,6 @@
     <p id="status"></p>
   <div id="log"></div>
   </div>
-  <div id="event-card-display"></div>
 <script>
 
 
@@ -98,7 +77,6 @@
 
 const config = JSON.parse(localStorage.getItem("gameConfig") || '{}');
 const { mode, timeLimit, scoreTarget, mapData, pathIndices } = config;
-const eventCard = document.getElementById("event-card");
 document.getElementById("configInfo").innerText =
   mode === "time"
     ? `🎯 模式：限時制（${timeLimit} 秒）`
@@ -471,11 +449,6 @@ function didCompleteLap(prevStep, newStep, pathLength) {
   
   log.innerText += `\n🎯🎯🎯🎯觸發事件：「${event.desc} ${event.effect}」\n`;
 
-
-
-
-
-
   log.scrollTop = log.scrollHeight;
 
   let newStep = playerSteps[currentPlayer];
@@ -509,9 +482,6 @@ function didCompleteLap(prevStep, newStep, pathLength) {
 
   // 💬 先彈出事件框（這是你要的）
   alert(`🎲 事件卡：\n${event.desc}\n➡ 效果：${event.effect}`);
-  
-  showEventCard(event, ());
-  
 
   const fromIndex = pathIndices[fromStep];
   const toIndex = pathIndices[newStep];
@@ -575,25 +545,6 @@ if (img.includes("dice.png")) {
     }
   });
 }
-
-function showEventCard(event, callback) {
-  const card = document.getElementById("event-card-display");
-  card.innerHTML = `
-    <h3>🎴 事件卡</h3>
-    <p>${event.desc}</p>
-    <strong>➡ ${event.effect}</strong>
-    <button onclick="hideEventCard()">確認</button>
-  `;
-  card.classList.add("show");
-  card.querySelector("button").onclick = () => {
-    hideEventCard();
-    if (callback) callback();
-  };
-}
-function hideEventCard() {
-  document.getElementById("event-card-display").classList.remove("show");
-}
-
 
 </script>
 </body>
