@@ -569,7 +569,24 @@ if (img.includes("dice.png")) {
     }
   });
 }
+function showEventCard(event, callback) {
+  const card = document.getElementById("event-card-display");
+  card.innerHTML = `
+    <h3>🎴 事件卡</h3>
+    <p>${event.desc}</p>
+    <strong>➡ ${event.effect}</strong>
+    <button>確認</button>
+  `;
+  card.classList.add("show");
+  card.querySelector("button").onclick = () => {
+    hideEventCard();
+    if (callback) callback();
+  };
+}
 
+function hideEventCard() {
+  document.getElementById("event-card-display").classList.remove("show");
+}
 </script>
 </body>
 </html>
