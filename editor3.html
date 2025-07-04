@@ -40,14 +40,14 @@
   visibility: visible;
   opacity: 1;
 }
-	#map .item-wrapper {
+	.drop-item-wrapper {
   position: relative;
   display: inline-block;
   width: 100%;
   height: 100%;
 }
 
-#map .tooltip {
+.drop-tooltip {
   visibility: hidden;
   opacity: 0;
   width: max-content;
@@ -68,7 +68,7 @@
   white-space: pre-line;
 }
 
-#map .item-wrapper:hover .tooltip {
+.drop-item-wrapper:hover .tooltip {
   visibility: visible;
   opacity: 1;
 }
@@ -134,19 +134,18 @@ for (let i = 0; i < 64; i++) {
   mapEl.appendChild(cell);
 }
 function getDescription(filename) {
-  const map = {
-    "start.png": "起點：遊戲開始的位置",
-    "goal.png": "終點：遊戲結束的位置",
-    "quiz.png": "問答格：答對加分",
-    "dice.png": "骰子格：再擲一次",
-    "event1.png": "事件卡1：觸發隨機事件",
-    "event2.png": "事件卡2：觸發隨機事件",
-    "underdesk.png": "書櫃格：退回起點",
-    // 可以持續擴充其他圖片說明
+  const name = filename.split('/').pop();
+  const descriptions = {
+    "start.png": "起點",
+    "goal.png": "終點",
+    "quiz.png": "答題格",
+    "event1.png": "事件卡A",
+    "event2.png": "事件卡B",
+    "underdesk.png": "被書壓倒退回起點",
+    "dice.png": "骰子格（再擲一次）",
+    // ...可以加更多
   };
-
-  const name = filename.split('/').pop(); // 防止是絕對路徑
-  return map[name] || "一般格子";
+  return descriptions[name] || name;
 }
 
 function drop(e) {
@@ -156,18 +155,23 @@ function drop(e) {
   const index = parseInt(cell.dataset.cell);
   cell.innerHTML = '';
   
+  // 建立 wrapper + 圖片 + tooltip
+  
   const wrapper = document.createElement("div");
-  wrapper.className = "item-wrapper";
+  wrapper.className = "drop-item-wrapper";
+
 
   const img = new Image();
   img.src = filename;
   img.className = "item";
-   const tooltip = document.createElement("div");
-  tooltip.className = "tooltip";
-  tooltip.textContent = getDescription(filename);  // 根據圖檔名稱給說明文字
+  wrapper.appendChild(img);
   
-   wrapper.appendChild(img);
+   const tooltip = document.createElement("div");
+  tooltip.className = "drop-tooltip";
+  tooltip.textContent = getDescription(filename);  // 根據圖檔名稱給說明文字
   wrapper.appendChild(tooltip);
+  
+   
   cell.appendChild(wrapper);
   
   
