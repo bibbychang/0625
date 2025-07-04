@@ -42,11 +42,18 @@
 }
 	.drop-item-wrapper {
   position: relative;
-  <!--display: inline-block;-->
+  display: inline-block;
   width: 100%;
   height: 100%;
 }
-
+.drop-item-wrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border: 1px solid #aaa;
+  border-radius: 6px;
+  background: white;
+}
 .drop-tooltip {
   visibility: hidden;
   opacity: 0;
