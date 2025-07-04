@@ -43,6 +43,10 @@
   visibility: visible;
   opacity: 1;
 }
+.cell .item-wrapper:hover .tooltip {
+  visibility: visible;
+  opacity: 1;
+}
     .order-number { position: absolute; bottom: 2px; right: 4px; font-size: 10px; background: rgba(255,255,255,0.7); padding: 1px 3px; border-radius: 4px; }
     #sidebar img { width: 60px; height: 60px; cursor: grab; border: 1px solid #aaa; border-radius: 6px; margin: 3px; background: white; }
   </style>
@@ -148,8 +152,11 @@ function drop(e) {
   tooltip.className = "tooltip";
   tooltip.textContent = getTooltipText(filename);  // 取得說明文字
   
-  cell.appendChild(img);
-  cell.appendChild(tooltip);
+  const wrapper = document.createElement("div");
+  wrapper.className = "item-wrapper";
+  wrapper.appendChild(img);
+  wrapper.appendChild(tooltip);
+   cell.appendChild(wrapper);
   if (!placedOrder.includes(index)) placedOrder.push(index);
 }
 function getTooltipText(filename) {
@@ -206,8 +213,11 @@ function getTooltipText(filename) {
 	  const tooltip = document.createElement("div");
 tooltip.className = "tooltip";
 tooltip.textContent = getTooltipText(img);
-cell.appendChild(image);
-cell.appendChild(tooltip);
+const wrapper = document.createElement("div");
+wrapper.className = "item-wrapper";
+wrapper.appendChild(image);
+wrapper.appendChild(tooltip);
+cell.appendChild(wrapper);
 	  cell.appendChild(image);
 	  cell.appendChild(tooltip);
       placedOrder.push(index);
