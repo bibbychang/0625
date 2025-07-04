@@ -365,7 +365,7 @@ function rollDice() {
 	  
         playerSteps[currentPlayer] = step;
         animateMove(currentPlayer, fromIndex, toIndex, () => {
-		log.innerText += `玩家${currentPlayer + 1} 從${fromIndex}移動到{toIndex}\t\t`;
+		log.innerText += `玩家${currentPlayer + 1} 從${fromIndex}移動到${toIndex}\t\t`;
           updateStatus();
 		  logAction(currentPlayer, dice, toIndex);
 			if (mode === "score" && playerScores[currentPlayer] >= scoreGoal) {
