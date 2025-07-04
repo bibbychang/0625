@@ -11,7 +11,8 @@
 	.item-wrapper {
   position: relative;
   display: inline-block;
-  margin: 3px;
+  margin: 3px;width: 100%;
+  height: 100%;
 }
 
 .tooltip {
@@ -207,19 +208,22 @@ function getTooltipText(filename) {
       cell.innerHTML = '';
       const image = new Image();
       image.src = img;
-      image.width = image.height = 60;
+	  image.style.width = "100%";
+    image.style.height = "100%";
+    image.style.objectFit = "contain";
+      //image.width = image.height = 60;
       
 	  
 	  const tooltip = document.createElement("div");
 tooltip.className = "tooltip";
 tooltip.textContent = getTooltipText(img);
+
 const wrapper = document.createElement("div");
 wrapper.className = "item-wrapper";
 wrapper.appendChild(image);
 wrapper.appendChild(tooltip);
 cell.appendChild(wrapper);
-	  cell.appendChild(image);
-	  cell.appendChild(tooltip);
+	 
       placedOrder.push(index);
 	  
     });
