@@ -252,6 +252,9 @@ function drop(e) {
       image.width = image.height = 60;
       const tooltip = document.createElement("div");
 		tooltip.className = "map-tooltip";
+		tooltip.textContent = tooltipTextMap[img] || img;
+		alert( `獲勝${tooltip.textContent}`);
+		
 		tooltip.innerText = img;
 	  wrapper.appendChild(image);
     wrapper.appendChild(tooltip);
