@@ -257,8 +257,8 @@ function drop(e) {
       const tooltip = document.createElement("div");
 		tooltip.className = "map-tooltip";
 		
-		
-		
+		tooltip.textContent = "aaa";
+		console.log("加入 tooltip:", tooltip.textContent);
 		tooltip.innerText = img;
 	  wrapper.appendChild(image);
     wrapper.appendChild(tooltip);
