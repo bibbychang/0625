@@ -40,12 +40,21 @@
   visibility: visible;
   opacity: 1;
 }
-	.drop-item-wrapper {
+
+.drop-item-wrapper, .map-item-wrapper {
   position: relative;
-  display: inline-block;
-  width: 100%;
-  height: 100%;
+  width: 100%; height: 100%;
+  display: flex;         /* 新增這行 */
+  justify-content: center;
+  align-items: center;
 }
+.drop-item-wrapper img, .map-item-wrapper img {
+  width: 100%; height: 100%; object-fit: contain;
+  /* 加一行確保 img 不會遮蔽 pointer 事件 */
+  pointer-events: none;
+}
+
+
 .drop-item-wrapper img {
   width: 100%;
   height: 100%;
@@ -81,12 +90,6 @@
 }
 	
 	
-	.map-item-wrapper {
-  position: relative;
-  display: inline-block;
-  width: 60px;
-  height: 60px;
-}
 
 .map-item-wrapper:hover .map-tooltip {
   visibility: visible;
