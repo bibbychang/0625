@@ -41,20 +41,24 @@
   opacity: 1;
 }
 	.drop-item-wrapper {
- position: relative;
+  position: relative;
   display: inline-block;
   width: 100%;
   height: 100%;
 }
 .drop-item-wrapper img {
-width: 60px; height: 60px; cursor: grab; border: 1px solid #aaa; border-radius: 6px; margin: 3px; background: white;
- 
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border: 1px solid #aaa;
+  border-radius: 6px;
+  background: white;
 }
 .drop-tooltip {
   visibility: hidden;
   opacity: 0;
   width: max-content;
-  max-width: 150px;
+  max-width: 140px;
   background-color: #333;
   color: #fff;
   text-align: center;
@@ -62,9 +66,9 @@ width: 60px; height: 60px; cursor: grab; border: 1px solid #aaa; border-radius: 
   padding: 5px 8px;
   position: absolute;
   z-index: 10;
-  bottom: 105%;
-  left: 50%;
-  transform: translateX(-50%);
+  bottom:auto;
+  top:-8px; transform:translate(-50%,-100%);
+  
   transition: opacity 0.3s;
   font-size: 12px;
   pointer-events: none;
@@ -92,6 +96,28 @@ width: 60px; height: 60px; cursor: grab; border: 1px solid #aaa; border-radius: 
 .map-tooltip {
   visibility: hidden;
   opacity: 0;
+  position: absolute;
+  background-color: #333;
+  color: white;
+  text-align: center;
+  padding: 5px 8px;
+  border-radius: 6px;
+  bottom: 105%;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 12px;
+  white-space: pre-line;
+  z-index: 10;
+  transition: opacity 0.3s;
+}
+ .item-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+ .item-wrapper .tooltip {
+  visibility: hidden;
+  opacity: 0;
   width: max-content;
   max-width: 150px;
   background-color: #333;
@@ -109,7 +135,11 @@ width: 60px; height: 60px; cursor: grab; border: 1px solid #aaa; border-radius: 
   pointer-events: none;
   white-space: pre-line;
 }
-	
+
+ .item-wrapper:hover .tooltip {
+  visibility: visible;
+  opacity: 1;
+}
 	
   </style>
 </head>
@@ -248,16 +278,16 @@ function drop(e) {
       const cell = mapEl.querySelector(`.cell[data-cell="${index}"]`);
       cell.innerHTML = '';
       const wrapper = document.createElement("div");
-    wrapper.className = "map-item-wrapper";
+    wrapper.className = "item-wrapper";
 	  
 	  const image = new Image();
       image.src = img;
       image.width = image.height = 60;
       const tooltip = document.createElement("div");
-		tooltip.className = "map-tooltip";
+		tooltip.className = "tooltip";
 		
 		tooltip.textContent = "aaa";
-		console.log("加入 tooltip:", tooltip.textContent);
+		
 		tooltip.innerText = img;
 	  wrapper.appendChild(image);
     wrapper.appendChild(tooltip);
