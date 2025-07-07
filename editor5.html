@@ -178,7 +178,7 @@ for (let i = 0; i < 64; i++) {
 function getDescription(filename) {
   const name = filename.split('/').pop();
   const descriptions = {
-    "start.png": "起點",
+    "start.png": "起點 玩家從這裡開始",
     "goal.png": "終點",
     "quiz.png": "答題格",
     "event1.png": "事件卡A",
@@ -187,7 +187,7 @@ function getDescription(filename) {
     "dice.png": "再擲一次",
     // ...可以加更多
   };
-  return descriptions[name] || name;
+  return descriptions[name] || `${name}`;
 }
 
 function drop(e) {
