@@ -188,6 +188,10 @@ function getDescription(filename) {
 }
 
 function drop(e) {
+  
+  
+
+  
   e.preventDefault();
   const filename = e.dataTransfer.getData('text/plain');
   const cell = e.target.closest('.cell');
@@ -202,13 +206,13 @@ function drop(e) {
 
   const img = new Image();
   img.src = filename;
-  img.className = "item";
+  //img.className = "item";
   wrapper.appendChild(img);
   
-   const tooltip = document.createElement("div");
-  tooltip.className = "drop-tooltip";
-  tooltip.textContent = getDescription(filename);  // 根據圖檔名稱給說明文字
-  wrapper.appendChild(tooltip);
+   const tip = document.createElement("div");
+  tip.className = "drop-tooltip";
+  tip.textContent = getDescription("aaa");  // 根據圖檔名稱給說明文字
+  wrapper.appendChild(tip);
   
    
   cell.appendChild(wrapper);
