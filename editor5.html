@@ -110,36 +110,7 @@
   z-index: 10;
   transition: opacity 0.3s;
 }
- .item-wrapper {
-  position: relative;
-  display: inline-block;
-}
-
- .item-wrapper .tooltip {
-  visibility: hidden;
-  opacity: 0;
-  width: max-content;
-  max-width: 150px;
-  background-color: #333;
-  color: #fff;
-  text-align: center;
-  border-radius: 6px;
-  padding: 5px 8px;
-  position: absolute;
-  z-index: 10;
-  bottom: 105%;
-  left: 50%;
-  transform: translateX(-50%);
-  transition: opacity 0.3s;
-  font-size: 12px;
-  pointer-events: none;
-  white-space: pre-line;
-}
-
- .item-wrapper:hover .tooltip {
-  visibility: visible;
-  opacity: 1;
-}
+	
 	
   </style>
 </head>
@@ -278,13 +249,13 @@ function drop(e) {
       const cell = mapEl.querySelector(`.cell[data-cell="${index}"]`);
       cell.innerHTML = '';
       const wrapper = document.createElement("div");
-    wrapper.className = "item-wrapper";
+    wrapper.className = "map-item-wrapper";
 	  
 	  const image = new Image();
       image.src = img;
       image.width = image.height = 60;
       const tooltip = document.createElement("div");
-		tooltip.className = "tooltip";
+		tooltip.className = "map-tooltip";
 		
 		tooltip.textContent = "aaa";
 		
