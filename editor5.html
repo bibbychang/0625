@@ -176,7 +176,7 @@ for (let i = 0; i < 64; i++) {
   mapEl.appendChild(cell);
 }
 function getDescription(filename) {
-  const name = filename.split('/').pop();
+  const name = filename.split('/').pop().trim();
   const descriptions = {
     "start.png": "起點 玩家從這裡開始",
     "goal.png": "終點",
@@ -187,7 +187,7 @@ function getDescription(filename) {
     "dice.png": "再擲一次",
     // ...可以加更多
   };
-  return descriptions[name] || `${name}`;
+  return descriptions[name] ||  "";
 }
 
 function drop(e) {
