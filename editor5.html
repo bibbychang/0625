@@ -211,7 +211,7 @@ function drop(e) {
   
    const tip = document.createElement("div");
   tip.className = "drop-tooltip";
-  tip.textContent = getDescription("aaa");  // 根據圖檔名稱給說明文字
+  tip.textContent = getDescription(filename);  // 根據圖檔名稱給說明文字
   wrapper.appendChild(tip);
   
    
@@ -257,7 +257,7 @@ function drop(e) {
       const tooltip = document.createElement("div");
 		tooltip.className = "map-tooltip";
 		
-		tooltip.textContent = "aaa";
+		tooltip.textContent = getDescription(img);
 		
 		tooltip.innerText = img;
 	  wrapper.appendChild(image);
