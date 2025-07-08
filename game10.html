@@ -446,14 +446,14 @@ function rollDice() {
 		animateMove(currentPlayer, fromIndex, toIndex, () => {
 		log.innerText += `玩家${currentPlayer + 1} 從${fromIndex}移動到${toIndex}\t\t`;
 		  updateStatus();
-		  logAction(currentPlayer, dice, toIndex);
+		  //logAction(currentPlayer, dice, toIndex);
 			if (mode === "score" && playerScores[currentPlayer] >= scoreGoal) {
 			  gameEnded = true;
 			  alert(`🎉 玩家 ${currentPlayer + 1} 達到 ${scoreGoal} 分，獲勝！`);
 			  clearInterval(timer);
 			  return;
 			}
-			alert(`🎉🎉🎉🎉`);
+			alert(`🎉1`);
 			nextTurn(); //modify
 		  
 		});
@@ -500,6 +500,7 @@ function rollDice() {
 		
 		
 		else {//不是以上幾種  要換人
+		  alert(`🎉2`);
 		  proceed();
 		  currentPlayer = (currentPlayer + 1) % 2;
 			document.getElementById("currentPlayer").textContent = currentPlayer + 1;
@@ -556,7 +557,7 @@ function logAction(player, dice, pos) {
       const imgSrc = mapData[pos] || "";
       const imgName = imgSrc.split('/').pop();
       //log.innerText += `玩家${player + 1} 擲出 ${dice}，移動到第 ${stepNum} 格（${imgName}）`;
-	  log.innerText += ` 移動到第 ${stepNum} 格（${imgName}）`;
+	  //log.innerText += ` 移動到第 ${stepNum} 格（${imgName}）`;
       log.scrollTop = log.scrollHeight;
     }
 
