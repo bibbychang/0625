@@ -450,9 +450,9 @@ function rollDice() {
 		//log.innerText += `  玩家${currentPlayer + 1} 從${fromIndex}移動到${toIndex}\t\t`;
 		  updateStatus();
 		  logAction(currentPlayer, dice, toIndex);
-		  alert(`🎉 玩家 ${currentPlayer + 1} 德 ${scoreTarget} 分`);
-		  alert(`🎉${mode} `);
-		  alert(`🎉0b`);
+		  //alert(`🎉 玩家 ${currentPlayer + 1} 德 ${scoreTarget} 分`);
+		  //alert(`🎉${mode} `);
+		  //alert(`🎉0b`);
 			if (mode === "score" && playerScores[currentPlayer] >= scoreTarget) {
 			  alert(`🎉???`);
 			  gameEnded = true;
@@ -460,7 +460,7 @@ function rollDice() {
 			  clearInterval(timer);
 			  return;
 			}
-			alert(`🎉1bb`);
+			alert(`🎉proceed_nextturn`);
 			nextTurn(); //modify
 		  
 		});
@@ -509,7 +509,7 @@ function rollDice() {
 		
 		
 		else {//不是以上幾種  要換人
-		  alert(`🎉2`);
+		  alert(`🎉else`);
 		  proceed();
 		  //currentPlayer = (currentPlayer + 1) % 2;
 			//document.getElementById("currentPlayer").textContent = currentPlayer + 1;
