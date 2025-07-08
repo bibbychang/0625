@@ -197,7 +197,7 @@ updateStatus();
 
   if (mode === "score") {
     // 积分制：設定目標分數
-    scoreGoal = parseInt(document.getElementById("scoreTarget").value);
+    //scoreGoal = parseInt(document.getElementById("scoreTarget").value);
   } else if (mode === "time") {
     // 限時制：啟動倒數計時
     timeLeft = config.timeLimit;
@@ -430,7 +430,7 @@ function rollDice() {
       }
 
       function proceed() {
-	  alert(`🎉 玩家 ${currentPlayer + 1} 德 ${scoreGoal} 分`);
+	  alert(`🎉 玩家 ${currentPlayer + 1} 德 ${scoreTarget} 分`);
 	  const pathLength = pathIndices.length;
 	  const prev = playerSteps[currentPlayer];
 	  const newStep = step;
@@ -448,13 +448,13 @@ function rollDice() {
 		log.innerText += `玩家${currentPlayer + 1} 從${fromIndex}移動到${toIndex}\t\t`;
 		  updateStatus();
 		  
-		  alert(`🎉 玩家 ${currentPlayer + 1} 德 ${scoreGoal} 分`);
+		  alert(`🎉 玩家 ${currentPlayer + 1} 德 ${scoreTarget} 分`);
 		  alert(`🎉${mode} `);
 		  alert(`🎉0b`);
-			if (mode === "score" && playerScores[currentPlayer] >= scoreGoal) {
+			if (mode === "score" && playerScores[currentPlayer] >= scoreTarget) {
 			  alert(`🎉???`);
 			  gameEnded = true;
-			  alert(`🎉 玩家 ${currentPlayer + 1} 達到 ${scoreGoal} 分，獲勝！`);
+			  alert(`🎉 玩家 ${currentPlayer + 1} 達到 ${scoreTarget} 分，獲勝！`);
 			  clearInterval(timer);
 			  return;
 			}
