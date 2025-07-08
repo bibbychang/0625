@@ -334,7 +334,9 @@ function askQuiz(playerIndex,onCorrect, onWrong) {
       document.body.removeChild(modal); 
       if (opt.trim().startsWith(quiz.answer)) {
         alert("答對了！加3分。");
-		log.innerText += `  玩家${playerIndex + 1} 答對題目：「${quiz.question}」 加 3 分`;
+		log.innerText += `  答對題目：「${quiz.question}」 加 3 分`;
+		
+		//log.innerText += `  玩家${playerIndex + 1} 答對題目：「${quiz.question}」 加 3 分`;
 		log.scrollTop = log.scrollHeight;
         playerScores[playerIndex] += 3;   // ✅ 答對加 3 分
 		updateStatus();
@@ -342,8 +344,9 @@ function askQuiz(playerIndex,onCorrect, onWrong) {
       } else {
         alert("答錯了！輪到下一位玩家。");
 		logAction(playerIndex, lastDiceRoll[playerIndex], pathIndices[playerSteps[playerIndex]]);
-    
-		log.innerText += `  玩家${playerIndex + 1} 答錯：「${quiz.question}」 `;
+		//log.innerText += `  玩家${playerIndex + 1} 答錯：「${quiz.question}」 `;
+		
+		log.innerText += `  答錯：「${quiz.question}」 `;
 		log.scrollTop = log.scrollHeight;
 		updateStatus();
 		onWrong();
