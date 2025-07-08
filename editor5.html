@@ -295,17 +295,38 @@ for (let i = 0; i < 64; i++) {
 function getDescription(filename) {
   const name = filename.split('/').pop().trim();
   const descriptions = {
-    "start.png": "起點：玩家從這裡開始",
-    "goal.png": "終點",
-    "quiz.png": "答題格",
-    "event1.png": "事件卡A",
-    "event2.png": "事件卡B",
+    "start.png": "起點：玩家從這裡開始",    
+    "quiz.png": "答題格：答對可得分",
+    "event1.png": "事件卡1：隨機事件",
+    "event2.png": "事件卡2：隨機事件",
+	"fire1.png": "火災",
+    "fire2.png": "火災", 
+	"light.png": "燈光",
+    "bag1.png": "包包", 
+	"bag2.png": "包包",
+    "card1.png": "空白卡片",
+	"card2.png": "卡片",
+	"earthquake1.png": "地震了", 
+	"earthquake2.png": "地震了",
+    "earthquake3.png": "地震了",
+	"ok1.png": "沒事",
+	"ok2.png": "沒事",
+	"ok3.png": "沒事",
+	"rain1.png": "下雨",
+	"rain2.png": "下雨",
+	"rain3.png": "下雨",
+	"safe.png": "安全區",
+	"safezone.png": "安全區",
+	"warning1.png": "警告",
+	"warning2.png": "警告",	
     "underdesk.png": "被書壓倒退回起點",
-    "dice.png": "再擲一次",
+    "dice.png": "骰子格：可以再擲一次",
     // ...可以加更多
   };
   return descriptions[name] ||  "";
 }
+   
+
 
 function drop(e) {
   
