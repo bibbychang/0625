@@ -468,7 +468,7 @@ function rollDice() {
 			  clearInterval(timer);
 			  return;
 			}
-			alert(`🎉proceed_nextturn`);
+			'alert(`🎉proceed_nextturn`);
 			nextTurn(); //modify
 		  
 		});
@@ -700,7 +700,12 @@ function handleEventEffect(event, fromStep) {
     });
   });
 }
-
+document.addEventListener('keydown', function(e) {
+    if ((e.code === "Space" || e.key === " ") && !gameEnded) {
+      e.preventDefault();
+      rollDice();
+    }
+  });
 
 </script>
 </body>
