@@ -459,9 +459,9 @@ function rollDice() {
 		  //alert(`🎉${mode} `);
 		  //alert(`🎉0b`);
 			if (mode === "score" && playerScores[currentPlayer] >= scoreTarget) {
-			  alert(`🎉???`);
+			  //alert(`🎉???`);
 			  gameEnded = true;
-			  alert(`🎉 玩家 ${currentPlayer + 1} 達到 ${scoreTarget} 分，獲勝！`);
+			  //alert(`🎉 玩家 ${currentPlayer + 1} 達到 ${scoreTarget} 分，獲勝！`);
 			  clearInterval(timer);
 			  return;
 			}
@@ -573,6 +573,7 @@ function logAction(player, dice, pos) {
       //log.innerText += `玩家${player + 1} 擲出 ${dice}，移動到第 ${stepNum} 格（${imgName}）`;
 	  log.innerText += ` 移動到第 ${stepNum} 格（${imgName}）`;
       log.scrollTop = log.scrollHeight;
+	  alert("📢📢📢 ！");
     }
 
 function didCompleteLap(prevStep, newStep, pathLength) {
@@ -606,7 +607,7 @@ function handleEventEffect(event, fromStep) {
     const moveEffects = ["前進1格", "前進2格", "退回1格", "退回2格", "回到起點"];
     const log = document.getElementById("log");
     const lastRoll = lastDiceRoll[currentPlayer];
-    log.innerText += `\n🎯🎯🎯🎯觸發事件：「${event.desc} ${event.effect}」\n`;
+    log.innerText += `  觸發事件：「${event.desc} ${event.effect}」\n`;
     log.scrollTop = log.scrollHeight;
 	
 
