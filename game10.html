@@ -441,7 +441,7 @@ function rollDice() {
 		log.innerText += `\n🎯 玩家${currentPlayer + 1} 完成一圈，加1分`;
 		passedStart = false;
 	  }
-	  
+	  alert(`🎉0`);
 		playerSteps[currentPlayer] = step;
 		animateMove(currentPlayer, fromIndex, toIndex, () => {
 		log.innerText += `玩家${currentPlayer + 1} 從${fromIndex}移動到${toIndex}\t\t`;
@@ -457,7 +457,9 @@ function rollDice() {
 			nextTurn(); //modify
 		  
 		});
-	  }
+		
+		
+	  
 		if (cellImg.includes("dice.png")) {
 		  
 		  const fromIndex = toIndex;
@@ -502,8 +504,8 @@ function rollDice() {
 		else {//不是以上幾種  要換人
 		  alert(`🎉2`);
 		  proceed();
-		  currentPlayer = (currentPlayer + 1) % 2;
-			document.getElementById("currentPlayer").textContent = currentPlayer + 1;
+		  //currentPlayer = (currentPlayer + 1) % 2;
+			//document.getElementById("currentPlayer").textContent = currentPlayer + 1;
 		}
 
 
