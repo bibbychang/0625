@@ -494,7 +494,19 @@ function rollDice() {
 		  animateMove(currentPlayer, fromIndex, toIndex, () => {
 			handleEventEffect(randomEvent, step);  // ✅ 動畫結束後再執行事件
 		  });
-		} else {
+		} 
+		else if (cellImg.includes("ok1.png") || cellImg.includes("ok2.png") || cellImg.includes("ok3.png")) {
+  // 加一個明確的 ok 格 log
+  log.innerText += `\n🎯ok1ok1ok1`;
+  proceed();
+} 
+		
+		
+		
+		
+		
+		
+		else {
 		  proceed();
 		}
 
