@@ -444,6 +444,7 @@ function rollDice() {
 	  alert(`🎉0`);
 		playerSteps[currentPlayer] = step;
 		animateMove(currentPlayer, fromIndex, toIndex, () => {
+		alert(`🎉0a`);
 		log.innerText += `玩家${currentPlayer + 1} 從${fromIndex}移動到${toIndex}\t\t`;
 		  updateStatus();
 		  //logAction(currentPlayer, dice, toIndex);
