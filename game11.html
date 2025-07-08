@@ -197,6 +197,7 @@ updateStatus();
 
   if (mode === "score") {
     // 积分制：設定目標分數
+	
     //scoreGoal = parseInt(document.getElementById("scoreTarget").value);
   } else if (mode === "time") {
     // 限時制：啟動倒數計時
@@ -509,8 +510,8 @@ function rollDice() {
 		else {//不是以上幾種  要換人
 		  alert(`🎉2`);
 		  proceed();
-		  currentPlayer = (currentPlayer + 1) % 2;
-			document.getElementById("currentPlayer").textContent = currentPlayer + 1;
+		  //currentPlayer = (currentPlayer + 1) % 2;
+			//document.getElementById("currentPlayer").textContent = currentPlayer + 1;
 		}
 
 
@@ -550,7 +551,7 @@ function updateStatus() {
     status.textContent = `限時制：倒數 ${timeLeft} 秒，玩家1: ${playerScores[0]}分，玩家2: ${playerScores[1]}分`;
   } else {
     status.textContent = `積分制：玩家1: ${playerScores[0]}分，玩家2: ${playerScores[1]}分`;
-  }alert(`🎉updatestatus`);
+  }
 }
 
 function log(msg) {
