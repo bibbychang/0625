@@ -334,15 +334,18 @@ function askQuiz(playerIndex,onCorrect, onWrong) {
       document.body.removeChild(modal); 
       if (opt.trim().startsWith(quiz.answer)) {
         alert("答對了！加3分。");
-		log.innerText += `玩家${playerIndex + 1} 答對題目：「${quiz.question}」`;
+		log.innerText += `  玩家${playerIndex + 1} 答對題目：「${quiz.question}」 加 3 分`;
 		log.scrollTop = log.scrollHeight;
         playerScores[playerIndex] += 3;   // ✅ 答對加 3 分
 		updateStatus();
 		onCorrect();
       } else {
         alert("答錯了！輪到下一位玩家。");
+		log.innerText += `  玩家${playerIndex + 1} 答對題目：「${quiz.question}」 加 3 分`;
+		log.scrollTop = log.scrollHeight;
+		updateStatus();
 		onWrong();
-        logQuizFail(playerIndex, quiz.question);       
+        
       }
     };
     
@@ -484,7 +487,7 @@ function rollDice() {
 		}
  if (cellImg.includes("underdesk.png")) {
 		  alert("📢 你躲到書櫃旁邊，被書壓倒！退回起點！");
-		  log.innerText += `\n🎯 玩家${currentPlayer + 1} 被書壓倒！退回起點`;
+		  log.innerText += ` 被書壓倒！退回起點`;
 		  const fromIndex = toIndex;
 		  const toStartIndex = pathIndices[0];
 		  playerSteps[currentPlayer] = 0;
@@ -575,12 +578,7 @@ function didCompleteLap(prevStep, newStep, pathLength) {
 }
 
 
-    function logQuizFail(player, question) {
-      const log = document.getElementById("log");
-      log.innerText += `玩家${player + 1} 答錯題目：「${question}」`;
-      log.scrollTop = log.scrollHeight;
-    }
-	
+  
 
 function showEventCard(event, callback) {
   const card = document.getElementById("event-card-display");
