@@ -666,6 +666,7 @@ function handleEventEffect(event, fromStep) {
 
       if (img.includes("underdesk.png")) {
         alert("📢 你走到了 underdesk！被書壓倒，退回起點！");
+		log.innerText += ` 被書壓倒！退回起點`;
         const toStart = pathIndices[0];
         playerSteps[currentPlayer] = 0;
         animateMove(currentPlayer, toIndex, toStart, () => {
