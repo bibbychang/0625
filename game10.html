@@ -459,7 +459,7 @@ function rollDice() {
 		});
 		
 		
-	  
+	  }
 		if (cellImg.includes("dice.png")) {
 		  
 		  const fromIndex = toIndex;
@@ -504,8 +504,8 @@ function rollDice() {
 		else {//不是以上幾種  要換人
 		  alert(`🎉2`);
 		  proceed();
-		  //currentPlayer = (currentPlayer + 1) % 2;
-			//document.getElementById("currentPlayer").textContent = currentPlayer + 1;
+		  currentPlayer = (currentPlayer + 1) % 2;
+			document.getElementById("currentPlayer").textContent = currentPlayer + 1;
 		}
 
 
