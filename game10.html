@@ -374,6 +374,7 @@ function renderPlayers() {
 }
 function rollDice() {
       if (gameEnded) return;
+	  console.log("log");
 	  const log = document.getElementById("log");
 	  const selected = document.querySelector('input[name="diceOverride"]:checked');
 		let dice = 0;
@@ -498,6 +499,7 @@ function rollDice() {
 		else if (cellImg.includes("ok1.png") || cellImg.includes("ok2.png") || cellImg.includes("ok3.png")) {
   // 加一個明確的 ok 格 log
   log.innerText += `\n🎯ok1ok1ok1`;
+  alert("📢 📢 📢 📢 📢 ");
   proceed();
 } 
 		
