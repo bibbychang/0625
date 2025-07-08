@@ -473,9 +473,16 @@ function rollDice() {
 		  });
 		  return;
 		}
+if (cellImg.includes("ok1.png") || cellImg.includes("ok2.png") || cellImg.includes("ok3.png")) {
+  // 加一個明確的 ok 格 log
+  log.innerText += `\n🎯ok1ok1ok1`;
+  alert("📢 📢 📢 📢 📢 ");
+  proceed();
+} 
+		
+		
 
-
-		if (cellImg.includes("underdesk.png")) {
+		else if (cellImg.includes("underdesk.png")) {
 		  alert("📢 你躲到書櫃旁邊，被書壓倒！退回起點！");
 		  log.innerText += `\n🎯 玩家${currentPlayer + 1} 被書壓倒！退回起點`;
 		  const fromIndex = toIndex;
@@ -496,13 +503,6 @@ function rollDice() {
 			handleEventEffect(randomEvent, step);  // ✅ 動畫結束後再執行事件
 		  });
 		} 
-		else if (cellImg.includes("ok1.png") || cellImg.includes("ok2.png") || cellImg.includes("ok3.png")) {
-  // 加一個明確的 ok 格 log
-  log.innerText += `\n🎯ok1ok1ok1`;
-  alert("📢 📢 📢 📢 📢 ");
-  proceed();
-} 
-		
 		
 		
 		
