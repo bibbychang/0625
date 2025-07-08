@@ -509,6 +509,7 @@ function rollDice() {
 		  playerSteps[currentPlayer] = step;
 		  animateMove(currentPlayer, fromIndex, toIndex, () => {
 			handleEventEffect(randomEvent, step);  // ✅ 動畫結束後再執行事件
+			nextTurn();
 		  });
 		} 
 		
