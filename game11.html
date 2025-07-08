@@ -446,10 +446,10 @@ function rollDice() {
 		animateMove(currentPlayer, fromIndex, toIndex, () => {
 		
 		log.innerText += `玩家${currentPlayer + 1} 從${fromIndex}移動到${toIndex}\t\t`;
-		  updateStatus();alert(`🎉0a`);
-		  //logAction(currentPlayer, dice, toIndex);
+		  updateStatus();
+		  
 		  alert(`🎉 玩家 ${currentPlayer + 1} 德 ${scoreGoal} 分`);
-		   alert(`🎉${mode} `);
+		  alert(`🎉${mode} `);
 		  alert(`🎉0b`);
 			if (mode === "score" && playerScores[currentPlayer] >= scoreGoal) {
 			  alert(`🎉???`);
