@@ -349,7 +349,7 @@ function askQuiz(playerIndex,onCorrect, onWrong) {
 		log.innerText += `  答錯：「${quiz.question}」 `;
 		log.scrollTop = log.scrollHeight;
 		updateStatus();
-		onWrong();
+		onCorrect();
         
       }
     };
@@ -440,7 +440,7 @@ function rollDice() {
       }
 
       function proceed() {
-	  alert(`🎉 玩家 ${currentPlayer + 1} 德 ${scoreTarget} 分`);
+	  //alert(`🎉 玩家 ${currentPlayer + 1} 德 ${scoreTarget} 分`);
 	  const pathLength = pathIndices.length;
 	  const prev = playerSteps[currentPlayer];
 	  const newStep = step;
