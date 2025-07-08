@@ -627,7 +627,7 @@ function handleEventEffect(event, fromStep) {
     } else if (event.effect === "回到起點") {
       newStep = 0;
     }
-	logAction(currentPlayer, dice, newStep);
+	//logAction(currentPlayer, dice, newStep);
     if (event.effect === "得2分") {
       playerScores[currentPlayer] += 2;
       updateStatus();
