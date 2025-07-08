@@ -441,10 +441,10 @@ function rollDice() {
 		passedStart = false;
 	  }
 	  
-        playerSteps[currentPlayer] = step;
-        animateMove(currentPlayer, fromIndex, toIndex, () => {
+		playerSteps[currentPlayer] = step;
+		animateMove(currentPlayer, fromIndex, toIndex, () => {
 		log.innerText += `玩家${currentPlayer + 1} 從${fromIndex}移動到${toIndex}\t\t`;
-          updateStatus();
+		  updateStatus();
 		  logAction(currentPlayer, dice, toIndex);
 			if (mode === "score" && playerScores[currentPlayer] >= scoreGoal) {
 			  gameEnded = true;
@@ -452,13 +452,14 @@ function rollDice() {
 			  clearInterval(timer);
 			  return;
 			}else if (mode === "score" && playerScores[currentPlayer] >= scoreGoal) {
-            alert(`🎉 玩家 ${currentPlayer + 1} 累積 ${scoreGoal} 分，獲勝！`);
-            gameEnded = true;
-          } else {
-            nextTurn();
-          }
-        });
-      }
+			alert(`🎉 玩家 ${currentPlayer + 1} 累積 ${scoreGoal} 分，獲勝！`);
+			gameEnded = true;
+			return;//add
+		  } 
+			nextTurn(); //modify
+		  
+		});
+	  }
 		if (cellImg.includes("dice.png")) {
 		  
 		  const fromIndex = toIndex;
