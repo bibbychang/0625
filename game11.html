@@ -338,13 +338,14 @@ function askQuiz(playerIndex,onCorrect, onWrong) {
 		log.scrollTop = log.scrollHeight;
         playerScores[playerIndex] += 3;   // ✅ 答對加 3 分
 		updateStatus();
+		onCorrect();
       } else {
         alert("答錯了！輪到下一位玩家。");
-		
+		onWrong();
         logQuizFail(playerIndex, quiz.question);       
       }
     };
-    onCorrect();
+    
 	box.appendChild(btn);
   });
 
@@ -493,7 +494,7 @@ function rollDice() {
 			document.getElementById("currentPlayer").textContent = currentPlayer + 1;
 		  });
 		} else if (cellImg.includes("quiz.png")) {
-			log.innerText += `\n🎯 玩家${currentPlayer + 1} 走到quiz`;
+			//log.innerText += `\n🎯 玩家${currentPlayer + 1} 走到quiz`;
 		  askQuiz(currentPlayer, proceed, nextTurn);
 		} else if (cellImg.includes("event1.png") || cellImg.includes("event2.png")) {
 		  const randomEvent = eventList[Math.floor(Math.random() * eventList.length)];
