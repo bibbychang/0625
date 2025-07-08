@@ -441,7 +441,7 @@ function rollDice() {
 		log.innerText += `\n🎯 玩家${currentPlayer + 1} 完成一圈，加1分`;
 		passedStart = false;
 	  }
-	  alert(`🎉0`);
+	  
 		playerSteps[currentPlayer] = step;
 		animateMove(currentPlayer, fromIndex, toIndex, () => {
 		alert(`🎉0a`);
@@ -449,12 +449,13 @@ function rollDice() {
 		  updateStatus();
 		  //logAction(currentPlayer, dice, toIndex);
 			if (mode === "score" && playerScores[currentPlayer] >= scoreGoal) {
+			  alert(`🎉???`);
 			  gameEnded = true;
 			  alert(`🎉 玩家 ${currentPlayer + 1} 達到 ${scoreGoal} 分，獲勝！`);
 			  clearInterval(timer);
 			  return;
 			}
-			alert(`🎉1`);
+			alert(`🎉1bb`);
 			nextTurn(); //modify
 		  
 		});
