@@ -444,9 +444,9 @@ function rollDice() {
 	  
 		playerSteps[currentPlayer] = step;
 		animateMove(currentPlayer, fromIndex, toIndex, () => {
-		alert(`🎉0a`);
+		
 		log.innerText += `玩家${currentPlayer + 1} 從${fromIndex}移動到${toIndex}\t\t`;
-		  updateStatus();
+		  updateStatus();alert(`🎉0a`);
 		  //logAction(currentPlayer, dice, toIndex);
 			if (mode === "score" && playerScores[currentPlayer] >= scoreGoal) {
 			  alert(`🎉???`);
@@ -455,9 +455,9 @@ function rollDice() {
 			  clearInterval(timer);
 			  return;
 			}
-			alert(`🎉1bb`);
+			else if {alert(`🎉1bb`);
 			nextTurn(); //modify
-		  
+		  }
 		});
 		
 		
