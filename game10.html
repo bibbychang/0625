@@ -446,16 +446,12 @@ function rollDice() {
 		log.innerText += `玩家${currentPlayer + 1} 從${fromIndex}移動到${toIndex}\t\t`;
 		  updateStatus();
 		  logAction(currentPlayer, dice, toIndex);
-			if (playerScores[currentPlayer] >= scoreGoal) {
+			if (mode === "score" && playerScores[currentPlayer] >= scoreGoal) {
 			  gameEnded = true;
 			  alert(`🎉 玩家 ${currentPlayer + 1} 達到 ${scoreGoal} 分，獲勝！`);
 			  clearInterval(timer);
 			  return;
-			}else if (playerScores[currentPlayer] >= scoreGoal) {
-			alert(`🎉 玩家 ${currentPlayer + 1} 累積 ${scoreGoal} 分，獲勝！`);
-			gameEnded = true;
-			return;//add
-		  } 
+			}
 			nextTurn(); //modify
 		  
 		});
