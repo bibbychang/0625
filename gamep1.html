@@ -146,7 +146,7 @@
 
 const config = JSON.parse(localStorage.getItem("gameConfig") || '{}');
 const { mode, timeLimit, scoreTarget, mapData, pathIndices } = config;
-const nPlayers = playerCount || 2; 
+const nPlayers = config.playerCount || 2; 
 document.getElementById("configInfo").innerText =
   mode === "time"
     ? `🎯 模式：限時制（${timeLimit} 秒）`
@@ -637,7 +637,7 @@ function showEventCard(event, callback) {
       // 跳過事件、換人
       currentPlayer = (currentPlayer + 1) % nPlayers;
       document.getElementById("currentPlayer").textContent = currentPlayer + 1;
-      logEl.innerText += `\n🎮 玩家${currentPlayer ? 2 : 1} 使用技能卡，事件無效`;
+      logEl.innerText += `\n🎮 玩家${currentPlayer ? + 1} 使用技能卡，事件無效`;
       logEl.scrollTop = logEl.scrollHeight;
       updateStatus();
     };
