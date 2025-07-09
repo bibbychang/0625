@@ -634,7 +634,8 @@ function showEventCard(event, callback) {
       // 跳過事件、換人
       currentPlayer = (currentPlayer + 1) % nPlayers;
       document.getElementById("currentPlayer").textContent = currentPlayer + 1;
-      logEl.innerText += `\n🎮 玩家${currentPlayer ? + 1} 使用技能卡，事件無效`;
+	
+      logEl.innerText += `\n🎮 玩家${currentPlayer+1} 使用技能卡，事件無效`;
       logEl.scrollTop = logEl.scrollHeight;
       updateStatus();
     };
