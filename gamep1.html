@@ -140,12 +140,8 @@
   
 <script>
 
-
-
-
-
 const config = JSON.parse(localStorage.getItem("gameConfig") || '{}');
-const { mode, timeLimit, scoreTarget, mapData, pathIndices } = config;
+const { mode, timeLimit, scoreTarget,playerCount, mapData, pathIndices } = config;
 const nPlayers = config.playerCount || 2; 
 document.getElementById("configInfo").innerText =
   mode === "time"
