@@ -518,6 +518,7 @@ function rollDice() {
 		else if (cellImg.includes("card2.png")) {
   playerSkills[currentPlayer]++;
   updateStatus();
+   proceed();
   alert(`🎴 恭喜！玩家${currentPlayer+1} 獲得一張技能卡，目前技能卡：${playerSkills[currentPlayer]} 張`);
   logEl.innerText += `\n🎴 玩家${currentPlayer+1} 獲得1張技能卡`;
   logEl.scrollTop = logEl.scrollHeight;
