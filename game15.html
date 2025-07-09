@@ -605,9 +605,15 @@ function showEventCard(event, callback) {
   };
   // 新增技能按鈕
   card.querySelector("#event-skill-btn").onclick = () => {
-    alert("🎮 你使用了特殊技能！(可自訂這段內容)");
-    hideEventCard();
-    if (callback) callback();
+    alert("🎮 你使用了特殊技能！本次事件效果無效！");
+    // **這裡不執行 callback**，事件不會觸發
+    // 你可以在這裡直接換下一位玩家
+    currentPlayer = (currentPlayer + 1) % 2;
+    document.getElementById("currentPlayer").textContent = currentPlayer + 1;
+    updateStatus();
+    // 也可以 log 記錄一下
+    logEl.innerText += `\n🎮 玩家${(currentPlayer ? 2 : 1)} 使用特殊技能，跳過事件`;
+    logEl.scrollTop = logEl.scrollHeight;
   };
 }
 
