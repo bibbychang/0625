@@ -111,7 +111,7 @@
 </head>
 <body>
 <div id="left-panel">
-  <h2>🎲 遊戲開始！</h2><div id="configInfo"></div>
+  <h2>🎲 遊戲開始！</h2><div id="configInfo"></div><br>
    <div id="status" style="margin: 10px 0;"></div>
   <div>
     <button onclick="rollDice()">擲骰 🎲 玩家 <span id="currentPlayer">1</span></button>
@@ -208,12 +208,12 @@ updateStatus();
   } else if (mode === "time") {
     // 限時制：啟動倒數計時
     timeLeft = config.timeLimit;
-    const status = document.getElementById("status");
-    status.textContent = `限時制：倒數 ${timeLeft} 秒 玩家: ${playerScores[0]}分 / 玩家2: ${playerScores[1]}分`;
+    const configInfo = document.getElementById("configInfo");
+    configInfo.textContent = `限時制：倒數 ${timeLeft} 秒 `;
 
     timer = setInterval(() => {
       timeLeft--;
-      status.textContent = `限時制：倒數 ${timeLeft} 秒 玩家: ${playerScores[0]}分 / 玩家2: ${playerScores[1]}分`;
+      configInfo.textContent = `限時制：倒數 ${timeLeft} 秒 `;
 
       if (timeLeft <= 0) {
         clearInterval(timer);
