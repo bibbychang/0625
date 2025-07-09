@@ -33,7 +33,7 @@
     .player1 { top: 4px; left: 4px; }
     .player2 { top: 4px; right: 4px; }
 	.player3 { bottom: 4px; left: 4px; }
-	.player4 { bottom: 4px; right: 4px; }
+.player4 { bottom: 4px; right: 4px; }
     .player img { width: 100%; height: 100%; }
     #log {     
 	  
@@ -208,12 +208,12 @@ updateStatus();
   } else if (mode === "time") {
     // 限時制：啟動倒數計時
     timeLeft = config.timeLimit;
-    const configInfo = document.getElementById("configInfo");
-    configInfo.textContent = `🎯限時制：倒數 ${timeLeft} 秒 `;
+    const status = document.getElementById("status");
+    status.textContent = `限時制：倒數 ${timeLeft} 秒 玩家: ${playerScores[0]}分 / 玩家2: ${playerScores[1]}分`;
 
     timer = setInterval(() => {
       timeLeft--;
-      configInfo.textContent = `限時制：倒數 ${timeLeft} 秒 `;
+      status.textContent = `限時制：倒數 ${timeLeft} 秒 玩家: ${playerScores[0]}分 / 玩家2: ${playerScores[1]}分`;
 
       if (timeLeft <= 0) {
         clearInterval(timer);
@@ -574,8 +574,8 @@ function rollDice() {
 
 function updateStatus() {
   let statusText = mode === "time"
-    ? `限時制：`
-    : `積分制：`;
+    ? `限時制：倒數 ${timeLeft} 秒`
+    : `積分制`;
   for (let i = 0; i < nPlayers; i++) {
     statusText += `，玩家${i+1}: ${playerScores[i]}分 技能卡：${playerSkills[i]}`;
   }
