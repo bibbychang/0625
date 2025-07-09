@@ -607,6 +607,7 @@ function showEventCard(event, callback) {
   card.querySelector("#event-skill-btn").onclick = () => {
     alert("🎮 你使用了特殊技能！本次事件效果無效！");
     // **這裡不執行 callback**，事件不會觸發
+	hideEventCard();
     // 你可以在這裡直接換下一位玩家
     currentPlayer = (currentPlayer + 1) % 2;
     document.getElementById("currentPlayer").textContent = currentPlayer + 1;
