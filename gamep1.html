@@ -213,29 +213,23 @@ updateStatus();
 
     timer = setInterval(() => {
       timeLeft--;
-      configInfo.textContent = `🎯限時制：倒數 ${timeLeft} 秒 `;
+      configInfo.textContent = `限時制：倒數 ${timeLeft} 秒 `;
 
       if (timeLeft <= 0) {
         clearInterval(timer);
         gameEnded = true;
 
-        const maxScore = Math.max(...playerScores);
-		// 找出所有最高分的玩家（支援多人平手）
-		const winners = [];
-		for (let i = 0; i < playerScores.length; i++) {
-		  if (playerScores[i] === maxScore) {
-			winners.push(i + 1); // 玩家編號從1開始
-		  }
-		}
-
-		if (winners.length === 1) {
-		  alert(`⌛ 時間到！🎉 玩家 ${winners[0]} 以 ${maxScore} 分獲勝`);
-		} else {
-		  alert(`⌛ 時間到！🤝 平手！玩家 ${winners.join("、")} 各得 ${maxScore} 分`);
-		}
-			  }
-			}, 1000);
-		  }
+        // 比較雙方分數
+        if (playerScores[0] > playerScores[1]) {
+          alert(`⌛ 時間到！🎉 玩家 1 以 ${playerScores[0]} 分獲勝`);
+        } else if (playerScores[1] > playerScores[0]) {
+          alert(`⌛ 時間到！🎉 玩家 2 以 ${playerScores[1]} 分獲勝`);
+        } else {
+          alert(`⌛ 時間到！🤝 雙方平手，各得 ${playerScores[0]} 分！`);
+        }
+      }
+    }, 1000);
+  }
 
 function getDescription(filename) {
   const name = filename.split('/').pop().trim();
@@ -579,9 +573,11 @@ function rollDice() {
     }
 
 function updateStatus() {
-
+  let statusText = mode === "time"
+    ? `限時制：`
+    : `積分制：`;
   for (let i = 0; i < nPlayers; i++) {
-    statusText += `📢玩家${i+1}: ${playerScores[i]}分 技能卡：${playerSkills[i]}`;
+    statusText += `，玩家${i+1}: ${playerScores[i]}分 技能卡：${playerSkills[i]}`;
   }
   document.getElementById("status").textContent = statusText;
 }
