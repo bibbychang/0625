@@ -371,21 +371,20 @@ function askQuiz(playerIndex,onCorrect, onWrong) {
   document.body.appendChild(modal);
 }
 
-
 function renderPlayers() {
-
-document.querySelectorAll(".player").forEach(p => p.remove());
-  playerSteps.forEach((step, idx) => {
-    const cellIndex = pathIndices[step];
+  document.querySelectorAll(".player").forEach(p => p.remove());
+  for (let idx = 0; idx < nPlayers; idx++) {
+    const cellIndex = pathIndices[playerSteps[idx]];
     const cell = gameBoard.children[cellIndex];
     const token = document.createElement("div");
     token.className = `player player${idx+1}`;
+    const carImgs = ["car_red.png", "car_blue.png", "car_green.png", "car_yellow.png"];
     const car = new Image();
-    car.src = ["car_red.png", "car_blue.png", "car_green.png", "car_yellow.png"][idx] || "car_red.png";
+    car.src = carImgs[idx] || "car_red.png";
     token.appendChild(car);
     cell.appendChild(token);
     playerTokens[idx] = token;
-  });
+  }
 }
 
 function rollDice() {
