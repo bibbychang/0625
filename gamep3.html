@@ -111,8 +111,8 @@
 </head>
 <body>
 <div id="left-panel">
-  <div id="configInfo"></div>
-  <div id="status" style="margin: 10px 0;"></div>
+  <h2>🎲 遊戲開始！</h2><div id="configInfo"></div>
+   <div id="status" style="margin: 10px 0;"></div>
   <div>
     <button onclick="rollDice()">擲骰 🎲 玩家 <span id="currentPlayer">1</span></button>
 	
@@ -582,7 +582,9 @@ function rollDice() {
     }
 
 function updateStatus() {
-  //let statusText = mode === "time"      ? `限時制：倒數 ${timeLeft} 秒`     : `積分制`;
+  let statusText = mode === "time"
+    ? `限時制：倒數 ${timeLeft} 秒`
+    : `積分制`;
   for (let i = 0; i < nPlayers; i++) {
     statusText += `，玩家${i+1}: ${playerScores[i]}分 技能卡：${playerSkills[i]}`;
   }
