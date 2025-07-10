@@ -49,7 +49,7 @@
       border-radius: 4px;
       margin-bottom: 10px;
       font-size: 14px;
-	  width:200px;
+	  width:400px;
     }
 	#event-card-display {
       position: fixed;
@@ -209,11 +209,11 @@ updateStatus();
     // 限時制：啟動倒數計時
     timeLeft = config.timeLimit;
     const configInfo = document.getElementById("configInfo");
-    configInfo.textContent = `限時制：倒數 ${timeLeft} 秒 玩家: ${playerScores[0]}分 / 玩家2: ${playerScores[1]}分`;
+    configInfo.textContent = `限時制：倒數 ${timeLeft} 秒 `;
 
     timer = setInterval(() => {
       timeLeft--;
-      configInfo.textContent = `限時制：倒數 ${timeLeft} 秒 玩家: ${playerScores[0]}分 / 玩家2: ${playerScores[1]}分`;
+      configInfo.textContent = `限時制：倒數 ${timeLeft} 秒 `;
 
       if (timeLeft <= 0) {
         clearInterval(timer);
@@ -588,9 +588,10 @@ function updateStatus() {
 	
 	  statusText ="";
   for (let i = 0; i < nPlayers; i++) {
-    statusText += `，玩家${i+1}: ${playerScores[i]}分 技能卡：${playerSkills[i]}`;
+    statusText += `玩家${i+1}: ${playerScores[i]}分 技能卡：${playerSkills[i]}`;
   }
   document.getElementById("status").textContent = statusText;
+  document.getElementById("configInfo").textContent += statusText;
 }
 
 function log(msg) {
