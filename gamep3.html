@@ -119,7 +119,7 @@
     剛剛玩家<span id="people">-</span> 擲出 <span id="diceResult">-</span>
 	
   </div>
-  <fieldset style="margin-top: 10px; border: 1px solid #ccc; padding: 10px;">
+  <fieldset style="margin-top: 10px; border: 1px solid #ccc; padding: 10px;width:80%">
   
   <legend>🎯 指定骰子點數（作弊用）</legend>
   <label style="margin-right: 8px;"><input type="radio" name="diceOverride" value="0" checked> 不指定</label>
@@ -588,10 +588,10 @@ function updateStatus() {
 	
 	  statusText ="";
   for (let i = 0; i < nPlayers; i++) {
-    statusText += `玩家${i+1}: ${playerScores[i]}分 技能卡：${playerSkills[i]}`;
+    statusText += `玩家${i+1}: <font color=red>${playerScores[i]}</font>分 技能卡：<font color=red>${playerSkills[i]}</font> `;
   }
   document.getElementById("status").textContent = statusText;
-  document.getElementById("configInfo").textContent += statusText;
+  //document.getElementById("configInfo").textContent += statusText;
 }
 
 function log(msg) {
