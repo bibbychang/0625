@@ -586,7 +586,7 @@ function updateStatus() {
     ? `限時制：倒數 ${timeLeft} 秒`
     : `積分制`;
 	
-	  let statusText = ``;
+	  statusText ="";
   for (let i = 0; i < nPlayers; i++) {
     statusText += `，玩家${i+1}: ${playerScores[i]}分 技能卡：${playerSkills[i]}`;
   }
