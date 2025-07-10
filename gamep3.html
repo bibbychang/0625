@@ -208,12 +208,12 @@ updateStatus();
   } else if (mode === "time") {
     // 限時制：啟動倒數計時
     timeLeft = config.timeLimit;
-    const status = document.getElementById("status");
-    status.textContent = `限時制：倒數 ${timeLeft} 秒 玩家: ${playerScores[0]}分 / 玩家2: ${playerScores[1]}分`;
+    const configInfo = document.getElementById("configInfo");
+    configInfo.textContent = `限時制：倒數 ${timeLeft} 秒 玩家: ${playerScores[0]}分 / 玩家2: ${playerScores[1]}分`;
 
     timer = setInterval(() => {
       timeLeft--;
-      status.textContent = `限時制：倒數 ${timeLeft} 秒 玩家: ${playerScores[0]}分 / 玩家2: ${playerScores[1]}分`;
+      configInfo.textContent = `限時制：倒數 ${timeLeft} 秒 玩家: ${playerScores[0]}分 / 玩家2: ${playerScores[1]}分`;
 
       if (timeLeft <= 0) {
         clearInterval(timer);
