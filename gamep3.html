@@ -588,7 +588,7 @@ function updateStatus() {
 	
 	  statusText ="";
   for (let i = 0; i < nPlayers; i++) {
-    statusText += `玩家${i+1}: <font color=red>${playerScores[i]}</font>分 技能卡：<font color=red>${playerSkills[i]}</font> `;
+    statusText += `玩家${i+1}: <span style="color:red">${playerScores[i]}</span>分 技能卡：<span style="color:red">${playerSkills[i]}</span> `;
   }
   document.getElementById("status").textContent = statusText;
   //document.getElementById("configInfo").textContent += statusText;
