@@ -714,6 +714,18 @@ function handleEventEffect(event, fromStep) {
         return;
       }
 
+if (img.includes("card2.png")) {
+  playerSkills[currentPlayer]++;
+  updateStatus();
+   proceed();
+  alert(`🎴 恭喜！玩家${currentPlayer+1} 獲得一張技能卡，目前技能卡：${playerSkills[currentPlayer]} 張`);
+  logEl.innerText += `\n🎴 玩家${currentPlayer+1} 獲得1張技能卡`;
+  logEl.scrollTop = logEl.scrollHeight;
+  return;
+}
+
+
+
       if (img.includes("underdesk.png")) {
         alert("📢 你走到了 underdesk！被書壓倒，退回起點！");
 		log.innerText += ` 玩家${currentPlayer + 1}被書壓倒！退回起點`;
@@ -738,15 +750,7 @@ function handleEventEffect(event, fromStep) {
         return;
       }
 
- if (img.includes("card2.png")) {
-  playerSkills[currentPlayer]++;
-  updateStatus();
-   proceed();
-  alert(`🎴 恭喜！玩家${currentPlayer+1} 獲得一張技能卡，目前技能卡：${playerSkills[currentPlayer]} 張`);
-  logEl.innerText += `\n🎴 玩家${currentPlayer+1} 獲得1張技能卡`;
-  logEl.scrollTop = logEl.scrollHeight;
-  return;
-}
+ 
 
 
 
