@@ -359,6 +359,13 @@ function askQuiz(playerIndex,onCorrect, onWrong) {
         playerScores[playerIndex] += 3;   // ✅ 答對加 3 分
 		updateStatus();
 		onCorrect();
+		if (mode === "score" && playerScores[playerIndex] >= scoreTarget) {
+			  //alert(`🎉???`);
+			  gameEnded = true;
+			  alert(`🎉 玩家 ${playerIndex + 1} 達到 ${scoreTarget} 分，獲勝！`);
+			  clearInterval(timer);
+			  return;
+			}
       } else {
         alert("答錯了！輪到下一位玩家。");
 		//logAction(playerIndex, lastDiceRoll[playerIndex], pathIndices[playerSteps[playerIndex]]);
