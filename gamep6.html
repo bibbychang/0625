@@ -811,6 +811,7 @@ if (img.includes("card2.png")) {
 
 
       if ((img.includes("event1.png") || img.includes("event2.png")) && moveEffects.includes(event.effect)) {
+	  alert("🎉🎉🎉 ");
         const nextEvent = eventList[Math.floor(Math.random() * eventList.length)];
         setTimeout(() => {
           handleEventEffect(nextEvent, newStep);
@@ -819,6 +820,7 @@ if (img.includes("card2.png")) {
         currentPlayer = (currentPlayer + 1) % nPlayers;
         document.getElementById("currentPlayer").textContent = currentPlayer + 1;
 		updateStatus();
+		alert("~~~~~~ ");
       }
     });
   });
