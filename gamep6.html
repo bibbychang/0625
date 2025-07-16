@@ -685,6 +685,17 @@ function showEventCard(event, callback) {
   if (playerSkills[currentPlayer] > 0) {
     card.querySelector("#event-skill-btn").onclick = () => {
       alert("🎮 你使用了特殊技能，本次事件效果無效！");
+	  if (passedStart) {
+        playerScores[currentPlayer] += 1;
+		
+        alert("🎉 完成一圈，加1分(這邊是套圈後  走到event的加分 然後用技能卡的)！");
+		
+        log.innerText += `\n🎯 玩家${currentPlayer + 1} 完成一圈，加1分`;
+        passedStart = false;
+        updateStatus();
+		alert("⚠event完成一圈");
+		checkScoreWin();
+      }
       playerSkills[currentPlayer]--;
       updateStatus();
       hideEventCard();
