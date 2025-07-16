@@ -700,7 +700,7 @@ function showEventCard(event, callback) {
       updateStatus();
       hideEventCard();
       // 跳過事件、換人
-	  logEl.innerText += `\n🎮 玩家${currentPlayer+1} 使用技能卡，事件無效`;
+	  logEl.innerText += `\n🎮 玩家${currentPlayer+1} 使用技能卡，觸發事件${event.desc}  事件無效`;
       logEl.scrollTop = logEl.scrollHeight;
       currentPlayer = (currentPlayer + 1) % nPlayers;
       document.getElementById("currentPlayer").textContent = currentPlayer + 1;
