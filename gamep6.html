@@ -729,11 +729,18 @@ console.log("handleEventEffect");
     if (event.effect === "得2分") {
       playerScores[currentPlayer] += 2;
       updateStatus();
-	  checkWin();
+	  if (!checkScoreWin()) {
+    currentPlayer = (currentPlayer + 1) % nPlayers;
+    document.getElementById("currentPlayer").textContent = currentPlayer + 1;
+}
+	  
     } else if (event.effect === "得1分") {
       playerScores[currentPlayer] += 1;
       updateStatus();
-	  checkWin();
+	   if (!checkScoreWin()) {
+    currentPlayer = (currentPlayer + 1) % nPlayers;
+    document.getElementById("currentPlayer").textContent = currentPlayer + 1;
+}
     } else if (event.effect === "停一回合") {
       skipTurn[currentPlayer] = true;
     }
