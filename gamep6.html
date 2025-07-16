@@ -668,7 +668,7 @@ function showEventCard(event, callback) {
     skillBtnHtml = `<button id="event-skill-btn">使用特殊技能</button>`;
   }
   card.innerHTML = `
-    <h3>🎴 事件卡</h3>
+    <h3>🎴 玩家${currentPlayer + 1}抽到事件卡</h3>
     <p>${event.desc}</p>
     <strong>➡ ${event.effect}</strong>
     <button id="event-ok-btn">確認</button>
