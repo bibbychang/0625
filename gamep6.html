@@ -473,6 +473,7 @@ function rollDice() {
 	  if (passedStart ) {
 		playerScores[currentPlayer] += 1;
 		alert("🎉這邊是套圈終點是一般格的加分   完成一圈，加1分！"); //yes
+		alert("⚠proceed");
 		log.innerText += `\n🎯 玩家${currentPlayer + 1} 完成一圈，加1分`;
 		passedStart = false;
 	  }
@@ -756,6 +757,7 @@ console.log("handleEventEffect");
         log.innerText += `\n🎯 玩家${currentPlayer + 1} 完成一圈，加1分`;
         passedStart = false;
         updateStatus();
+		alert("⚠event完成一圈");
 		checkScoreWin();
       }
 
