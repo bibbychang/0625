@@ -358,6 +358,7 @@ function askQuiz(playerIndex,onCorrect, onWrong) {
 		log.scrollTop = log.scrollHeight;
         playerScores[playerIndex] += 3;   // ✅ 答對加 3 分
 		updateStatus();
+		if (checkScoreWin()) return;
 		onCorrect();
 		
       } else {
@@ -481,6 +482,7 @@ function rollDice() {
 		console.log("rollDice_proceed_animateMove");
 		//log.innerText += `  玩家${currentPlayer + 1} 從${fromIndex}移動到${toIndex}\t\t`;
 		  updateStatus();
+		  if (checkScoreWin()) return;  // ⬅️ 新增這行
 		  logAction(currentPlayer, dice, toIndex);
 		  //alert(`🎉 玩家 ${currentPlayer + 1} 德 ${scoreTarget} 分`);
 		  //alert(`🎉${mode} `);
@@ -497,13 +499,7 @@ function rollDice() {
 			console.log("rollDice_proceed_animateMove_end");
 		});
 		
-		if (mode === "score" && playerScores[currentPlayer] >= scoreTarget) {
-			  //alert(`🎉???`);
-			  gameEnded = true;
-			  alert(`🎉 玩家 ${currentPlayer + 1} 達到 ${scoreTarget} 分，獲勝！`);
-			  clearInterval(timer);
-			  return;
-			}
+	
 	  }
 		if (cellImg.includes("dice.png")) {
 		  console.log("rollDice_dice.png");
@@ -601,6 +597,21 @@ function rollDice() {
       }, 450);
     }
 
+function checkScoreWin() {
+  if (mode === "score") {
+    for (let i = 0; i < nPlayers; i++) {
+      if (playerScores[i] >= scoreTarget) {
+        gameEnded = true;
+        alert(`🎉 玩家 ${i + 1} 達到 ${scoreTarget} 分，獲勝！`);
+        clearInterval(timer);
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
+
 function updateStatus() {
   let statusText = mode === "time"
     ? `限時制：倒數 ${timeLeft} 秒`
@@ -613,6 +624,9 @@ function updateStatus() {
   document.getElementById("status").innerHTML  = statusText;
   //document.getElementById("configInfo").textContent += statusText;
 }
+
+
+
 
 function log(msg) {
   logEl.innerText += msg + "\n";
