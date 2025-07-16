@@ -433,12 +433,12 @@ function askQuiz(playerIndex,onCorrect, onWrong) {
       document.body.removeChild(modal); 
 	  console.log("askQuiz_btn_click");
 	  const isCorrect = opt.trim().startsWith(quiz.answer);
-
+const correctOption = quiz.options.find(o => o.trim().startsWith(quiz.answer));
   quizHistory.push({
     player: playerIndex + 1,
     question: quiz.question,
     selected: opt,
-    correctAnswer: quiz.answer,
+    correctAnswer: `${quiz.answer} (${correctOption})`,
     result: isCorrect ? "✔️ 正確" : "❌ 錯誤"
   });
       if (opt.trim().startsWith(quiz.answer)) {
@@ -481,7 +481,7 @@ function askQuiz(playerIndex,onCorrect, onWrong) {
 function showQuizHistory() {
   const historyEl = document.getElementById('quiz-list');
   historyEl.innerHTML = quizHistory.map(h => 
-    `<div>玩家${h.player}：${h.question}<br> ➡️ 你答：${h.selected}，${h.result} (正解: ${h.correctAnswer})</div><hr>`
+    `<div>玩家${h.player}：${h.question}<br> ➡️ 你答：${h.selected}，${h.result}<br> ✅ 正解: ${h.correctAnswer}</div><hr>`
   ).join('');
   document.getElementById('quiz-history').classList.add('show');
 }
