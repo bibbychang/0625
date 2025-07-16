@@ -756,7 +756,7 @@ console.log("handleEventEffect");
         log.innerText += `\n🎯 玩家${currentPlayer + 1} 完成一圈，加1分`;
         passedStart = false;
         updateStatus();
-		checkWin();//modify
+		checkScoreWin();
       }
 
       if (img.includes("dice.png")) {
@@ -811,7 +811,7 @@ if (img.includes("card2.png")) {
 
 
       if ((img.includes("event1.png") || img.includes("event2.png")) && moveEffects.includes(event.effect)) {
-	  alert("🎉🎉🎉 ");
+	  //alert("🎉🎉🎉 ");
         const nextEvent = eventList[Math.floor(Math.random() * eventList.length)];
         setTimeout(() => {
           handleEventEffect(nextEvent, newStep);
@@ -820,7 +820,7 @@ if (img.includes("card2.png")) {
         currentPlayer = (currentPlayer + 1) % nPlayers;
         document.getElementById("currentPlayer").textContent = currentPlayer + 1;
 		updateStatus();
-		alert("~~~~~~ ");
+		//alert("~~~~~~ ");
       }
     });
   });
