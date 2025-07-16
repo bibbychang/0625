@@ -484,9 +484,14 @@ function rollDice() {
 		  //alert(`🎉 玩家 ${currentPlayer + 1} 德 ${scoreTarget} 分`);
 		  //alert(`🎉${mode} `);
 		  //alert(`🎉0b`);
-		
-			if (checkScoreGoal()) return;
-			 
+			if (mode === "score" && playerScores[currentPlayer] >= scoreTarget) {
+			  //alert(`🎉???`);
+			  gameEnded = true;
+			  //alert(`🎉 玩家 ${currentPlayer + 1} 達到 ${scoreTarget} 分，獲勝！`);
+			  clearInterval(timer);
+			  alert(`🎉 玩家 ${currentPlayer + 1} 累積 ${playerScores[currentPlayer]} 分，獲勝！`);
+			  return;
+			}
 			//alert(`🎉proceed_nextturn`);
 			nextTurn(); //modify
 			console.log("rollDice_proceed_animateMove_end");
