@@ -749,6 +749,7 @@ console.log("handleEventEffect");
 
       if (passedStart) {
         playerScores[currentPlayer] += 1;
+		checkWin();
         alert("🎉 完成一圈，加1分(這邊是套圈後  走到event的加分  但如果是event連鎖前進是不加分的)！");
         log.innerText += `\n🎯 玩家${currentPlayer + 1} 完成一圈，加1分`;
         passedStart = false;
