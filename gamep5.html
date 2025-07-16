@@ -487,9 +487,8 @@ function rollDice() {
 			if (mode === "score" && playerScores[currentPlayer] >= scoreTarget) {
 			  //alert(`🎉???`);
 			  gameEnded = true;
-			  //alert(`🎉 玩家 ${currentPlayer + 1} 達到 ${scoreTarget} 分，獲勝！`);
+			  alert(`🎉 玩家 ${currentPlayer + 1} 達到 ${scoreTarget} 分，獲勝！`);
 			  clearInterval(timer);
-			  alert(`🎉 玩家 ${currentPlayer + 1} 累積 ${playerScores[currentPlayer]} 分，獲勝！`);
 			  return;
 			}
 			//alert(`🎉proceed_nextturn`);
