@@ -679,7 +679,7 @@ console.log("handleEventEffect");
     const moveEffects = ["前進1格", "前進2格", "退回1格", "退回2格", "回到起點"];
     const log = document.getElementById("log");
     const lastRoll = lastDiceRoll[currentPlayer];
-    log.innerText += `  觸發事件：「${event.desc} ${event.effect}」\n`;
+    log.innerText += `  觸發事件：「${event.desc} ${event.effect}」`;
     log.scrollTop = log.scrollHeight;
 	
 
@@ -738,7 +738,7 @@ if (img.includes("card2.png")) {
   updateStatus();
   // proceed();
   alert(`🎴 恭喜！玩家${currentPlayer+1} 獲得一張技能卡，目前技能卡：${playerSkills[currentPlayer]} 張`);
-  logEl.innerText += `\n🎴 玩家${currentPlayer+1} 獲得1張技能卡`;
+  logEl.innerText += `\n🎴  玩家${currentPlayer+1} 獲得1張技能卡`;
   logEl.scrollTop = logEl.scrollHeight;
   currentPlayer = (currentPlayer + 1) % nPlayers;
   document.getElementById("currentPlayer").textContent = currentPlayer + 1;
