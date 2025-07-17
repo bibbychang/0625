@@ -560,22 +560,13 @@ console.log("renderPlayers");
   if (skipTurn[currentPlayer]) {
     console.log(`玩家 ${currentPlayer + 1} 停一回合`);
     alert(`🛑 玩家 ${currentPlayer + 1} 停一回合`);
-    const log = document.getElementById("log");
     log.innerText += `\n🎯 玩家 ${currentPlayer + 1} 停一回合`;
     skipTurn[currentPlayer] = false;
-
-    setTimeout(() => {
-      // 動畫結束後恢復按鈕
-      diceAnimation.style.display = 'none';
-      rollBtn.style.display = 'inline-block';
-
-      // 換人
-      currentPlayer = (currentPlayer + 1) % nPlayers;
-      document.getElementById("currentPlayer").textContent = currentPlayer + 1;
-      updateStatus();
-    }, 1000);
-
-    return; // 不進行後續骰子
+    currentPlayer = (currentPlayer + 1) % nPlayers;
+    document.getElementById("currentPlayer").textContent = currentPlayer + 1;
+    updateStatus();
+    resetDiceUI();  // 補：結束後恢復按鈕與動畫狀態
+    return;
   }
 
   const selected = document.querySelector('input[name="diceOverride"]:checked');
@@ -586,49 +577,35 @@ console.log("renderPlayers");
   playDiceAnimation(dice, () => {
     finalizeRoll(dice);
 
-    // 動畫結束後顯示按鈕
-    diceAnimation.style.display = 'none';
-    rollBtn.style.display = 'inline-block';
+    
   });
+}
+function resetDiceUI() {
+  document.getElementById('playDiceAnimation').style.display = 'none';
+  document.getElementById('roll_dice_btn').style.display = 'inline-block';
 }
 
 function playDiceAnimation(finalDice, callback) {
-  const diceOverlay = document.createElement("div");
-  diceOverlay.id = "diceOverlay";
-  diceOverlay.style.position = "fixed";
-  diceOverlay.style.top = "50%";
-  diceOverlay.style.left = "50%";
-  diceOverlay.style.transform = "translate(-50%, -50%)";
-  diceOverlay.style.zIndex = "1000";
-  diceOverlay.style.backgroundColor = "rgba(255,255,255,0.8)";
-  diceOverlay.style.padding = "20px";
-  diceOverlay.style.borderRadius = "10px";
+  const diceImage = document.getElementById('playDiceAnimation');
+  diceImage.style.display = 'inline-block';
 
-  const diceImage = document.createElement("img");
-  diceImage.id = "diceImage";
-  diceImage.style.width = "100px";
-  diceImage.style.height = "100px";
-  diceOverlay.appendChild(diceImage);
-  document.body.appendChild(diceOverlay);
+  // 播放音效
+  const diceSound = new Audio('dice-sound.mp3');
+  diceSound.play();
 
-  const diceSound = document.getElementById("diceSound");
-  if (diceSound) {
-    diceSound.currentTime = 0;
-    diceSound.play();
-  }
-
-  let rollCount = 12, currentRoll = 0;
+  let rollCount = 12;
+  let currentRoll = 0;
   const interval = setInterval(() => {
-    let tempFace = Math.floor(Math.random() * 6) + 1;
-    diceImage.src = `dice${tempFace}.png`;
+    const randomFace = Math.floor(Math.random() * 6) + 1;
+    diceImage.src = `dice${randomFace}.png`;
     currentRoll++;
     if (currentRoll >= rollCount) {
       clearInterval(interval);
       diceImage.src = `dice${finalDice}.png`;
       setTimeout(() => {
-        document.body.removeChild(diceOverlay);
+        diceImage.style.display = 'none';
         if (callback) callback();
-      }, 500);
+      }, 600);
     }
   }, 80);
 }
