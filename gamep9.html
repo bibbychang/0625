@@ -575,13 +575,7 @@ function finalizeRoll(dice) {
   console.log("finalizeRoll dice:", dice);
   const log = document.getElementById("log");
 
-  if (skipTurn[currentPlayer]) {
-    alert(`🛑 玩家 ${currentPlayer + 1} 停一回合`);
-    log.innerText += `\n🎯 玩家${currentPlayer + 1} 停一回合`;
-    skipTurn[currentPlayer] = false;
-    nextTurn();
-    return;
-  }
+  
 
   log.innerText += `\n🎯 玩家${currentPlayer + 1} 擲出${dice}`;
   lastDiceRoll[currentPlayer] = dice;
