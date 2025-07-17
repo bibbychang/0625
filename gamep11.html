@@ -545,7 +545,7 @@ console.log("renderPlayers");
   if (gameEnded) return;
   console.log("rollDice");
 
-  const rollBtn = document.getElementById('roll_dice_btn');
+  const rollBtn = document.getElementById('roll-dice-btn');
   const diceAnimation = document.getElementById('playDiceAnimation');
 
   // 1. 隱藏按鈕，顯示動畫
@@ -582,7 +582,7 @@ console.log("renderPlayers");
 }
 function resetDiceUI() {
   document.getElementById('playDiceAnimation').style.display = 'none';
-  document.getElementById('roll_dice_btn').style.display = 'inline-block';
+  document.getElementById('roll-dice-btn').style.display = 'inline-block';
 }
 
 function playDiceAnimation(finalDice, callback) {
