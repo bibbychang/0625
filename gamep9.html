@@ -516,6 +516,7 @@ function rollDice() {
   console.log("rollDice");
 if (skipTurn[currentPlayer]) {
     console.log(`玩家 ${currentPlayer + 1} 停一回合`);
+	alert(`🛑 玩家 ${currentPlayer + 1} 停一回合`);
     skipTurn[currentPlayer] = false;
     currentPlayer = (currentPlayer + 1) % nPlayers;
     updateStatus();
