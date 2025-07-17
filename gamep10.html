@@ -175,6 +175,29 @@
 #quiz-history h2 {
   text-align: center;
 }
+
+#roll-dice-btn {
+  background-color: #4CAF50;
+  border: none;
+  color: white;
+  padding: 12px 20px;
+  text-align: center;
+  text-decoration: none;
+  font-size: 18px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+#roll-dice-btn:hover {
+  background-color: #45a049;
+  transform: scale(1.05);
+}
+
+#roll-dice-btn:active {
+  background-color: #3e8e41;
+  transform: scale(0.95);
+}
   </style>
 </head>
 <body>
@@ -182,9 +205,13 @@
   <h2>🎲 遊戲開始！</h2><div id="configInfo"></div>
    <div id="status" style="margin: 10px 0;"></div>
   <div>
-    <button onclick="rollDice()">擲骰 🎲 玩家 <span id="currentPlayer">1</span></button>
+    <button id="roll-dice-btn" onclick="rollDice()">擲骰 🎲 玩家 <span id="currentPlayer">1</span></button>
 	
     剛剛玩家<span id="people">-</span> 擲出 <span id="diceResult">-</span>
+	
+	
+	
+	
 	
   </div>
   <fieldset style="margin-top: 10px; border: 1px solid #ccc; padding: 10px;width:80%">
