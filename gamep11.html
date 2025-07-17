@@ -622,6 +622,7 @@ function finalizeRoll(dice) {
   document.getElementById("people").textContent = currentPlayer + 1;
 
   continueMoveLogic(dice);
+  resetDiceUI(); 
 }
 
 function continueMoveLogic(dice) {
