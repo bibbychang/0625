@@ -111,15 +111,16 @@
   position: fixed;
   top: 50%; left: 50%;
   transform: translate(-50%, -50%) scale(0);
-  background: white;
-  border: 3px solid #444;
-  border-radius: 12px;
-  box-shadow: 0 0 30px rgba(0,0,0,0.5);
+  background: linear-gradient(135deg, #ff5f6d, #ffc371);
+  color: white;
+  border: 4px solid #fff;
+  border-radius: 15px;
   padding: 30px;
   text-align: center;
+  box-shadow: 0 0 30px rgba(0,0,0,0.5);
   z-index: 10000;
-  opacity: 0;
   transition: transform 0.5s ease, opacity 0.5s ease;
+  opacity: 0;
 }
 
 #game-over.show {
@@ -127,23 +128,9 @@
   opacity: 1;
 }
 
-#game-over.hidden {
-  opacity: 0;
-  pointer-events: none;
-}
-
 #game-over h1 {
   font-size: 2.5em;
   margin-bottom: 20px;
-}
-#game-over .close-btn {
-  position: absolute;
-  top: 8px;
-  right: 12px;
-  background: transparent;
-  border: none;
-  font-size: 24px;
-  cursor: pointer;
 }
 
 #game-over button {
@@ -220,25 +207,21 @@
   <div id="log"></div>
   <div id="event-card-display"></div>
   </div>
-
-
-<div id="game-over" class="hidden">
-  <button class="close-btn" onclick="closeGameOver()">×</button>
+  <div id="game-over" class="hidden">
   <h1>🏆 遊戲結束 🏆</h1>
   <p id="winner-text"></p>
   <button onclick="restartGame()">重新開始</button>
   <button onclick="showQuizHistory()">檢視答題紀錄</button>
 </div>
-
-
-
   <!-- 顯示答題記錄的區塊 -->
 <div id="quiz-history" class="hidden">
   <h2>📚 答題紀錄</h2>
   <div id="quiz-list"></div>
   <button onclick="closeQuizHistory()">關閉</button>
 </div>
-
+  <div id="diceAnimation" style="width:60px; height:60px;">
+  <img id="diceImage" src="dice1.png" style="width:100%; height:100%;">
+</div>
 <audio id="diceSound" src="dice-sound.mp3" preload="auto"></audio>
 <script>
 
@@ -269,11 +252,6 @@ let timeLeft = timeLimit;
 let quizHistory = []; 
 
 let quizQuestions = [];
-
-document.getElementById("gameOverClose").addEventListener("click", () => {
-  document.getElementById("game-over").classList.add("hidden");
-});
-
 let passedStart = false;
 fetch("quiz.json")
   .then(res => res.json())
@@ -763,14 +741,9 @@ function updateStatus() {
 function showGameOverScreen(winnerText) {
   const over = document.getElementById('game-over');
   document.getElementById('winner-text').textContent = winnerText;
-  over.classList.remove('hidden');  // 先移除 hidden 才加 show
   over.classList.add('show');
 }
-function closeGameOver() {
-  const over = document.getElementById('game-over');
-  over.classList.remove('show');
-  over.classList.add('hidden');
-}
+
 function restartGame() {
   location.reload();  // 直接重整頁面
 }
