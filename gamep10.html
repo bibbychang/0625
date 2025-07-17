@@ -519,7 +519,7 @@ if (skipTurn[currentPlayer]) {
     console.log(`玩家 ${currentPlayer + 1} 停一回合`);
 	alert(`🛑 玩家 ${currentPlayer + 1} 停一回合`);
 	const log = document.getElementById("log");
-	log.innerText += `玩家 ${currentPlayer + 1} 停一回合`;
+	log.innerText += `\n玩家 ${currentPlayer + 1} 停一回合`;
     skipTurn[currentPlayer] = false;
     currentPlayer = (currentPlayer + 1) % nPlayers;
 	document.getElementById("currentPlayer").textContent = currentPlayer + 1;
