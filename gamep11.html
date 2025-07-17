@@ -176,6 +176,20 @@
   text-align: center;
 }
 
+#roll-dice-btn {
+  background: linear-gradient(135deg, #ff7e5f, #feb47b);
+  border: none;
+  color: white;
+  padding: 14px 24px;
+  font-size: 20px;
+  font-weight: bold;
+  border-radius: 50px;
+  cursor: pointer;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+  transition: all 0.3s ease;
+  letter-spacing: 1px;
+}
+
   </style>
 </head>
 <body>
@@ -185,7 +199,7 @@
   <div>
     <button id="roll-dice-btn" onclick="rollDice()">擲骰 🎲 玩家 <span id="currentPlayer">1</span></button>
 	
-    剛剛玩家<span id="people">-</span> 擲出 <span id="diceResult">-</span>
+    <!--剛剛玩家<span id="people">-</span> 擲出 <span id="diceResult">-</span>-->
 	
 	
 <img id="playDiceAnimation" src="dice-rolling.gif" style="display:none; width:50px; height:50px;" />
