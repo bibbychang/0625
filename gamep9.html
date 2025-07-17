@@ -219,7 +219,10 @@
   <div id="quiz-list"></div>
   <button onclick="closeQuizHistory()">關閉</button>
 </div>
-  
+  <div id="diceAnimation" style="width:60px; height:60px;">
+  <img id="diceImage" src="dice1.png" style="width:100%; height:100%;">
+</div>
+<audio id="diceSound" src="dice-sound.mp3" preload="auto"></audio>
 <script>
 
 const config = JSON.parse(localStorage.getItem("gameConfig") || '{}');
@@ -508,7 +511,13 @@ console.log("renderPlayers");
     playerTokens[idx] = token;
   }
 }
-
+function finalizeDiceRoll(dice) {
+  document.getElementById("diceResult").textContent = dice;
+  document.getElementById("people").textContent = currentPlayer + 1;
+  log(`🎲 玩家${currentPlayer + 1} 擲出 ${dice}`);
+  
+  movePlayerByDice(dice);  // 呼叫你原本移動玩家的函數
+}
 function rollDice() {
       if (gameEnded) return;
 	  console.log("rollDice");
@@ -522,7 +531,24 @@ function rollDice() {
     dice = Math.floor(Math.random() * 6) + 1;
   }
 		
-		
+		const diceImage = document.getElementById("diceImage");
+  const diceSound = document.getElementById("diceSound");
+  diceSound.currentTime = 0;  // 讓音效每次都從頭播放
+  diceSound.play();
+
+  let rollCount = 12;
+  let currentRoll = 0;
+  const interval = setInterval(() => {
+    let randomFace = Math.floor(Math.random() * 6) + 1;
+    diceImage.src = `dice${randomFace}.png`;
+    currentRoll++;
+    if (currentRoll >= rollCount) {
+      clearInterval(interval);
+      diceImage.src = `dice${finalDice}.png`;
+      finalizeDiceRoll(finalDice);
+    }
+  }, 80);
+}
 		
 	  if (skipTurn[currentPlayer]) {
 		console.log("rollDice_停一回合");
