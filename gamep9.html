@@ -219,9 +219,7 @@
   <div id="quiz-list"></div>
   <button onclick="closeQuizHistory()">關閉</button>
 </div>
-  <div id="diceAnimation" style="width:60px; height:60px;">
-  <img id="diceImage" src="dice1.png" style="width:100%; height:100%;">
-</div>
+
 <audio id="diceSound" src="dice-sound.mp3" preload="auto"></audio>
 <script>
 
@@ -517,6 +515,7 @@ function rollDice() {
 if (skipTurn[currentPlayer]) {
     console.log(`玩家 ${currentPlayer + 1} 停一回合`);
 	alert(`🛑 玩家 ${currentPlayer + 1} 停一回合`);
+	log.innerText += `玩家 ${currentPlayer + 1} 停一回合`;
     skipTurn[currentPlayer] = false;
     currentPlayer = (currentPlayer + 1) % nPlayers;
     updateStatus();
