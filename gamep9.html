@@ -524,11 +524,29 @@ function rollDice() {
 }
 
 function playDiceAnimation(finalDice, callback) {
-  const diceImage = document.getElementById("diceImage");
-  const diceSound = document.getElementById("diceSound");
+  const diceOverlay = document.createElement("div");
+  diceOverlay.id = "diceOverlay";
+  diceOverlay.style.position = "fixed";
+  diceOverlay.style.top = "50%";
+  diceOverlay.style.left = "50%";
+  diceOverlay.style.transform = "translate(-50%, -50%)";
+  diceOverlay.style.zIndex = "1000";
+  diceOverlay.style.backgroundColor = "rgba(255,255,255,0.8)";
+  diceOverlay.style.padding = "20px";
+  diceOverlay.style.borderRadius = "10px";
 
-  diceSound.currentTime = 0;
-  diceSound.play();
+  const diceImage = document.createElement("img");
+  diceImage.id = "diceImage";
+  diceImage.style.width = "100px";
+  diceImage.style.height = "100px";
+  diceOverlay.appendChild(diceImage);
+  document.body.appendChild(diceOverlay);
+
+  const diceSound = document.getElementById("diceSound");
+  if (diceSound) {
+    diceSound.currentTime = 0;
+    diceSound.play();
+  }
 
   let rollCount = 12, currentRoll = 0;
   const interval = setInterval(() => {
@@ -538,7 +556,10 @@ function playDiceAnimation(finalDice, callback) {
     if (currentRoll >= rollCount) {
       clearInterval(interval);
       diceImage.src = `dice${finalDice}.png`;
-      if (callback) callback();
+      setTimeout(() => {
+        document.body.removeChild(diceOverlay);
+        if (callback) callback();
+      }, 500);
     }
   }, 80);
 }
