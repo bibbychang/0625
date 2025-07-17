@@ -521,6 +521,7 @@ if (skipTurn[currentPlayer]) {
 	log.innerText += `玩家 ${currentPlayer + 1} 停一回合`;
     skipTurn[currentPlayer] = false;
     currentPlayer = (currentPlayer + 1) % nPlayers;
+	document.getElementById("currentPlayer").textContent = currentPlayer + 1;
     updateStatus();
     return;
   }
