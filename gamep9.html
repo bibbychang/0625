@@ -260,15 +260,15 @@ fetch("quiz.json")
   
 
 const eventList = [
-  { desc: "E01：地震發生時，你立刻躲到堅固桌子下。幸運逃過一劫！", effect: "前進1格" },
-  { desc: "E02：地震時你跑向樓梯逃生，被警衛制止。停一回合反思。", effect: "前進1格" },
-  { desc: "E03：你忘了固定書櫃，地震時東西掉下來，請退回1格。", effect: "前進1格" },
+  { desc: "E01：地震發生時，你立刻躲到堅固桌子下。幸運逃過一劫！", effect: "停一回合" },
+  { desc: "E02：地震時你跑向樓梯逃生，被警衛制止。停一回合反思。", effect: "停一回合" },
+  { desc: "E03：你忘了固定書櫃，地震時東西掉下來，請退回1格。", effect: "停一回合" },
   { desc: "E04：地震後馬上開瓦斯煮泡麵，發生火警！", effect: "回到起點" },
   { desc: "E05：你熟記疏散路線，迅速帶同學撤離，獲得得2分。", effect: "得1分" },
   { desc: "E06：你用防災包中的哨子呼救，成功獲救！", effect: "前進2格" },
   { desc: "E07：你冷靜躲避並幫助同學逃離，表現優秀！", effect: "前進2格" },
-  { desc: "E08：地震後打電話報平安，電話擁塞中。", effect: "前進1格" },
-  { desc: "E09：地震時窗戶破裂你被碎玻璃劃傷。", effect: "前進1格" },
+  { desc: "E08：地震後打電話報平安，電話擁塞中。", effect: "停一回合" },
+  { desc: "E09：地震時窗戶破裂你被碎玻璃劃傷。", effect: "停一回合" },
   { desc: "E10：你參加防震演練，熟悉避難路線！", effect: "前進1格" },
   { desc: "E11：你躲在書櫃旁邊，被書壓倒。", effect: "回到起點" },
   { desc: "E12：地震時你大喊「不要動」讓大家驚慌。", effect: "退回1格" },
@@ -514,6 +514,13 @@ console.log("renderPlayers");
 function rollDice() {
   if (gameEnded) return;
   console.log("rollDice");
+if (skipTurn[currentPlayer]) {
+    console.log(`玩家 ${currentPlayer + 1} 停一回合`);
+    skipTurn[currentPlayer] = false;
+    currentPlayer = (currentPlayer + 1) % nPlayers;
+    updateStatus();
+    return;
+  }
 
   const selected = document.querySelector('input[name="diceOverride"]:checked');
   let dice = selected && selected.value !== "0" ? parseInt(selected.value) : Math.floor(Math.random() * 6) + 1;
