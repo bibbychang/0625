@@ -1,23 +1,23 @@
 {
   "map1": [
-    ["1:start", "2:event", "3:card", "4:rain", "5:dice", "6:fire", "7:event1", "8:event2"],
-    ["9:event", "10:underdesk", "11:event", "12:card", "13:event1", "14:dice", "15:rain", "16:fire"],
-    ["17:event1", "18:event2", "19:fire", "20:dice", "21:event", "22:underdesk", "23:start", "24:card"],
-    ["25:rain", "26:fire", "27:event2", "28:event1", "29:underdesk", "30:card", "31:rain", "32:event"],
-    ["33:event", "34:card", "35:rain", "36:fire", "37:dice", "38:event2", "39:event1", "40:underdesk"],
-    ["41:event1", "42:underdesk", "43:event", "44:card", "45:event2", "46:rain", "47:start", "48:fire"],
-    ["49:rain", "50:fire", "51:event", "52:dice", "53:event1", "54:event2", "55:card", "56:underdesk"],
-    ["57:event", "58:card", "59:start", "60:underdesk", "61:rain", "62:fire", "63:dice", "64:event1"]
+    ["1:start", "2:event1", "3:card", "4:rain1", "5:dice", "6:fire", "7:event1", "8:event2"],
+    ["", "", "", "", "", "", "", "9:event1"],
+    ["", "", "", "", "", "", "", "10:underdesk"],
+    ["", "", "", "", "", "", "", "11:event2"],
+    ["", "", "", "", "", "", "", "12:event1"],
+    ["", "", "", "", "", "", "", "13:fire"],
+    ["", "", "", "", "", "", "", "14:rain2"],
+    ["28:dice", "27:card", "26:event2", "25:fire", "24:underdesk", "23:event1", "22:event1", "15:start"]
   ],
   "map2": [
-    ["1:start", "2:start", "3:start", "4:start", "5:start", "6:start", "7:start", "8:start"],
-    ["9:event", "10:event", "11:event", "12:event", "13:event", "14:event", "15:event", "16:event"],
-    ["17:card", "18:card", "19:card", "20:card", "21:card", "22:card", "23:card", "24:card"],
-    ["25:rain", "26:rain", "27:rain", "28:rain", "29:rain", "30:rain", "31:rain", "32:rain"],
-    ["33:dice", "34:dice", "35:dice", "36:dice", "37:dice", "38:dice", "39:dice", "40:dice"],
-    ["41:fire", "42:fire", "43:fire", "44:fire", "45:fire", "46:fire", "47:fire", "48:fire"],
-    ["49:event1", "50:event1", "51:event1", "52:event1", "53:event1", "54:event1", "55:event1", "56:event1"],
-    ["57:underdesk", "58:underdesk", "59:underdesk", "60:underdesk", "61:underdesk", "62:underdesk", "63:underdesk", "64:underdesk"]
+    ["1:start", "2:event1", "3:card", "4:rain1", "5:dice", "6:fire", "7:event1", "8:event2"],
+    ["9:card", "10:event1", "11:underdesk", "12:rain2", "13:dice", "14:event1", "15:fire", "16:card"],
+    ["", "", "", "", "", "", "", ""],
+    ["", "", "", "", "", "", "", ""],
+    ["", "", "", "", "", "", "", ""],
+    ["", "", "", "", "", "", "", ""],
+    ["", "", "", "", "", "", "", ""],
+    ["", "", "", "", "", "", "", ""]
   ],
   "map3": [
     ["1:card", "2:card", "3:card", "4:card", "5:card", "6:card", "7:card", "8:card"],
@@ -27,6 +27,6 @@
     ["33:", "34:", "35:", "36:", "37:", "38:", "39:", "40:"] ,
     ["41:", "42:", "43:", "44:", "45:", "46:", "47:", "48:"] ,
     ["49:", "50:", "51:", "52:", "53:", "54:", "55:", "56:"] ,
-    ["57:dice", "58:dice", "59:dice", "60:dice", "61:dice", "62:dice", "63:dice", "64:dice"]
+    ["57:dice", "58:dice", "59:dice", "60:dice", "61:dice", "11:dice", "10:dice", "9:dice"]
   ]
 }
