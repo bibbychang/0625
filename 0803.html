@@ -21,10 +21,19 @@
       height: 50px;
       border: 1px solid #aaa;
       background-color: #f0f0f0;
+      position: relative;
     }
     .grid-cell img {
       width: 100%;
       height: 100%;
+    }
+    .grid-cell .label {
+      position: absolute;
+      bottom: 0;
+      right: 2px;
+      background: rgba(255,255,255,0.8);
+      font-size: 10px;
+      padding: 1px;
     }
   </style>
 </head>
@@ -81,7 +90,6 @@
     const grid = document.getElementById('map-grid');
     const mapData = Array.from({ length: 8 }, () => Array(8).fill(null));
 
-    // 建立地圖格子
     for (let row = 0; row < 8; row++) {
       for (let col = 0; col < 8; col++) {
         const cell = document.createElement('div');
@@ -91,24 +99,20 @@
         cell.ondragover = e => e.preventDefault();
         cell.ondrop = e => {
           const type = e.dataTransfer.getData('text/plain');
-          const img = document.createElement('img');
-          img.src = `${type}.png`;
-          cell.innerHTML = '';
-          cell.appendChild(img);
-          mapData[row][col] = type;
+          const index = row * 8 + col + 1;
+          cell.innerHTML = `<img src="${type}.png"><div class="label">${index}</div>`;
+          mapData[row][col] = `${index}:${type}`;
         };
         grid.appendChild(cell);
       }
     }
 
-    // 拖拉圖片設定
     document.querySelectorAll('#tile-palette img').forEach(img => {
       img.ondragstart = e => {
         e.dataTransfer.setData('text/plain', e.target.dataset.type);
       };
     });
 
-    // 切換計時與記分模式
     const timeSel = document.getElementById('time-options');
     const scoreSel = document.getElementById('score-options');
     document.querySelectorAll('input[name="mode"]').forEach(radio => {
@@ -123,20 +127,21 @@
       };
     });
 
-    async function loadMap(mapNumber) {
-  const response = await fetch('preset_maps.json');
-  const data = await response.json();
-  const selected = data[`map${mapNumber}`];
+    async function loadMap(id) {
+      const response = await fetch('preset_maps.json');
+      const data = await response.json();
+      const selected = data[`map${id}`];
 
-  for (let row = 0; row < 8; row++) {
-    for (let col = 0; col < 8; col++) {
-      const type = selected[row][col];
-      mapData[row][col] = type;
-      const cell = grid.children[row * 8 + col];
-      cell.innerHTML = type ? `<img src="${type}.png">` : '';
+      for (let row = 0; row < 8; row++) {
+        for (let col = 0; col < 8; col++) {
+          const raw = selected[row][col];
+          const [index, type] = raw.split(":");
+          mapData[row][col] = raw;
+          const cell = grid.children[row * 8 + col];
+          cell.innerHTML = type ? `<img src="${type}.png"><div class="label">${index}</div>` : '';
+        }
+      }
     }
-  }
-}
 
     function startGame() {
       const mode = document.querySelector('input[name="mode"]:checked').value;
@@ -144,17 +149,11 @@
       const score = scoreSel.value;
       const players = document.getElementById('player-count').value;
 
-      console.log('模式:', mode);
-      console.log('時間或分數:', mode === 'time' ? time + '秒' : score + '分');
-      console.log('玩家數:', players);
-      console.log('地圖資料:', mapData);
-
-      // 你可以儲存 mapData 到 localStorage 再跳轉頁面
       localStorage.setItem('mapData', JSON.stringify(mapData));
       localStorage.setItem('mode', mode);
       localStorage.setItem('value', mode === 'time' ? time : score);
       localStorage.setItem('players', players);
-      window.location.href = 'game0803.html'; // 前往遊戲頁面
+      window.location.href = 'game.html';
     }
   </script>
 </body>
