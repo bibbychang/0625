@@ -123,17 +123,20 @@
       };
     });
 
-    function loadMap(id) {
-      // 簡化範例地圖：填滿整個圖為某種格子
-      let type = ['event', 'underdesk', 'card'][id - 1];
-      for (let row = 0; row < 8; row++) {
-        for (let col = 0; col < 8; col++) {
-          mapData[row][col] = type;
-          const cell = grid.children[row * 8 + col];
-          cell.innerHTML = `<img src="${type}.png">`;
-        }
-      }
+    async function loadMap(mapNumber) {
+  const response = await fetch('preset_maps.json');
+  const data = await response.json();
+  const selected = data[`map${mapNumber}`];
+
+  for (let row = 0; row < 8; row++) {
+    for (let col = 0; col < 8; col++) {
+      const type = selected[row][col];
+      mapData[row][col] = type;
+      const cell = grid.children[row * 8 + col];
+      cell.innerHTML = type ? `<img src="${type}.png">` : '';
     }
+  }
+}
 
     function startGame() {
       const mode = document.querySelector('input[name="mode"]:checked').value;

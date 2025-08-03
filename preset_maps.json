@@ -1,0 +1,32 @@
+{
+  "map1": [
+    ["start", "event", "card", "rain", "dice", "fire", "event1", "event2"],
+    ["event", "underdesk", "event", "card", "event1", "dice", "rain", "fire"],
+    ["event1", "event2", "fire", "dice", "event", "underdesk", "start", "card"],
+    ["rain", "fire", "event2", "event1", "underdesk", "card", "rain", "event"],
+    ["event", "card", "rain", "fire", "dice", "event2", "event1", "underdesk"],
+    ["event1", "underdesk", "event", "card", "event2", "rain", "start", "fire"],
+    ["rain", "fire", "event", "dice", "event1", "event2", "card", "underdesk"],
+    ["event", "card", "start", "underdesk", "rain", "fire", "dice", "event1"]
+  ],
+  "map2": [
+    ["start", "start", "start", "start", "start", "start", "start", "start"],
+    ["event", "event", "event", "event", "event", "event", "event", "event"],
+    ["card", "card", "card", "card", "card", "card", "card", "card"],
+    ["rain", "rain", "rain", "rain", "rain", "rain", "rain", "rain"],
+    ["dice", "dice", "dice", "dice", "dice", "dice", "dice", "dice"],
+    ["fire", "fire", "fire", "fire", "fire", "fire", "fire", "fire"],
+    ["event1", "event1", "event1", "event1", "event1", "event1", "event1", "event1"],
+    ["underdesk", "underdesk", "underdesk", "underdesk", "underdesk", "underdesk", "underdesk", "underdesk"]
+  ],
+  "map3": [
+    ["card", "card", "card", "card", "card", "card", "card", "card"],
+    ["", "", "", "", "", "", "", ""],
+    ["", "", "", "", "", "", "", ""],
+    ["", "", "", "", "", "", "", ""],
+    ["", "", "", "", "", "", "", ""],
+    ["", "", "", "", "", "", "", ""],
+    ["", "", "", "", "", "", "", ""],
+    ["dice", "dice", "dice", "dice", "dice", "dice", "dice", "dice"]
+  ]
+}
