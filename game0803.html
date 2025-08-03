@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <title>大富翁遊戲頁面</title>
+  <style>
+    body {
+      font-family: sans-serif;
+    }
+    #game-board {
+      display: grid;
+      grid-template-columns: repeat(8, 50px);
+      grid-template-rows: repeat(8, 50px);
+      gap: 2px;
+      margin-top: 10px;
+    }
+    .cell {
+      width: 50px;
+      height: 50px;
+      border: 1px solid #aaa;
+      position: relative;
+    }
+    .cell img {
+      width: 100%;
+      height: 100%;
+    }
+    .player {
+      width: 15px;
+      height: 15px;
+      border-radius: 50%;
+      position: absolute;
+      bottom: 2px;
+      right: 2px;
+      background-color: red;
+      z-index: 10;
+    }
+  </style>
+</head>
+<body>
+  <h1>大富翁遊戲進行中</h1>
+  <div>
+    <span id="mode-label"></span>｜<span id="time-label"></span>｜玩家人數：<span id="player-count"></span>
+  </div>
+
+  <div id="game-board"></div>
+  <button onclick="nextTurn()">擲骰前進</button>
+
+  <script>
+    const board = document.getElementById('game-board');
+    const mapData = JSON.parse(localStorage.getItem('mapData'));
+    const mode = localStorage.getItem('mode');
+    const value = localStorage.getItem('value');
+    const players = parseInt(localStorage.getItem('players'));
+
+    document.getElementById('mode-label').textContent = mode === 'time' ? '計時制' : '記分制';
+    document.getElementById('time-label').textContent = mode === 'time' ? value + '秒' : value + '分';
+    document.getElementById('player-count').textContent = players;
+
+    // 初始化格子
+    const cells = [];
+    for (let row = 0; row < 8; row++) {
+      for (let col = 0; col < 8; col++) {
+        const cell = document.createElement('div');
+        cell.className = 'cell';
+        const type = mapData[row][col];
+        if (type) {
+          const img = document.createElement('img');
+          img.src = `${type}.png`;
+          cell.appendChild(img);
+        }
+        board.appendChild(cell);
+        cells.push(cell);
+      }
+    }
+
+    // 玩家狀態
+    const playerPositions = Array(players).fill(0); // 每位玩家初始在 index 0
+    const playerColors = ['red', 'blue', 'green', 'orange'];
+    let currentPlayer = 0;
+
+    function renderPlayers() {
+      cells.forEach(cell => {
+        const old = cell.querySelectorAll('.player');
+        old.forEach(p => p.remove());
+      });
+      for (let i = 0; i < players; i++) {
+        const idx = playerPositions[i];
+        const p = document.createElement('div');
+        p.className = 'player';
+        p.style.backgroundColor = playerColors[i];
+        cells[idx].appendChild(p);
+      }
+    }
+
+    function nextTurn() {
+      const roll = Math.floor(Math.random() * 6) + 1;
+      alert(`玩家 ${currentPlayer + 1} 擲出 ${roll}`);
+      playerPositions[currentPlayer] = (playerPositions[currentPlayer] + roll) % 64;
+      renderPlayers();
+      currentPlayer = (currentPlayer + 1) % players;
+    }
+
+    renderPlayers();
+  </script>
+</body>
+</html>

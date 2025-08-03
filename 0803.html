@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <title>大富翁設定頁面</title>
+  <style>
+    #tile-palette img {
+      width: 40px;
+      margin: 5px;
+      cursor: grab;
+    }
+    #map-grid {
+      display: grid;
+      grid-template-columns: repeat(8, 50px);
+      grid-template-rows: repeat(8, 50px);
+      gap: 2px;
+      margin-top: 10px;
+    }
+    .grid-cell {
+      width: 50px;
+      height: 50px;
+      border: 1px solid #aaa;
+      background-color: #f0f0f0;
+    }
+    .grid-cell img {
+      width: 100%;
+      height: 100%;
+    }
+  </style>
+</head>
+<body>
+  <h1>大富翁遊戲設定</h1>
+
+  <h2>選擇遊戲模式</h2>
+  <label><input type="radio" name="mode" value="time" checked> 計時制</label>
+  <select id="time-options">
+    <option value="20">20 秒</option>
+    <option value="50">50 秒</option>
+    <option value="90">1 分半</option>
+  </select>
+  <label><input type="radio" name="mode" value="score"> 記分制</label>
+  <select id="score-options" disabled>
+    <option value="5">5 分</option>
+    <option value="10">10 分</option>
+    <option value="15">15 分</option>
+  </select>
+
+  <h2>選擇遊戲人數</h2>
+  <select id="player-count">
+    <option value="2">2 人</option>
+    <option value="3">3 人</option>
+    <option value="4">4 人</option>
+  </select>
+
+  <h2>選擇格子</h2>
+  <div id="tile-palette">
+    <img src="start.png" draggable="true" data-type="start">
+    <img src="event.png" draggable="true" data-type="event">
+    <img src="earthquake.png" draggable="true" data-type="earthquake">
+    <img src="event1.png" draggable="true" data-type="event1">
+    <img src="underdesk.png" draggable="true" data-type="underdesk">
+    <img src="event2.png" draggable="true" data-type="event2">
+    <img src="fire.png" draggable="true" data-type="fire">
+    <img src="card.png" draggable="true" data-type="card">
+    <img src="rain.png" draggable="true" data-type="rain">
+    <img src="dice.png" draggable="true" data-type="dice">
+  </div>
+
+  <h2>地圖編輯 (8x8)</h2>
+  <div id="map-grid"></div>
+
+  <h2>載入預設地圖</h2>
+  <button onclick="loadMap(1)">地圖 1</button>
+  <button onclick="loadMap(2)">地圖 2</button>
+  <button onclick="loadMap(3)">地圖 3</button>
+
+  <h2></h2>
+  <button onclick="startGame()">開始遊戲</button>
+
+  <script>
+    const grid = document.getElementById('map-grid');
+    const mapData = Array.from({ length: 8 }, () => Array(8).fill(null));
+
+    // 建立地圖格子
+    for (let row = 0; row < 8; row++) {
+      for (let col = 0; col < 8; col++) {
+        const cell = document.createElement('div');
+        cell.className = 'grid-cell';
+        cell.dataset.row = row;
+        cell.dataset.col = col;
+        cell.ondragover = e => e.preventDefault();
+        cell.ondrop = e => {
+          const type = e.dataTransfer.getData('text/plain');
+          const img = document.createElement('img');
+          img.src = `${type}.png`;
+          cell.innerHTML = '';
+          cell.appendChild(img);
+          mapData[row][col] = type;
+        };
+        grid.appendChild(cell);
+      }
+    }
+
+    // 拖拉圖片設定
+    document.querySelectorAll('#tile-palette img').forEach(img => {
+      img.ondragstart = e => {
+        e.dataTransfer.setData('text/plain', e.target.dataset.type);
+      };
+    });
+
+    // 切換計時與記分模式
+    const timeSel = document.getElementById('time-options');
+    const scoreSel = document.getElementById('score-options');
+    document.querySelectorAll('input[name="mode"]').forEach(radio => {
+      radio.onchange = () => {
+        if (radio.value === 'time') {
+          timeSel.disabled = false;
+          scoreSel.disabled = true;
+        } else {
+          timeSel.disabled = true;
+          scoreSel.disabled = false;
+        }
+      };
+    });
+
+    function loadMap(id) {
+      // 簡化範例地圖：填滿整個圖為某種格子
+      let type = ['event', 'underdesk', 'card'][id - 1];
+      for (let row = 0; row < 8; row++) {
+        for (let col = 0; col < 8; col++) {
+          mapData[row][col] = type;
+          const cell = grid.children[row * 8 + col];
+          cell.innerHTML = `<img src="${type}.png">`;
+        }
+      }
+    }
+
+    function startGame() {
+      const mode = document.querySelector('input[name="mode"]:checked').value;
+      const time = timeSel.value;
+      const score = scoreSel.value;
+      const players = document.getElementById('player-count').value;
+
+      console.log('模式:', mode);
+      console.log('時間或分數:', mode === 'time' ? time + '秒' : score + '分');
+      console.log('玩家數:', players);
+      console.log('地圖資料:', mapData);
+
+      // 你可以儲存 mapData 到 localStorage 再跳轉頁面
+      localStorage.setItem('mapData', JSON.stringify(mapData));
+      localStorage.setItem('mode', mode);
+      localStorage.setItem('value', mode === 'time' ? time : score);
+      localStorage.setItem('players', players);
+      window.location.href = 'game0803.html'; // 前往遊戲頁面
+    }
+  </script>
+</body>
+</html>
