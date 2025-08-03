@@ -1,160 +1,176 @@
 <!DOCTYPE html>
-<html lang="zh-Hant">
+<html lang="zh">
 <head>
   <meta charset="UTF-8">
-  <title>大富翁設定頁面</title>
+  <title>大富翁遊戲設定</title>
   <style>
-    #tile-palette img {
-      width: 40px;
-      margin: 5px;
-      cursor: grab;
-    }
-    #map-grid {
-      display: grid;
-      grid-template-columns: repeat(8, 50px);
-      grid-template-rows: repeat(8, 50px);
-      gap: 2px;
-      margin-top: 10px;
-    }
-    .grid-cell {
-      width: 50px;
-      height: 50px;
-      border: 1px solid #aaa;
-      background-color: #f0f0f0;
-      position: relative;
-    }
-    .grid-cell img {
-      width: 100%;
-      height: 100%;
-    }
-    .grid-cell .label {
-      position: absolute;
-      bottom: 0;
-      right: 2px;
-      background: rgba(255,255,255,0.8);
-      font-size: 10px;
-      padding: 1px;
-    }
+    body { font-family: sans-serif; }
+    .section { margin-bottom: 20px; }
+    .grid { display: grid; grid-template-columns: repeat(8, 50px); grid-template-rows: repeat(8, 50px); gap: 2px; }
+    .cell { width: 50px; height: 50px; border: 1px solid #ccc; background-size: cover; background-position: center; }
+    .draggable { width: 50px; height: 50px; margin: 5px; cursor: grab; border: 1px solid #000; background-size: cover; background-position: center; }
   </style>
 </head>
 <body>
   <h1>大富翁遊戲設定</h1>
 
-  <h2>選擇遊戲模式</h2>
-  <label><input type="radio" name="mode" value="time" checked> 計時制</label>
-  <select id="time-options">
-    <option value="20">20 秒</option>
-    <option value="50">50 秒</option>
-    <option value="90">1 分半</option>
-  </select>
-  <label><input type="radio" name="mode" value="score"> 記分制</label>
-  <select id="score-options" disabled>
-    <option value="5">5 分</option>
-    <option value="10">10 分</option>
-    <option value="15">15 分</option>
-  </select>
-
-  <h2>選擇遊戲人數</h2>
-  <select id="player-count">
-    <option value="2">2 人</option>
-    <option value="3">3 人</option>
-    <option value="4">4 人</option>
-  </select>
-
-  <h2>選擇格子</h2>
-  <div id="tile-palette">
-    <img src="start.png" draggable="true" data-type="start">
-    <img src="event.png" draggable="true" data-type="event">
-    <img src="earthquake.png" draggable="true" data-type="earthquake">
-    <img src="event1.png" draggable="true" data-type="event1">
-    <img src="underdesk.png" draggable="true" data-type="underdesk">
-    <img src="event2.png" draggable="true" data-type="event2">
-    <img src="fire.png" draggable="true" data-type="fire">
-    <img src="card.png" draggable="true" data-type="card">
-    <img src="rain.png" draggable="true" data-type="rain">
-    <img src="dice.png" draggable="true" data-type="dice">
+  <div class="section">
+    <label>模式：</label>
+    <select id="mode" onchange="updateTimeScoreOptions()">
+      <option value="timer">計時制</option>
+      <option value="score">記分制</option>
+    </select>
+    <select id="option"></select>
   </div>
 
-  <h2>地圖編輯 (8x8)</h2>
-  <div id="map-grid"></div>
+  <div class="section">
+    <label>遊戲人數：</label>
+    <select id="players">
+      <option value="2">2人</option>
+      <option value="3">3人</option>
+      <option value="4">4人</option>
+    </select>
+  </div>
 
-  <h2>載入預設地圖</h2>
-  <button onclick="loadMap(1)">地圖 1</button>
-  <button onclick="loadMap(2)">地圖 2</button>
-  <button onclick="loadMap(3)">地圖 3</button>
+  <div class="section">
+    <label>地圖選擇：</label>
+    <select id="map-select" onchange="loadMap(this.value)">
+      <option value="">自訂</option>
+      <option value="map1">地圖1（外圈）</option>
+      <option value="map2">地圖2（直線）</option>
+      <option value="map3">地圖3（L型）</option>
+    </select>
+  </div>
 
-  <h2></h2>
-  <button onclick="startGame()">開始遊戲</button>
+  <div class="section">
+    <div>
+      <strong>格子素材：</strong>
+      <div id="tiles"></div>
+    </div>
+    <div class="grid" id="map-grid"></div>
+  </div>
+
+  <div class="section">
+    <button onclick="startGame()">開始遊戲</button>
+  </div>
 
   <script>
-    const grid = document.getElementById('map-grid');
-    const mapData = Array.from({ length: 8 }, () => Array(8).fill(null));
+    const tileTypes = [
+      "start.png", "event1.png", "earthquake.png", "event2.png",
+      "underdesk.png", "fire.png", "card.png", "rain1.png", "dice.png", "quiz.png"
+    ];
 
-    for (let row = 0; row < 8; row++) {
-      for (let col = 0; col < 8; col++) {
-        const cell = document.createElement('div');
-        cell.className = 'grid-cell';
-        cell.dataset.row = row;
-        cell.dataset.col = col;
-        cell.ondragover = e => e.preventDefault();
-        cell.ondrop = e => {
-          const type = e.dataTransfer.getData('text/plain');
-          const index = row * 8 + col + 1;
-          cell.innerHTML = `<img src="${type}.png"><div class="label">${index}</div>`;
-          mapData[row][col] = `${index}:${type}`;
-        };
+    const predefinedMaps = {
+      map1: generateOuterPath(),
+      map2: generateLinePath(),
+      map3: generateLPath()
+    };
+
+    function updateTimeScoreOptions() {
+      const mode = document.getElementById("mode").value;
+      const option = document.getElementById("option");
+      option.innerHTML = "";
+      let opts = mode === "timer" ? ["20秒", "50秒", "90秒"] : ["5分", "10分", "15分"];
+      opts.forEach(val => {
+        let op = document.createElement("option");
+        op.value = val;
+        op.textContent = val;
+        option.appendChild(op);
+      });
+    }
+
+    function createTilePalette() {
+      const container = document.getElementById("tiles");
+      tileTypes.forEach(tile => {
+        const img = document.createElement("div");
+        img.className = "draggable";
+        img.draggable = true;
+        img.style.backgroundImage = `url(${tile})`;
+        img.dataset.tile = tile;
+        img.addEventListener("dragstart", e => {
+          e.dataTransfer.setData("text/plain", tile);
+        });
+        container.appendChild(img);
+      });
+    }
+
+    function createGrid() {
+      const grid = document.getElementById("map-grid");
+      for (let i = 0; i < 64; i++) {
+        const cell = document.createElement("div");
+        cell.className = "cell";
+        cell.dataset.index = i;
+        cell.addEventListener("dragover", e => e.preventDefault());
+        cell.addEventListener("drop", e => {
+          e.preventDefault();
+          const tile = e.dataTransfer.getData("text/plain");
+          cell.style.backgroundImage = `url(${tile})`;
+          cell.dataset.tile = tile;
+          cell.textContent = i + 1; // 顯示格子順序
+        });
         grid.appendChild(cell);
       }
     }
 
-    document.querySelectorAll('#tile-palette img').forEach(img => {
-      img.ondragstart = e => {
-        e.dataTransfer.setData('text/plain', e.target.dataset.type);
-      };
-    });
-
-    const timeSel = document.getElementById('time-options');
-    const scoreSel = document.getElementById('score-options');
-    document.querySelectorAll('input[name="mode"]').forEach(radio => {
-      radio.onchange = () => {
-        if (radio.value === 'time') {
-          timeSel.disabled = false;
-          scoreSel.disabled = true;
+    function loadMap(mapName) {
+      const tiles = predefinedMaps[mapName] || [];
+      const grid = document.getElementById("map-grid").children;
+      for (let i = 0; i < 64; i++) {
+        const cell = grid[i];
+        if (i < tiles.length && tiles[i]) {
+          cell.style.backgroundImage = `url(${tiles[i]})`;
+          cell.dataset.tile = tiles[i];
+          cell.textContent = i + 1;
         } else {
-          timeSel.disabled = true;
-          scoreSel.disabled = false;
-        }
-      };
-    });
-
-    async function loadMap(id) {
-      const response = await fetch('preset_maps.json');
-      const data = await response.json();
-      const selected = data[`map${id}`];
-
-      for (let row = 0; row < 8; row++) {
-        for (let col = 0; col < 8; col++) {
-          const raw = selected[row][col];
-          const [index, type] = raw.split(":");
-          mapData[row][col] = raw;
-          const cell = grid.children[row * 8 + col];
-          cell.innerHTML = type ? `<img src="${type}.png"><div class="label">${index}</div>` : '';
+          cell.style.backgroundImage = "none";
+          cell.removeAttribute("data-tile");
+          cell.textContent = "";
         }
       }
     }
 
-    function startGame() {
-      const mode = document.querySelector('input[name="mode"]:checked').value;
-      const time = timeSel.value;
-      const score = scoreSel.value;
-      const players = document.getElementById('player-count').value;
-
-      localStorage.setItem('mapData', JSON.stringify(mapData));
-      localStorage.setItem('mode', mode);
-      localStorage.setItem('value', mode === 'time' ? time : score);
-      localStorage.setItem('players', players);
-      window.location.href = 'game.html';
+    function generateOuterPath() {
+      const path = Array(64).fill("");
+      const indices = [];
+      for (let i = 0; i < 8; i++) indices.push(i);
+      for (let i = 1; i < 8; i++) indices.push(i * 8 + 7);
+      for (let i = 6; i >= 0; i--) indices.push(7 * 8 + i);
+      for (let i = 6; i > 0; i--) indices.push(i * 8);
+      const tiles = ["start.png", "event1.png", "earthquake.png", "event2.png", "underdesk.png", "fire.png", "card.png", "rain1.png", "dice.png", "quiz.png"];
+      indices.forEach((idx, i) => path[idx] = tiles[i % tiles.length]);
+      return path;
     }
+
+    function generateLinePath() {
+      const path = Array(64).fill("");
+      const tiles = ["start.png", "quiz.png", "rain1.png", "card.png", "fire.png", "underdesk.png", "event2.png", "earthquake.png"];
+      for (let i = 0; i < 8; i++) path[8 * 4 + i] = tiles[i % tiles.length];
+      return path;
+    }
+
+    function generateLPath() {
+      const path = Array(64).fill("");
+      const tiles = ["start.png", "dice.png", "event1.png", "quiz.png", "rain1.png", "card.png", "event2.png", "earthquake.png"];
+      for (let i = 0; i < 8; i++) path[i * 8] = tiles[i % tiles.length];
+      for (let i = 1; i < 8; i++) path[56 + i] = tiles[i % tiles.length];
+      return path;
+    }
+
+    function startGame() {
+  const mode = document.getElementById("mode").value;
+  const modeValue = document.getElementById("option").value;
+  const players = document.getElementById("players").value;
+
+  const grid = document.getElementById("map-grid").children;
+  const map = Array.from(grid).map(cell => cell.dataset.tile || "");
+
+  localStorage.setItem("gameSettings", JSON.stringify({ mode, modeValue, players, map }));
+  window.location.href = "0803game.html";
+}
+
+    updateTimeScoreOptions();
+    createTilePalette();
+    createGrid();
   </script>
 </body>
 </html>
