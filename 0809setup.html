@@ -13,8 +13,60 @@
   </style>
 </head>
 <body>
-  <h1>遊戲設定</h1>
 
+  <script>
+    function changeToEnglish() {
+      document.querySelector('h1').textContent = 'Game Settings';
+      document.querySelector('label[for]')?.removeAttribute('for');
+      document.querySelector("label").childNodes[0].textContent = 'Mode: ';
+      document.getElementById('mode').options[0].text = 'Time';
+      document.getElementById('mode').options[1].text = 'Score';
+      document.getElementById('timeLimit').options[0].text = '20 sec';
+      document.getElementById('timeLimit').options[1].text = '50 sec';
+      document.getElementById('timeLimit').options[2].text = '90 sec';
+      document.getElementById('scoreLimit').options[0].text = '5 pts';
+      document.getElementById('scoreLimit').options[1].text = '10 pts';
+      document.getElementById('scoreLimit').options[2].text = '15 pts';
+      document.querySelectorAll('label')[1].childNodes[0].textContent = 'Players: ';
+      document.getElementById('playerCount').options[0].text = '2 players';
+      document.getElementById('playerCount').options[1].text = '3 players';
+      document.getElementById('playerCount').options[2].text = '4 players';
+      document.querySelector('h3').textContent = 'Tile Materials (Drag to Map)';
+      document.querySelectorAll('h3')[1].textContent = 'Map Editor (8x8)';
+      document.querySelector("button[onclick^='loadMap(1)']").textContent = 'Apply Map 1';
+      document.querySelector("button[onclick^='loadMap(2)']").textContent = 'Map 2';
+      document.querySelector("button[onclick^='loadMap(3)']").textContent = 'Map 3';
+      document.querySelector("button[onclick^='startGame()']").textContent = 'Start Game';
+    }
+
+    function changeToChinese() {
+      document.querySelector('h1').textContent = '遊戲設定';
+      document.querySelector('label[for]')?.removeAttribute('for');
+      document.querySelector("label").childNodes[0].textContent = '模式：';
+      document.getElementById('mode').options[0].text = '計時制';
+      document.getElementById('mode').options[1].text = '記分制';
+      document.getElementById('timeLimit').options[0].text = '20秒';
+      document.getElementById('timeLimit').options[1].text = '50秒';
+      document.getElementById('timeLimit').options[2].text = '1分半';
+      document.getElementById('scoreLimit').options[0].text = '5分';
+      document.getElementById('scoreLimit').options[1].text = '10分';
+      document.getElementById('scoreLimit').options[2].text = '15分';
+      document.querySelectorAll('label')[1].childNodes[0].textContent = '人數：';
+      document.getElementById('playerCount').options[0].text = '2人';
+      document.getElementById('playerCount').options[1].text = '3人';
+      document.getElementById('playerCount').options[2].text = '4人';
+      document.querySelector('h3').textContent = '格子素材（拖曳到地圖）';
+      document.querySelectorAll('h3')[1].textContent = '地圖編輯區（8x8）';
+      document.querySelector("button[onclick^='loadMap(1)']").textContent = '套用地圖1';
+      document.querySelector("button[onclick^='loadMap(2)']").textContent = '地圖2';
+      document.querySelector("button[onclick^='loadMap(3)']").textContent = '地圖3';
+      document.querySelector("button[onclick^='startGame()']").textContent = '開始遊戲';
+    }
+  </script>
+
+  <button id="langBtnEn" onclick="changeToEnglish()">Change language into English</button>
+  <button id="langBtnZh" onclick="changeToChinese()">切換成中文</button>
+  <h1>遊戲設定</h1>
   <!-- 遊戲模式 -->
   <label>模式：
     <select id="mode" onchange="updateModeOptions()">
@@ -28,7 +80,7 @@
       <option value="50">50秒</option>
       <option value="90">1分半</option>
     </select>
-  </div>
+</div>
   <div id="scoreOptions" style="display:none">
     <select id="scoreLimit">
       <option value="5">5分</option>
@@ -51,14 +103,24 @@
   <div class="toolbox" id="toolbox">
     <img src="start.png" draggable="true">
     <img src="event1.png" draggable="true">
-    <img src="earthquake.png" draggable="true">
+    <img src="ok1.png" draggable="true">
+    <img src="card2.png" draggable="true">
+    <img src="event1.png" draggable="true">
+    <img src="earthquake2.png" draggable="true">
+    <img src="card2.png" draggable="true">
+    <img src="event1.png" draggable="true">
+    <img src="quiz.png" draggable="true">
+    <img src="card2.png" draggable="true">
+    <img src="event1.png" draggable="true">
+    <img src="fire2.png" draggable="true">
+    <img src="quiz.png" draggable="true">
+    <img src="dice.png" draggable="true">
+    <img src="event1.png" draggable="true">
+    <img src="card2.png" draggable="true">
+    <img src="event2.png" draggable="true">
+    <img src="card2.png" draggable="true">
     <img src="event2.png" draggable="true">
     <img src="underdesk.png" draggable="true">
-    <img src="fire.png" draggable="true">
-    <img src="card.png" draggable="true">
-    <img src="rain1.png" draggable="true">
-    <img src="dice.png" draggable="true">
-    <img src="quiz.png" draggable="true">
   </div>
 
   <!-- 地圖區域 -->
