@@ -133,9 +133,9 @@
   </select>
 <label style="margin-left:10px">人數
   <select id="playerCount">
-    <option value="2">2人</option>
-    <option value="3">3人</option>
-    <option value="4">4人</option>
+    <option value="2">2</option>
+    <option value="3">3</option>
+    <option value="4">4</option>
   </select>
 </label>
 
@@ -288,7 +288,10 @@
 <script>
 const LANG_KEY = 'gameLang';
 let lang = localStorage.getItem(LANG_KEY) || 'zh'; // 'zh' or 'en'
-
+if (!lang) {
+  lang = 'zh'; // 預設中文
+  localStorage.setItem(LANG_KEY, lang);
+}
 const uiText = {
   zh: {
     title: '🧩 編輯地圖與設定',
@@ -301,7 +304,7 @@ const uiText = {
     score_5: '5 分',
     score_10: '10 分',
     score_15: '15 分',
-    people: '人數',
+    people: '人數',    
     map1: '📌 地圖1',
     start: '▶ 開始遊戲'
   },
