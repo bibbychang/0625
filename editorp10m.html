@@ -118,7 +118,7 @@
   </style>
 </head>
 <body>
-  <h2>🧩 編輯地圖與設定</h2> <button id="lang-toggle" style="margin-left:8px"></button>
+  <h2>🧩 編輯地圖與設定aaa</h2> <button id="lang-toggle" style="margin-left:8px">語系</button>
   <label><input type="radio" name="mode" value="time" checked onchange="updateMode()"> 限時制</label>
   <select id="timeLimit">
     <option value="20">20 秒</option>
@@ -288,80 +288,30 @@
 <script>
 const LANG_KEY = 'gameLang';
 let lang = localStorage.getItem(LANG_KEY) || 'zh'; // 'zh' or 'en'
+function renderLangButton() {
+  const btn = document.getElementById('lang-toggle');
+  if (!btn) return;
+  // 目前是中文 -> 顯示 English version；目前是英文 -> 顯示 中文版
+  btn.textContent = (lang === 'zh') ? 'English version' : '中文版';
+  // 標題（可選）
+  const title = document.getElementById('title-text');
+  if (title) {
+    title.textContent = (lang === 'zh') ? '🧩 編輯地圖與設定' : '🧩 Map Editor & Settings';
+  }
+}
 
-function setLang(newLang) {
-  lang = newLang;
+function toggleLang() {
+  lang = (lang === 'zh') ? 'en' : 'zh';
   localStorage.setItem(LANG_KEY, lang);
-  renderLang();
+  renderLangButton();
 }
 
-function tEditor(key) {
-  const dict = {
-    zh: {
-      title: '🧩 編輯地圖與設定',
-      mode_time: '限時制',
-      mode_score: '積分制',
-      time_20s: '20 秒',
-      time_50s: '50 秒',
-      time_120s: '2 分鐘',
-      score_5: '5 分', score_10: '10 分', score_15: '15 分',
-      people: '人數',
-      btn_map1: '📌 地圖1',
-      btn_start: '▶ 開始遊戲',
-      toggle_to: 'English version'
-    },
-    en: {
-      title: '🧩 Map Editor & Settings',
-      mode_time: 'Timed',
-      mode_score: 'Score',
-      time_20s: '20 s',
-      time_50s: '50 s',
-      time_120s: '2 min',
-      score_5: '5 pts', score_10: '10 pts', score_15: '15 pts',
-      people: 'Players',
-      btn_map1: '📌 Map 1',
-      btn_start: '▶ Start Game',
-      toggle_to: '中文版'
-    }
-  };
-  return (dict[lang] && dict[lang][key]) || key;
-}
-
-function renderLang() {
-  // 標題 & 切換鈕
-  document.getElementById('title-text').innerText = tEditor('title');
-  document.getElementById('lang-toggle').innerText = tEditor('toggle_to');
-
-  // 單選標籤
-  document.querySelector('label input[value="time"]').parentNode.lastChild.nodeValue = ' ' + tEditor('mode_time');
-  document.querySelector('label input[value="score"]').parentNode.lastChild.nodeValue = ' ' + tEditor('mode_score');
-
-  // 下拉選項
-  const timeSel = document.getElementById('timeLimit');
-  timeSel.options[0].text = tEditor('time_20s');
-  timeSel.options[1].text = tEditor('time_50s');
-  timeSel.options[2].text = tEditor('time_120s');
-
-  const scoreSel = document.getElementById('scoreTarget');
-  scoreSel.options[0].text = tEditor('score_5');
-  scoreSel.options[1].text = tEditor('score_10');
-  scoreSel.options[2].text = tEditor('score_15');
-
-  // 人數標籤
-  const peopleLabel = document.querySelector('label[style*="margin-left:10px"]');
-  peopleLabel.childNodes[0].nodeValue = tEditor('people') + ' ';
-
-  // 地圖/開始按鈕
-  document.querySelector('button[onclick="loadMap1()"]').innerText = tEditor('btn_map1');
-  document.querySelector('button[onclick="saveAndStart()"]').innerText = tEditor('btn_start');
-}
-
-// 初始化 & 綁定按鈕
+// 初始化按鈕
 window.addEventListener('DOMContentLoaded', () => {
-  renderLang();
-  document.getElementById('lang-toggle').onclick = () => setLang(lang === 'zh' ? 'en' : 'zh');
+  renderLangButton();
+  const btn = document.getElementById('lang-toggle');
+  if (btn) btn.addEventListener('click', toggleLang);
 });
-
 
 
 
