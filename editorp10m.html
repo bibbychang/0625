@@ -288,17 +288,83 @@
 <script>
 const LANG_KEY = 'gameLang';
 let lang = localStorage.getItem(LANG_KEY) || 'zh'; // 'zh' or 'en'
-function renderLangButton() {
-  const btn = document.getElementById('lang-toggle');
-  if (!btn) return;
-  // 目前是中文 -> 顯示 English version；目前是英文 -> 顯示 中文版
-  btn.textContent = (lang === 'zh') ? 'English version' : '中文版';
-  // 標題（可選）
-  const title = document.getElementById('title-text');
-  if (title) {
-    title.textContent = (lang === 'zh') ? '🧩 編輯地圖與設定' : '🧩 Map Editor & Settings';
+
+const uiText = {
+  zh: {
+    title: '🧩 編輯地圖與設定',
+    toggle_to: 'English version',
+    mode_time: '限時制',
+    mode_score: '積分制',
+    time_20: '20 秒',
+    time_50: '50 秒',
+    time_120: '2 分鐘',
+    score_5: '5 分',
+    score_10: '10 分',
+    score_15: '15 分',
+    people: '人數',
+    map1: '📌 地圖1',
+    start: '▶ 開始遊戲'
+  },
+  en: {
+    title: '🧩 Map Editor & Settings',
+    toggle_to: '中文版',
+    mode_time: 'Timed Mode',
+    mode_score: 'Score Mode',
+    time_20: '20 sec',
+    time_50: '50 sec',
+    time_120: '2 min',
+    score_5: '5 pts',
+    score_10: '10 pts',
+    score_15: '15 pts',
+    people: 'Players',
+    map1: '📌 Map 1',
+    start: '▶ Start Game'
   }
+};
+
+function renderLangButton() {
+  document.documentElement.lang = (lang === 'en') ? 'en' : 'zh-Hant';
+
+  // 切換按鈕文字
+  const btn = document.getElementById('lang-toggle');
+  if (btn) btn.textContent = uiText[lang].toggle_to;
+
+  // 標題
+  const title = document.getElementById('title-text');
+  if (title) title.textContent = uiText[lang].title;
+
+  // 單選標籤（限時制 / 積分制）
+  const timeLabel = document.querySelector('label input[value="time"]').parentNode;
+  const scoreLabel = document.querySelector('label input[value="score"]').parentNode;
+  timeLabel.lastChild.nodeValue = ' ' + uiText[lang].mode_time;
+  scoreLabel.lastChild.nodeValue = ' ' + uiText[lang].mode_score;
+
+  // 下拉選項（時間限制）
+  const timeSel = document.getElementById('timeLimit');
+  timeSel.options[0].text = uiText[lang].time_20;
+  timeSel.options[1].text = uiText[lang].time_50;
+  timeSel.options[2].text = uiText[lang].time_120;
+
+  // 下拉選項（目標分數）
+  const scoreSel = document.getElementById('scoreTarget');
+  scoreSel.options[0].text = uiText[lang].score_5;
+  scoreSel.options[1].text = uiText[lang].score_10;
+  scoreSel.options[2].text = uiText[lang].score_15;
+
+  // 人數標籤
+  const peopleLabel = document.querySelector('label[style*="margin-left:10px"]');
+  if (peopleLabel) peopleLabel.childNodes[0].nodeValue = uiText[lang].people + ' ';
+
+  // 地圖按鈕
+  const map1Btn = document.querySelector('button[onclick="loadMap1()"]');
+  if (map1Btn) map1Btn.textContent = uiText[lang].map1;
+
+  // 開始遊戲按鈕
+  const startBtn = document.querySelector('button[onclick="saveAndStart()"]');
+  if (startBtn) startBtn.textContent = uiText[lang].start;
 }
+
+
 
 function toggleLang() {
   lang = (lang === 'zh') ? 'en' : 'zh';
