@@ -1002,6 +1002,11 @@ console.log("handleEventEffect");
 	   checkScoreWin();
     } else if (event.effect === "停一回合") {
       skipTurn[currentPlayer] = true;
+	  // 直接換下一位玩家
+	  currentPlayer = (currentPlayer + 1) % nPlayers;
+	  document.getElementById("currentPlayer").textContent = currentPlayer + 1;
+	  updateStatus();
+	  return; // 防止繼續執行後續程式
     }
 
     const fromIndex = pathIndices[fromStep];
