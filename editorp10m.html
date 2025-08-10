@@ -365,6 +365,9 @@ function renderLangButton() {
   // 開始遊戲按鈕
   const startBtn = document.querySelector('button[onclick="saveAndStart()"]');
   if (startBtn) startBtn.textContent = uiText[lang].start;
+
+    refreshAllTooltips();  // 最後加這一行，讓所有 tooltip 也換語言
+
 }
 
 
@@ -382,7 +385,37 @@ window.addEventListener('DOMContentLoaded', () => {
   if (btn) btn.addEventListener('click', toggleLang);
 });
 
+function refreshAllTooltips() {
+  // 1) 側邊欄的 tooltip（依 sidebar 圖示的 data-img）
+  document.querySelectorAll('#sidebar .item-wrapper').forEach(w => {
+    const img = w.querySelector('img.item');
+    const tip = w.querySelector('.tooltip');
+    if (img && tip) {
+      const key = img.getAttribute('data-img') || img.src;
+      tip.textContent = getDescription(key);
+    }
+  });
 
+  // 2) 地圖上「拖進來」的格子（drop-item-wrapper）
+  document.querySelectorAll('#map .drop-item-wrapper').forEach(w => {
+    const img = w.querySelector('img');
+    const tip = w.querySelector('.drop-tooltip');
+    if (img && tip) {
+      const key = img.getAttribute('data-img') || img.src;
+      tip.textContent = getDescription(key);
+    }
+  });
+
+  // 3) 地圖上「loadMap1() 載入」的格子（map-item-wrapper）
+  document.querySelectorAll('#map .map-item-wrapper').forEach(w => {
+    const img = w.querySelector('img');
+    const tip = w.querySelector('.map-tooltip');
+    if (img && tip) {
+      const key = img.getAttribute('data-img') || img.src;
+      tip.textContent = getDescription(key);
+    }
+  });
+}
 
 
 const mapEl = document.getElementById("map");
@@ -456,6 +489,7 @@ function drop(e) {
 
   const img = new Image();
   img.src = filename;
+  img.setAttribute('data-img', filename); // ★ 新增
   //img.className = "item";
   wrapper.appendChild(img);
   
@@ -503,6 +537,7 @@ function drop(e) {
 	  
 	  const image = new Image();
       image.src = img;
+      image.setAttribute('data-img', img); // ★ 新增
       image.width = image.height = 60;
       const tooltip = document.createElement("div");
 		tooltip.className = "map-tooltip";
