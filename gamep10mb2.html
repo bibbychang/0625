@@ -699,17 +699,25 @@ function continueMoveLogic(dice) {
   function handleProperty(index, afterDone) {
 alert("in function");
   
+  const imgSrc = getCellImageSrc(index); // 用 DOM 讀當前圖，最準
+  const pKey = propertyKeys[index] || getPropertyKey(imgSrc);
+  if (!pKey) {
+    console.log('[PROP] not a property:', { index, imgSrc });
+    afterDone && afterDone();
+    return;
+  }
+
   
-  const pKey = propertyKeys[index] || getPropertyKey(mapData[index]);
-  if (!pKey) { afterDone && afterDone(); alert("return");return; }
-alert("in");
+  
+  
+  
   // 補快取
   propertyKeys[index] = pKey;
 
   // 同步 owner
   if (propertyOwners[index] == null) {
-    const parsed = getOwnerFromImg(getCellImageSrc(index)); // 也改用 DOM 圖檔
-	propertyOwners[index] = (parsed == null ? 0 : parsed);
+    const parsed = getOwnerFromImg(imgSrc); // 可能是 0..4 或 null
+    propertyOwners[index] = (parsed == null ? 0 : parsed);
   }
   const owner = propertyOwners[index];   // 1..4 or null
   const me = currentPlayer + 1;
@@ -722,17 +730,23 @@ alert("in");
   alert("0");
     if (playerScores[currentPlayer] >= price) {
       const yes = confirm(`${name} 價格 ${price} 分。玩家 ${me} 要購買嗎？`);
-      if (yes) {
+         if (yes) {
         playerScores[currentPlayer] -= price;
         propertyOwners[index] = me;
         setTileImage(index, imageForOwner(pKey, me));
         updateStatus();
         logEl.innerText += `\n🏠 玩家${me} 以 ${price} 分購買了「${name}」`;
         logEl.scrollTop = logEl.scrollHeight;
+        console.log('[PROP] bought', { index, pKey, ownerNow: propertyOwners[index], score: playerScores[currentPlayer] });
+      } else {
+        console.log('[PROP] user canceled buy');
       }
     } else {
       logEl.innerText += `\n💡 玩家${me} 分數不足（${playerScores[currentPlayer]}）無法購買「${name}」`;
       logEl.scrollTop = logEl.scrollHeight;
+	  console.log('[PROP] user canceled buy');
+	        console.log('[PROP] cannot afford', { need: price, have: playerScores[currentPlayer] });
+
     }
     afterDone && afterDone();
     return;
@@ -747,9 +761,13 @@ alert("in");
       updateStatus();
       logEl.innerText += `\n💰 玩家${me} 在「${name}」支付 ${price} 分過路費給玩家${owner}`;
       logEl.scrollTop = logEl.scrollHeight;
+	       console.log('[PROP] paid toll', { from: me, to: owner, price });
+ 
     } else {
       logEl.innerText += `\n⚠️ 玩家${me} 分數不足（${playerScores[currentPlayer]}）無法支付「${name}」過路費`;
       logEl.scrollTop = logEl.scrollHeight;
+	     console.log('[PROP] cannot pay toll', { need: price, have: playerScores[currentPlayer] });
+ 
       // 有需要可在此加入：借貸/扣分至0/禁止前進 等規則
     }
     afterDone && afterDone();
@@ -758,6 +776,7 @@ alert("in");
 
   // 自己的地 → 沒事
   afterDone && afterDone();
+  console.log('[PROP] my own land, nothing happens');
 }
   function proceed() {
     const prev = playerSteps[currentPlayer];
