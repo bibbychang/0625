@@ -716,25 +716,24 @@ function continueMoveLogic(dice) {
   
   const imgNow = (typeof getCellImageSrc === 'function') ? getCellImageSrc(toIndex) : (mapData[toIndex] || "");
 
-// fire2：消防局(已經有了的話留著；這裡是參考，若你已寫過 fire2 可跳過這條)
+// fire2：消防局（用 askfireQuestion）
 if (imgNow.includes("fire2.png")) {
-  handleOwnershipQuiz("fire2.png", "fire_station", "消防局", toIndex, () => {
+  handleOwnershipQuiz("fire2.png", "fire_station", "消防局", toIndex, askfireQuestion, () => {
     handleProperty(toIndex, () => nextTurn());
   });
   return;
 }
-
-// ✅ rain1：水利局
+// rain1：水利局（用 askWaterBureauQuestion）
 if (imgNow.includes("rain1.png")) {
-  handleOwnershipQuiz("rain1.png", "water_bureau", "水利局", toIndex, () => {
+  handleOwnershipQuiz("rain1.png", "water_bureau", "水利局", toIndex, askWaterBureauQuestion, () => {
     handleProperty(toIndex, () => nextTurn());
   });
   return;
 }
 
-// ✅ earthquake3：921 博物館
+// earthquake3：921 博物館（用 askMuseumQuestion）
 if (imgNow.includes("earthquake3.png")) {
-  handleOwnershipQuiz("earthquake3.png", "museum921", "921博物館", toIndex, () => {
+  handleOwnershipQuiz("earthquake3.png", "museum921", "921博物館", toIndex, askMuseumQuestion, () => {
     handleProperty(toIndex, () => nextTurn());
   });
   return;
