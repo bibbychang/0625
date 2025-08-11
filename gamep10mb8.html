@@ -278,7 +278,7 @@ let timer = null;
 let timeLeft = timeLimit;
 
 let quizHistory = []; 
-et isAskingQuiz = false; // ✅ 防呆：避免同一回合重複彈出問答
+let isAskingQuiz = false; // ✅ 防呆：避免同一回合重複彈出問答
 
 function isQuizTileName(name) {
   if (!name) return false;
@@ -743,7 +743,7 @@ function continueMoveLogic(dice) {
   
   if (isQuizTileName(imgNow)) {
   if (isAskingQuiz) return; // already asking, avoid double
-  isAskingQuiz = True; // set guard
+  isAskingQuiz = true; // set guard
 
   let cat = null;
   if (imgNow.includes("quiz_earthquake.png")) cat = "earthquake";
@@ -776,7 +776,7 @@ function continueMoveLogic(dice) {
   return; // 出題完就收工，不要再往下跑其他格子效果
 }
   
-  if (cellImg.includes("bag1.png")) {
+  if (imgNow.includes("bag1.png")) {
   playerScores[currentPlayer] += 5;
   updateStatus();
   logEl.innerText += `\n🎒 玩家 ${currentPlayer + 1} 撿到包包，加 5 分`;
