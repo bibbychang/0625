@@ -283,7 +283,7 @@ function closeGameOver() {
 }
 let quizQuestions = [];
 let passedStart = false;
-fetch("quiz.json")
+fetch("quiz_all.json")
   .then(res => res.json())
   .then(data => quizQuestions = data);
   const quiz = quizQuestions[Math.floor(Math.random() * quizQuestions.length)];
