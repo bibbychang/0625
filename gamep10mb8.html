@@ -735,6 +735,53 @@ function continueMoveLogic(dice) {
   const imgNow = (typeof getCellImageSrc === 'function') ? getCellImageSrc(toIndex) : (mapData[toIndex] || "");
   
   
+  if (
+  cellImg.includes("quiz_earthquake.png") ||
+  cellImg.includes("quiz_fire.png") ||
+  cellImg.includes("quiz_water.png")
+) {
+  let cat = null;
+  if (cellImg.includes("quiz_earthquake.png")) cat = "earthquake";
+  else if (cellImg.includes("quiz_fire.png")) cat = "fire";
+  else if (cellImg.includes("quiz_water.png")) cat = "water";
+
+  const q = getRandomQuiz(cat);
+ // askQuiz(currentPlayer, proceed, proceed, q); // 保留你原本的流程
+  
+  
+askQuiz(
+  currentPlayer,
+  () => { // ✅ 答對：+3 分 → 繼續本回合流程
+    playerScores[currentPlayer] += 3;
+    logEl.innerText += `  答對題目：「${q?.question || ""}」 加 3 分`;
+    logEl.scrollTop = logEl.scrollHeight;
+    updateStatus();
+    if (checkScoreWin()) return;
+    proceed(); // 觸發地產 → 換人
+  },
+  () => { // ❌ 答錯：0 分 → 一樣繼續本回合流程
+    proceed();
+  },
+  q
+);
+  
+  
+  
+  return;
+}
+  
+  if (cellImg.includes("bag1.png")) {
+  playerScores[currentPlayer] += 5;
+  logEl.innerText += `\n🎒 玩家 ${currentPlayer + 1} 撿到包包，加 5 分`;
+  logEl.scrollTop = logEl.scrollHeight;
+  updateStatus();
+  checkScoreWin();
+
+  // 換下一位
+  currentPlayer = (currentPlayer + 1) % nPlayers;
+  document.getElementById("currentPlayer").textContent = currentPlayer + 1;
+  return;
+}
   if (imgNow.includes("card2.png")) {
   playerSkills[currentPlayer]++;
   updateStatus();
@@ -801,40 +848,7 @@ if (imgNow.includes("earthquake3.png")) {
     });
     return;
   }
-if (
-  cellImg.includes("quiz_earthquake.png") ||
-  cellImg.includes("quiz_fire.png") ||
-  cellImg.includes("quiz_water.png")
-) {
-  let cat = null;
-  if (cellImg.includes("quiz_earthquake.png")) cat = "earthquake";
-  else if (cellImg.includes("quiz_fire.png")) cat = "fire";
-  else if (cellImg.includes("quiz_water.png")) cat = "water";
 
-  const q = getRandomQuiz(cat);
- // askQuiz(currentPlayer, proceed, proceed, q); // 保留你原本的流程
-  
-  
-askQuiz(
-  currentPlayer,
-  () => { // ✅ 答對：+3 分 → 繼續本回合流程
-    playerScores[currentPlayer] += 3;
-    logEl.innerText += `  答對題目：「${q?.question || ""}」 加 3 分`;
-    logEl.scrollTop = logEl.scrollHeight;
-    updateStatus();
-    if (checkScoreWin()) return;
-    proceed(); // 觸發地產 → 換人
-  },
-  () => { // ❌ 答錯：0 分 → 一樣繼續本回合流程
-    proceed();
-  },
-  q
-);
-  
-  
-  
-  return;
-}
 
   if (cellImg.includes("event1.png") || cellImg.includes("event2.png")) {
     const randomEvent = eventList[Math.floor(Math.random() * eventList.length)];
@@ -845,18 +859,7 @@ askQuiz(
     return;
   }
 
-if (cellImg.includes("bag1.png")) {
-  playerScores[currentPlayer] += 5;
-  logEl.innerText += `\n🎒 玩家 ${currentPlayer + 1} 撿到包包，加 5 分`;
-  logEl.scrollTop = logEl.scrollHeight;
-  updateStatus();
-  checkScoreWin();
 
-  // 換下一位
-  currentPlayer = (currentPlayer + 1) % nPlayers;
-  document.getElementById("currentPlayer").textContent = currentPlayer + 1;
-  return;
-}
 
 
 
