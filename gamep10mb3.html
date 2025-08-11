@@ -715,52 +715,28 @@ function continueMoveLogic(dice) {
 	  // 🧯 fire2.png：先出題；答錯就清空所有消防局
   if ((mapData[toIndex] || "").includes("fire2.png")) {
     askfireQuestion(correct => {
-    const me = currentPlayer + 1;
-
-    // 先判斷目前盤面：我是否擁有消防局？別人是否擁有消防局？
-    const myFireIdx   = getFireStationIndexes(o => (o === me));
-    const otherFireIdx= getFireStationIndexes(o => (o > 0 && o !== me));
-
-    if (myFireIdx.length > 0) {
-      // 地是自己的
-      if (correct) {
-        alert("你答對了，保留消防局");
-      } else {
-        clearFireStationsByOwner(me);
-        alert("你答錯了，消防局清空");
-        logEl.innerText += `\n🚨 你答錯了，你的消防局已被清空`;
+      if (!correct) {
+        clearAllFireStations();
+        alert("消防局被清空了");
+        logEl.innerText += `\n🚨 因答錯題目，所有消防局已被清空`;
         logEl.scrollTop = logEl.scrollHeight;
       }
-    } else if (otherFireIdx.length > 0) {
-      // 地是別人的（盤面上至少有一位他人擁有消防局）
-      // 若有多位別人同時擁有，規則：清空所有「不是我」的消防局
-      if (correct) {
-        const owners = new Set();
-        otherFireIdx.forEach(i => owners.add(propertyOwners[i]));
-        owners.forEach(ownerId => clearFireStationsByOwner(ownerId));
-        alert("你答對了，清空消防局");
-        logEl.innerText += `\n🚨 你答對了，其他玩家的消防局已被清空`;
-        logEl.scrollTop = logEl.scrollHeight;
-      } else {
-        alert("你答錯了，保留消防局");
-      }
-    } else {
-      // 目前沒有人擁有消防局，僅提示
-      alert(correct ? "你答對了，目前沒有消防局需要處理" : "你答錯了，目前沒有消防局需要處理");
-    }
-
-    // 之後照原本流程
-    handleProperty(toIndex, () => {
-      nextTurn();
+      // 然後照原本流程
+      handleProperty(toIndex, () => {
+        nextTurn();
+      });
     });
-  });
-  return; // 避免後續重複執行
+    return; // 避免後續重複執行
   }
 
   // 原本流程end
 	  
 	  
-   
+      handleProperty(toIndex, () => {
+    nextTurn();
+    });
+    });
+  }
 
   if (cellImg.includes("dice.png")) {
     playerSteps[currentPlayer] = step;
@@ -999,31 +975,17 @@ function askfireQuestion(onDone) {
   modal.appendChild(box);
   document.body.appendChild(modal);
 }
-
-function getFireStationIndexes(ownerFilter /*(ownerId)=>bool*/ = null) {
-  const arr = [];
+function clearAllFireStations() {
   for (let i = 0; i < mapData.length; i++) {
-    const key = propertyKeys[i] || getPropertyKey(mapData[i] || "");
-    if (key === 'fire_station') {
-      if (!ownerFilter || ownerFilter(propertyOwners[i] ?? 0)) {
-        arr.push(i);
-      }
+    const pKey = propertyKeys[i] || getPropertyKey(mapData[i] || "");
+    if (pKey === 'fire_station') {
+      propertyOwners[i] = 0;
+      setTileImage(i, imageForOwner('fire_station', 0)); // fire_station_0.png
     }
   }
-  return arr;
-}
-
-// 清空指定 owner 的消防局（ownerId: 1..4；若傳 null 代表不清空任何）
-// 會把該 owner 擁有的所有消防局變回 fire_station_0.png
-function clearFireStationsByOwner(ownerId) {
-  if (ownerId == null) return;
-  const targets = getFireStationIndexes(o => (o === ownerId));
-  targets.forEach(i => {
-    propertyOwners[i] = 0;
-    setTileImage(i, imageForOwner('fire_station', 0)); // fire_station_0.png
-  });
   updateStatus();
 }
+
 
 function getCellImageSrc(index) {
   const cell = gameBoard.children[index];
@@ -1236,53 +1198,30 @@ if (img.includes("card2.png")) {
       }
 
  if (img.includes("fire2.png")) {
-  askfireQuestion(correct => {
-    const me = currentPlayer + 1;
-
-    const myFireIdx    = getFireStationIndexes(o => (o === me));
-    const otherFireIdx = getFireStationIndexes(o => (o > 0 && o !== me));
-
-    if (myFireIdx.length > 0) {
-      if (correct) {
-        alert("你答對了，保留消防局");
-      } else {
-        clearFireStationsByOwner(me);
-        alert("你答錯了，消防局清空");
-        logEl.innerText += `\n🚨 你答錯了，你的消防局已被清空`;
-        logEl.scrollTop = logEl.scrollHeight;
+        askfireQuestion(correct => {
+          if (!correct) {
+            clearAllFireStations();
+            alert("消防局被清空了");
+            logEl.innerText += `\n🚨 因答錯題目，所有消防局已被清空`;
+            logEl.scrollTop = logEl.scrollHeight;
+          }
+          // 照常檢查地產/換人
+          const imgSrcNow = getCellImageSrc(toIndex);
+          const pKeyAfterEvent = propertyKeys[toIndex] || getPropertyKey(imgSrcNow);
+          if (pKeyAfterEvent) {
+            handleProperty(toIndex, () => {
+              currentPlayer = (currentPlayer + 1) % nPlayers;
+              document.getElementById("currentPlayer").textContent = currentPlayer + 1;
+              updateStatus();
+            });
+          } else {
+            currentPlayer = (currentPlayer + 1) % nPlayers;
+            document.getElementById("currentPlayer").textContent = currentPlayer + 1;
+            updateStatus();
+          }
+        });
+        return;
       }
-    } else if (otherFireIdx.length > 0) {
-      if (correct) {
-        const owners = new Set();
-        otherFireIdx.forEach(i => owners.add(propertyOwners[i]));
-        owners.forEach(ownerId => clearFireStationsByOwner(ownerId));
-        alert("你答對了，清空消防局");
-        logEl.innerText += `\n🚨 你答對了，其他玩家的消防局已被清空`;
-        logEl.scrollTop = logEl.scrollHeight;
-      } else {
-        alert("你答錯了，保留消防局");
-      }
-    } else {
-      alert(correct ? "你答對了，目前沒有消防局需要處理" : "你答錯了，目前沒有消防局需要處理");
-    }
-
-    // 之後照原本流程：檢查地產/換人
-    const imgSrcNow = getCellImageSrc(toIndex);
-    const pKeyAfterEvent = propertyKeys[toIndex] || getPropertyKey(imgSrcNow);
-    if (pKeyAfterEvent) {
-      handleProperty(toIndex, () => {
-        currentPlayer = (currentPlayer + 1) % nPlayers;
-        document.getElementById("currentPlayer").textContent = currentPlayer + 1;
-        updateStatus();
-      });
-    } else {
-      currentPlayer = (currentPlayer + 1) % nPlayers;
-      document.getElementById("currentPlayer").textContent = currentPlayer + 1;
-      updateStatus();
-    }
-  });
-  return;
-}
 
 
 // 5) 若 landing 是事件格，且本次事件是「位移型事件」，做事件連鎖（不檢查地產）
