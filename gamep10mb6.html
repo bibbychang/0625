@@ -801,7 +801,7 @@ if (
   else if (cellImg.includes("quiz_water.png")) cat = "water";
 
   const q = getRandomQuiz(cat);
-  askQuiz(currentPlayer, proceed, nextTurn, q); // 保留你原本的流程
+  askQuiz(currentPlayer, proceed, proceed, q); // 保留你原本的流程
   return;
 }
 
