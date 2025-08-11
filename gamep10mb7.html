@@ -834,6 +834,21 @@ askQuiz(
     return;
   }
 
+if (cellImg.includes("bag1.png")) {
+  playerScores[currentPlayer] += 5;
+  logEl.innerText += `\n🎒 玩家 ${currentPlayer + 1} 撿到包包，加 5 分`;
+  logEl.scrollTop = logEl.scrollHeight;
+  updateStatus();
+  checkScoreWin();
+
+  // 換下一位
+  currentPlayer = (currentPlayer + 1) % nPlayers;
+  document.getElementById("currentPlayer").textContent = currentPlayer + 1;
+  return;
+}
+
+
+
   if (cellImg.includes("card2.png")) {
     playerSkills[currentPlayer]++;
     updateStatus();
@@ -1335,6 +1350,18 @@ if (img.includes("card2.png")) {
   return;
 }
 
+if (img.includes("bag1.png")) {
+  playerScores[currentPlayer] += 5;
+  updateStatus();
+  // proceed();
+  alert(`🎴 恭喜！玩家${currentPlayer+1} 加5分`);
+  logEl.innerText += ` 加5分`;
+  logEl.scrollTop = logEl.scrollHeight;
+  checkScoreWin();
+  currentPlayer = (currentPlayer + 1) % nPlayers;
+  document.getElementById("currentPlayer").textContent = currentPlayer + 1;
+  return;
+}
 
 // 3) underdesk：退回起點（不檢查地產）
       if (img.includes("underdesk.png")) {
