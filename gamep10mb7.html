@@ -872,30 +872,39 @@ function nextTurn() {
 
 
   function animateMove(playerIdx, from, to, callback) {
-  console.log("rollDice_animateMove");
   const token = playerTokens[playerIdx];
-  log.innerText += `ccc`;
-      if (!token) return;
-	  log.innerText += `eee`;
-      const rectFrom = gameBoard.children[from].getBoundingClientRect();
-      const rectTo = gameBoard.children[to].getBoundingClientRect();
-      const clone = token.cloneNode(true);
-      clone.style.position = 'fixed';
-      clone.style.zIndex = '9999';
-      clone.style.left = `${rectFrom.left}px`;
-      clone.style.top = `${rectFrom.top}px`;
-      clone.style.transition = 'all 0.4s ease';
-      document.body.appendChild(clone);
-      setTimeout(() => {
-        clone.style.left = `${rectTo.left}px`;
-        clone.style.top = `${rectTo.top}px`;
-      }, 10);
-      setTimeout(() => {
-        document.body.removeChild(clone);
-        gameBoard.children[to].appendChild(token);
-        if (callback) callback();
-      }, 450);
-    }
+  if (!token) { if (callback) callback(); return; }
+
+  const rectFrom = gameBoard.children[from].getBoundingClientRect();
+  const rectTo   = gameBoard.children[to].getBoundingClientRect();
+
+  // 先把原車隱藏，避免「原車 + 分身」的殘影
+  token.style.visibility = 'hidden';
+
+  const clone = token.cloneNode(true);
+  Object.assign(clone.style, {
+    position: 'fixed',
+    zIndex: '9999',
+    left: `${rectFrom.left}px`,
+    top:  `${rectFrom.top}px`,
+    transition: 'all 0.35s ease'
+  });
+  document.body.appendChild(clone);
+
+  // 觸發動畫
+  requestAnimationFrame(() => {
+    clone.style.left = `${rectTo.left}px`;
+    clone.style.top  = `${rectTo.top}px`;
+  });
+
+  // 動畫結束後，移除分身、把原車放到目的地並顯示
+  setTimeout(() => {
+    document.body.removeChild(clone);
+    gameBoard.children[to].appendChild(token);
+    token.style.visibility = 'visible';
+    if (callback) callback();
+  }, 370);
+}
 
 function checkScoreWin() {
   if (mode === "score") {
