@@ -204,7 +204,7 @@
 </head>
 <body>
 <div id="left-panel">
-  <h2>🎲 遊戲開始！abc</h2><div id="configInfo"></div>
+  <h2>🎲 遊戲開始！</h2><div id="configInfo"></div>
    <div id="status" style="margin: 10px 0;"></div>
   <div>
     <button id="roll-dice-btn" onclick="rollDice()">🎲 玩家 <span id="currentPlayer">1</span></button>
@@ -696,88 +696,7 @@ function continueMoveLogic(dice) {
 
 
 
-  function handleProperty(index, afterDone) {
-alert("in function");
-  
-  const imgSrc = getCellImageSrc(index); // 用 DOM 讀當前圖，最準
-  const pKey = propertyKeys[index] || getPropertyKey(imgSrc);
-  if (!pKey) {
-    console.log('[PROP] not a property:', { index, imgSrc });
-    afterDone && afterDone();
-    return;
-  }
-
-  
-  
-  
-  
-  // 補快取
-  propertyKeys[index] = pKey;
-
-  // 同步 owner
-  if (propertyOwners[index] == null) {
-    const parsed = getOwnerFromImg(imgSrc); // 可能是 0..4 或 null
-    propertyOwners[index] = (parsed == null ? 0 : parsed);
-  }
-  const owner = propertyOwners[index];   // 1..4 or null
-  const me = currentPlayer + 1;
-  const def = PROPERTY_DEFS[pKey];
-  const price = def.price;
-  const name = def.display;
-
-  // 沒人擁有 → 看要不要買
-  if (!owner || owner === 0) {
-  alert("0");
-    if (playerScores[currentPlayer] >= price) {
-      const yes = confirm(`${name} 價格 ${price} 分。玩家 ${me} 要購買嗎？`);
-         if (yes) {
-        playerScores[currentPlayer] -= price;
-        propertyOwners[index] = me;
-        setTileImage(index, imageForOwner(pKey, me));
-        updateStatus();
-        logEl.innerText += `\n🏠 玩家${me} 以 ${price} 分購買了「${name}」`;
-        logEl.scrollTop = logEl.scrollHeight;
-        console.log('[PROP] bought', { index, pKey, ownerNow: propertyOwners[index], score: playerScores[currentPlayer] });
-      } else {
-        console.log('[PROP] user canceled buy');
-      }
-    } else {
-      logEl.innerText += `\n💡 玩家${me} 分數不足（${playerScores[currentPlayer]}）無法購買「${name}」`;
-      logEl.scrollTop = logEl.scrollHeight;
-	  console.log('[PROP] user canceled buy');
-	        console.log('[PROP] cannot afford', { need: price, have: playerScores[currentPlayer] });
-
-    }
-    afterDone && afterDone();
-    return;
-  }
-
-  // 已有人擁有
-  if (owner !== me) {
-    // 付過路費
-    if (playerScores[currentPlayer] >= price) {
-      playerScores[currentPlayer] -= price;
-      playerScores[owner - 1] += price;
-      updateStatus();
-      logEl.innerText += `\n💰 玩家${me} 在「${name}」支付 ${price} 分過路費給玩家${owner}`;
-      logEl.scrollTop = logEl.scrollHeight;
-	       console.log('[PROP] paid toll', { from: me, to: owner, price });
  
-    } else {
-      logEl.innerText += `\n⚠️ 玩家${me} 分數不足（${playerScores[currentPlayer]}）無法支付「${name}」過路費`;
-      logEl.scrollTop = logEl.scrollHeight;
-	     console.log('[PROP] cannot pay toll', { need: price, have: playerScores[currentPlayer] });
- 
-      // 有需要可在此加入：借貸/扣分至0/禁止前進 等規則
-    }
-    afterDone && afterDone();
-    return;
-  }
-
-  // 自己的地 → 沒事
-  afterDone && afterDone();
-  console.log('[PROP] my own land, nothing happens');
-}
   function proceed() {
     const prev = playerSteps[currentPlayer];
     if (passedStart) {
@@ -1005,6 +924,74 @@ function getCellImageSrc(index) {
   const imgEl = cell ? cell.querySelector('img') : null;
   return imgEl ? imgEl.src : (mapData[index] || "");
 }
+// === 全域：地產處理（購買／過路費）===
+function handleProperty(index, afterDone) {
+  const imgSrc = getCellImageSrc(index);            // 用 DOM 讀圖
+  const pKey   = propertyKeys[index] || getPropertyKey(imgSrc);
+  if (!pKey) {
+    console.log('[PROP] not a property:', { index, imgSrc });
+    afterDone && afterDone();
+    return;
+  }
+
+  propertyKeys[index] = pKey;
+
+  // owner 正規化：無人 → 0
+  if (propertyOwners[index] == null) {
+    const parsed = getOwnerFromImg(imgSrc);         // 0..4 或 null
+    propertyOwners[index] = (parsed == null ? 0 : parsed);
+  }
+
+  const owner = propertyOwners[index];              // 0 | 1..4
+  const me    = currentPlayer + 1;
+  const def   = PROPERTY_DEFS[pKey];
+  const price = def.price;
+  const name  = def.display;
+
+  console.log('[PROP] enter', { index, pKey, name, imgSrc, owner, me, price, myScore: playerScores[currentPlayer] });
+
+  // 無人持有 → 詢問是否購買
+  if (owner === 0) {
+    if (playerScores[currentPlayer] >= price) {
+      console.log('[PROP] ask to buy', { name, price, me });
+      const yes = window.confirm(`${name} 價格 ${price} 分。玩家 ${me} 要購買嗎？`);
+      if (yes) {
+        playerScores[currentPlayer] -= price;
+        propertyOwners[index] = me;
+        setTileImage(index, imageForOwner(pKey, me)); // 會更新 mapData 與 DOM
+        updateStatus();
+        logEl.innerText += `\n🏠 玩家${me} 以 ${price} 分購買了「${name}」`;
+        logEl.scrollTop = logEl.scrollHeight;
+      }
+    } else {
+      logEl.innerText += `\n💡 玩家${me} 分數不足（${playerScores[currentPlayer]}）無法購買「${name}」（需 ${price} 分）`;
+      logEl.scrollTop = logEl.scrollHeight;
+    }
+    afterDone && afterDone();
+    return;
+  }
+
+  // 已有人持有 → 過路費或自己的地
+  if (owner !== me) {
+    if (playerScores[currentPlayer] >= price) {
+      playerScores[currentPlayer] -= price;
+      playerScores[owner - 1]     += price;
+      updateStatus();
+      logEl.innerText += `\n💰 玩家${me} 在「${name}」支付 ${price} 分過路費給玩家${owner}`;
+      logEl.scrollTop = logEl.scrollHeight;
+    } else {
+      logEl.innerText += `\n⚠️ 玩家${me} 分數不足（${playerScores[currentPlayer]}）無法支付「${name}」過路費`;
+      logEl.scrollTop = logEl.scrollHeight;
+    }
+    afterDone && afterDone();
+    return;
+  }
+
+  // 自己的地 → 沒事
+  afterDone && afterDone();
+}
+
+
 
 function handleEventEffect(event, fromStep) {
 console.log("handleEventEffect");
