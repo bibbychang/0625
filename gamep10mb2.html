@@ -958,10 +958,15 @@ function handleProperty(index, afterDone) {
       if (yes) {
         playerScores[currentPlayer] -= price;
         propertyOwners[index] = me;
-        setTileImage(index, imageForOwner(pKey, me)); // 會更新 mapData 與 DOM
-        updateStatus();
-        logEl.innerText += `\n🏠 玩家${me} 以 ${price} 分購買了「${name}」`;
-        logEl.scrollTop = logEl.scrollHeight;
+        setTileImage(index, imageForOwner(pKey, me)); // 同步 mapData + DOM
+        updateStatus(); // 先刷新計分板
+
+        setTimeout(() => {
+          logEl.innerText += `\n🏠 玩家${me} 以 ${price} 分購買了「${name}」`;
+          logEl.scrollTop = logEl.scrollHeight;
+          afterDone && afterDone();
+        }, 0);
+        return;
       }
     } else {
       logEl.innerText += `\n💡 玩家${me} 分數不足（${playerScores[currentPlayer]}）無法購買「${name}」（需 ${price} 分）`;
@@ -971,31 +976,36 @@ function handleProperty(index, afterDone) {
     return;
   }
 
-  // 已有人持有 → 過路費或自己的地
+  // === 已有人持有 → 付過路費或自己的地 ===
   if (owner !== me) {
     if (playerScores[currentPlayer] >= price) {
+      // 夠錢，正常付費
       playerScores[currentPlayer] -= price;
       playerScores[owner - 1]     += price;
-      updateStatus();
-	  
-	  alert(`玩家${me} 在「${name}」支付 ${price} 分過路費給玩家${owner}`);
-      logEl.innerText += `\n💰 玩家${me} 在「${name}」支付 ${price} 分過路費給玩家${owner}`;
-      logEl.scrollTop = logEl.scrollHeight;
-	  updateStatus();
-	  checkScoreWin();
+      updateStatus(); // 先刷新計分板
+
+      setTimeout(() => {
+        alert(`玩家${me} 在「${name}」支付 ${price} 分過路費給玩家${owner}`);
+        logEl.innerText += `\n💰 玩家${me} 在「${name}」支付 ${price} 分過路費給玩家${owner}`;
+        logEl.scrollTop = logEl.scrollHeight;
+        afterDone && afterDone();
+      }, 0);
+      return;
     } else {
-		
-	  alert(`玩家${me} 分數不足（${playerScores[currentPlayer]}）無法支付「${name}」過路費 把全部分數${playerScores[currentPlayer]}給玩家${owner} 自己變成0分`);
-      logEl.innerText += `\n⚠️ 玩家${me} 分數不足（${playerScores[currentPlayer]}）無法支付「${name}」過路費 把全部分數${playerScores[currentPlayer]}給玩家${owner} 自己變成0分`;
-      logEl.scrollTop = logEl.scrollHeight;
-	  playerScores[owner - 1]     += playerScores[currentPlayer];
-	  playerScores[currentPlayer] = 0;
-	  updateStatus();
-	  checkScoreWin();
+      // 不夠：把全部給對方（可依規則改）
+      const all = playerScores[currentPlayer];
+      playerScores[owner - 1] += all;
+      playerScores[currentPlayer] = 0;
+      updateStatus();
+
+      setTimeout(() => {
+        alert(`玩家${me} 分數不足，已把全部 ${all} 分給玩家${owner}（自己變 0 分）`);
+        logEl.innerText += `\n⚠️ 玩家${me} 分數不足，已把全部 ${all} 分給玩家${owner}（自己變 0 分）`;
+        logEl.scrollTop = logEl.scrollHeight;
+        afterDone && afterDone();
+      }, 0);
+      return;
     }
-	
-    afterDone && afterDone();
-    return;
   }
 
   // 自己的地 → 沒事
