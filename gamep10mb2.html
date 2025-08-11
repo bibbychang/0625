@@ -983,11 +983,12 @@ function handleProperty(index, afterDone) {
       playerScores[currentPlayer] -= price;
       playerScores[owner - 1]     += price;
       updateStatus(); // 先刷新計分板
-	  checkScoreWin();
+	  
       setTimeout(() => {
         alert(`玩家${me} 在「${name}」支付 ${price} 分過路費給玩家${owner}`);
         logEl.innerText += `\n💰 玩家${me} 在「${name}」支付 ${price} 分過路費給玩家${owner}`;
         logEl.scrollTop = logEl.scrollHeight;
+		checkScoreWin();
         afterDone && afterDone();
       }, 0);
       return;
@@ -997,11 +998,12 @@ function handleProperty(index, afterDone) {
       playerScores[owner - 1] += all;
       playerScores[currentPlayer] = 0;
       updateStatus();
-	checkScoreWin();
+	
       setTimeout(() => {
         alert(`玩家${me} 分數不足，已把全部 ${all} 分給玩家${owner}（自己變 0 分）`);
         logEl.innerText += `\n⚠️ 玩家${me} 分數不足，已把全部 ${all} 分給玩家${owner}（自己變 0 分）`;
         logEl.scrollTop = logEl.scrollHeight;
+		checkScoreWin();
         afterDone && afterDone();
       }, 0);
       return;
