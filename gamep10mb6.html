@@ -1342,8 +1342,12 @@ if (img.includes("quiz_earthquake.png") || img.includes("quiz_fire.png") || img.
   askQuiz(currentPlayer,
     () => { // 答對
       // 你原本的答對加分規則（若需要在這裡加分可打開）
-      // playerScores[currentPlayer] += 3; updateStatus(); checkScoreWin();
-
+       playerScores[currentPlayer] += 3; 
+	   logEl.innerText += `  答對題目：「${q.question}」 加 3 分`;
+		logEl.scrollTop = logEl.scrollHeight;
+	   updateStatus(); 
+	   checkScoreWin();
+		
       currentPlayer = (currentPlayer + 1) % nPlayers;
       document.getElementById("currentPlayer").textContent = currentPlayer + 1;
     },
