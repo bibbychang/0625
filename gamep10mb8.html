@@ -730,26 +730,6 @@ function continueMoveLogic(dice) {
       updateStatus();
       if (checkScoreWin()) return;
       logAction(currentPlayer, dice, toIndex);
-	  
-	  
-	  
-	  animateMove(currentStep, targetStep, () => {
-    if (cellImg.includes("card2.png")) {
-        playerSkills[currentPlayer]++;
-        updateStatus();
-        alert(`🎴 恭喜！玩家${currentPlayer+1} 獲得一張技能卡，目前技能卡：${playerSkills[currentPlayer]} 張`);
-        log.innerText += `\n🎴 玩家${currentPlayer+1} 獲得1張技能卡`;
-        log.scrollTop = log.scrollHeight;
-    }
-    proceed();
-});
-	  
-	  
-	  
-	  
-	  
-	  
-	  
 	  // 🧯 fire2.png：先出題；答錯就清空所有消防局
   
   const imgNow = (typeof getCellImageSrc === 'function') ? getCellImageSrc(toIndex) : (mapData[toIndex] || "");
@@ -868,8 +848,20 @@ if (cellImg.includes("bag1.png")) {
 }
 
 
+if (cellImg.includes("card2.png") ) {
+    
+    animateMove(currentPlayer, fromIndex, toIndex, () => {
+       playerSkills[currentPlayer]++;
+    updateStatus();
+    alert(`🎴 恭喜！玩家${currentPlayer+1} 獲得一張技能卡，目前技能卡：${playerSkills[currentPlayer]} 張`);
+    log.innerText += `\n🎴 玩家${currentPlayer+1} 獲得1張技能卡`;
+    log.scrollTop = log.scrollHeight;
+    proceed();
+    });
+    return;
+  }
 
-  
+
 
 
 
