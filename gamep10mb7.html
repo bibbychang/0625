@@ -871,41 +871,46 @@ function nextTurn() {
 
 
 
-  function animateMove(playerIdx, from, to, callback) {
+  function animateMove(playerIdx, fromCellIndex, toCellIndex, callback) {
   const token = playerTokens[playerIdx];
-  if (!token) { if (callback) callback(); return; }
+  if (!token) { callback && callback(); return; }
 
-  const rectFrom = gameBoard.children[from].getBoundingClientRect();
-  const rectTo   = gameBoard.children[to].getBoundingClientRect();
+  const pathLen = pathIndices.length;
 
-  // 先把原車隱藏，避免「原車 + 分身」的殘影
-  token.style.visibility = 'hidden';
+  // 取得「步數位置」：把 cellIndex 轉為 path 上的序號
+  let curStep = pathIndices.indexOf(fromCellIndex);
+  const targetStep = pathIndices.indexOf(toCellIndex);
+  if (curStep === -1 || targetStep === -1) { // 安全防呆
+    // 找不到就直接瞬移
+    gameBoard.children[toCellIndex].appendChild(token);
+    callback && callback();
+    return;
+  }
 
-  const clone = token.cloneNode(true);
-  Object.assign(clone.style, {
-    position: 'fixed',
-    zIndex: '9999',
-    left: `${rectFrom.left}px`,
-    top:  `${rectFrom.top}px`,
-    transition: 'all 0.35s ease'
-  });
-  document.body.appendChild(clone);
+  // 每格停留時間（可自行調整速度）
+  const STEP_DELAY = 180; // 毫秒
 
-  // 觸發動畫
-  requestAnimationFrame(() => {
-    clone.style.left = `${rectTo.left}px`;
-    clone.style.top  = `${rectTo.top}px`;
-  });
+  // 逐格前進直到 targetStep
+  function stepOnce() {
+    if (curStep === targetStep) {
+      // 走完
+      callback && callback();
+      return;
+    }
+    // 往下一格（繞圈）
+    curStep = (curStep + 1) % pathLen;
+    const nextCellIndex = pathIndices[curStep];
 
-  // 動畫結束後，移除分身、把原車放到目的地並顯示
-  setTimeout(() => {
-    document.body.removeChild(clone);
-    gameBoard.children[to].appendChild(token);
-    token.style.visibility = 'visible';
-    if (callback) callback();
-  }, 370);
+    // 將棋子放到下一格（不複製、不顯示分身 → 不會殘影）
+    gameBoard.children[nextCellIndex].appendChild(token);
+
+    // 繼續下一格
+    setTimeout(stepOnce, STEP_DELAY);
+  }
+
+  // 從當前格開始走
+  setTimeout(stepOnce, STEP_DELAY);
 }
-
 function checkScoreWin() {
   if (mode === "score") {
     for (let i = 0; i < nPlayers; i++) {
