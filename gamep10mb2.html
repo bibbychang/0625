@@ -697,6 +697,9 @@ function continueMoveLogic(dice) {
 
 
   function handleProperty(index, afterDone) {
+alert("in function");
+  
+  
   const pKey = propertyKeys[index] || getPropertyKey(mapData[index]);
   if (!pKey) { afterDone && afterDone(); alert("return");return; }
 alert("in");
