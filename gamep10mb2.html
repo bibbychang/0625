@@ -1104,15 +1104,17 @@ if (img.includes("card2.png")) {
       } 
       // 6) 以上皆非 → 在這裡檢查地產（買地／收費），處理完才換人
 			  console.log('LAND after event:', toIndex, mapData[toIndex], 'cachedKey=', propertyKeys[toIndex]);
-
+	alert("buy");
 		const pKeyAfterEvent = propertyKeys[toIndex] || getPropertyKey(mapData[toIndex] || '');
 		if (pKeyAfterEvent) {
+		alert("buy1");
 		  handleProperty(toIndex, () => {
 			currentPlayer = (currentPlayer + 1) % nPlayers;
 			document.getElementById("currentPlayer").textContent = currentPlayer + 1;
 			updateStatus();
 		  });
 		} else {
+		alert("buy2");
 		  currentPlayer = (currentPlayer + 1) % nPlayers;
 		  document.getElementById("currentPlayer").textContent = currentPlayer + 1;
 		  updateStatus();
