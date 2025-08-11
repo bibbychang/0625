@@ -204,7 +204,7 @@
 </head>
 <body>
 <div id="left-panel">
-  <h2>🎲 遊戲開始！</h2><div id="configInfo"></div>
+  <h2>🎲 遊戲開始！abc</h2><div id="configInfo"></div>
    <div id="status" style="margin: 10px 0;"></div>
   <div>
     <button id="roll-dice-btn" onclick="rollDice()">🎲 玩家 <span id="currentPlayer">1</span></button>
@@ -708,7 +708,8 @@ alert("in");
 
   // 同步 owner
   if (propertyOwners[index] == null) {
-    propertyOwners[index] = getOwnerFromImg(mapData[index]);
+    const parsed = getOwnerFromImg(getCellImageSrc(index)); // 也改用 DOM 圖檔
+	propertyOwners[index] = (parsed == null ? 0 : parsed);
   }
   const owner = propertyOwners[index];   // 1..4 or null
   const me = currentPlayer + 1;
@@ -980,6 +981,11 @@ function showEventCard(event, callback) {
 function hideEventCard() {
   document.getElementById("event-card-display").classList.remove("show");
 }
+function getCellImageSrc(index) {
+  const cell = gameBoard.children[index];
+  const imgEl = cell ? cell.querySelector('img') : null;
+  return imgEl ? imgEl.src : (mapData[index] || "");
+}
 
 function handleEventEffect(event, fromStep) {
 console.log("handleEventEffect");
@@ -1107,25 +1113,21 @@ if (img.includes("card2.png")) {
         return;
       } 
       // 6) 以上皆非 → 在這裡檢查地產（買地／收費），處理完才換人
-			  console.log('LAND after event:', toIndex, mapData[toIndex], 'cachedKey=', propertyKeys[toIndex]);
-	alert("buy");
-		const pKeyAfterEvent = propertyKeys[toIndex] || getPropertyKey(mapData[toIndex] || '');
-		if (pKeyAfterEvent) {
-		alert("buy1");
-		  handleProperty(toIndex, () => {
-		  alert("handleProperty");
-			currentPlayer = (currentPlayer + 1) % nPlayers;
-			document.getElementById("currentPlayer").textContent = currentPlayer + 1;
-			updateStatus();
-		  });
-		} else {
-		alert("buy2");
-		  currentPlayer = (currentPlayer + 1) % nPlayers;
-		  document.getElementById("currentPlayer").textContent = currentPlayer + 1;
-		  updateStatus();
-		}
-		return;
-      
+			 const imgSrcNow = getCellImageSrc(toIndex);
+      console.log('LAND after event:', toIndex, imgSrcNow, 'cachedKey=', propertyKeys[toIndex]);
+
+      const pKeyAfterEvent = propertyKeys[toIndex] || getPropertyKey(imgSrcNow);
+      if (pKeyAfterEvent) {
+        handleProperty(toIndex, () => {
+          currentPlayer = (currentPlayer + 1) % nPlayers;
+          document.getElementById("currentPlayer").textContent = currentPlayer + 1;
+          updateStatus();
+        });
+      } else {
+        currentPlayer = (currentPlayer + 1) % nPlayers;
+        document.getElementById("currentPlayer").textContent = currentPlayer + 1;
+        updateStatus();
+      }
     });
   });
 }
@@ -1135,6 +1137,8 @@ document.addEventListener('keydown', function(e) {
       rollDice();
     }
   });
+  
+  
 </script>
 </body>
 </html>
