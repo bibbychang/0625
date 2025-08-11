@@ -733,6 +733,17 @@ function continueMoveLogic(dice) {
 	  // 🧯 fire2.png：先出題；答錯就清空所有消防局
   
   const imgNow = (typeof getCellImageSrc === 'function') ? getCellImageSrc(toIndex) : (mapData[toIndex] || "");
+  
+  
+  if (imgNow.includes("card2.png")) {
+  playerSkills[currentPlayer]++;
+  updateStatus();
+  alert(`🎴 恭喜！玩家${currentPlayer+1} 獲得一張技能卡，目前技能卡：${playerSkills[currentPlayer]} 張`);
+  logEl.innerText += `\n🎴 玩家${currentPlayer+1} 獲得1張技能卡`;
+  logEl.scrollTop = logEl.scrollHeight;
+  nextTurn();   // 結束本回合
+  return;       // 不要再往下做地產/拆地
+}
 
 // fire2：消防局（用 askfireQuestion）
 if (imgNow.includes("fire2.png")) {
@@ -847,19 +858,6 @@ if (cellImg.includes("bag1.png")) {
   return;
 }
 
-
-if (cellImg.includes("card2.png") ) {
-    
-    animateMove(currentPlayer, fromIndex, toIndex, () => {
-       playerSkills[currentPlayer]++;
-    updateStatus();
-    alert(`🎴 恭喜！玩家${currentPlayer+1} 獲得一張技能卡，目前技能卡：${playerSkills[currentPlayer]} 張`);
-    log.innerText += `\n🎴 玩家${currentPlayer+1} 獲得1張技能卡`;
-    log.scrollTop = log.scrollHeight;
-    proceed();
-    });
-    return;
-  }
 
 
 
