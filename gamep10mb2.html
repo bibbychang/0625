@@ -266,7 +266,7 @@ const logEl = document.getElementById("log");
 console.log(config);
 
 let playerSteps = new Array(nPlayers).fill(0);
-let playerScores = new Array(nPlayers).fill(5);
+let playerScores = new Array(nPlayers).fill(8);
 let playerSkills = new Array(nPlayers).fill(1); // 每人初始1技能卡
 let skipTurn = new Array(nPlayers).fill(false);
 let lastDiceRoll = new Array(nPlayers).fill(0);
@@ -983,7 +983,7 @@ function handleProperty(index, afterDone) {
       playerScores[currentPlayer] -= price;
       playerScores[owner - 1]     += price;
       updateStatus(); // 先刷新計分板
-
+	  checkScoreWin();
       setTimeout(() => {
         alert(`玩家${me} 在「${name}」支付 ${price} 分過路費給玩家${owner}`);
         logEl.innerText += `\n💰 玩家${me} 在「${name}」支付 ${price} 分過路費給玩家${owner}`;
@@ -997,7 +997,7 @@ function handleProperty(index, afterDone) {
       playerScores[owner - 1] += all;
       playerScores[currentPlayer] = 0;
       updateStatus();
-
+	checkScoreWin();
       setTimeout(() => {
         alert(`玩家${me} 分數不足，已把全部 ${all} 分給玩家${owner}（自己變 0 分）`);
         logEl.innerText += `\n⚠️ 玩家${me} 分數不足，已把全部 ${all} 分給玩家${owner}（自己變 0 分）`;
