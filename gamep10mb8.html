@@ -734,40 +734,36 @@ function continueMoveLogic(dice) {
   
   const imgNow = (typeof getCellImageSrc === 'function') ? getCellImageSrc(toIndex) : (mapData[toIndex] || "");
   
-  
-  if (
-  cellImg.includes("quiz_earthquake.png") ||
-  cellImg.includes("quiz_fire.png") ||
-  cellImg.includes("quiz_water.png")
-) {
+  // 如果你的檔名是 quiz_file.png，下面也加上：
+  // || imgNow.includes("quiz_file.png")
+  if (  imgNow.includes("quiz_earthquake.png") ||  imgNow.includes("quiz_fire.png") ||  imgNow.includes("quiz_water.png")  )
+  {
   let cat = null;
-  if (cellImg.includes("quiz_earthquake.png")) cat = "earthquake";
-  else if (cellImg.includes("quiz_fire.png")) cat = "fire";
-  else if (cellImg.includes("quiz_water.png")) cat = "water";
+  if (imgNow.includes("quiz_earthquake.png")) cat = "earthquake";
+  else if (imgNow.includes("quiz_fire.png")) cat = "fire";
+  else if (imgNow.includes("quiz_water.png")) cat = "water";
+  // else if (imgNow.includes("quiz_file.png")) cat = "fire"; // 若你真的是 file→請改想要對應的分類
 
   const q = getRandomQuiz(cat);
- // askQuiz(currentPlayer, proceed, proceed, q); // 保留你原本的流程
-  
-  
-askQuiz(
-  currentPlayer,
-  () => { // ✅ 答對：+3 分 → 繼續本回合流程
-    playerScores[currentPlayer] += 3;
-    logEl.innerText += `  答對題目：「${q?.question || ""}」 加 3 分`;
-    logEl.scrollTop = logEl.scrollHeight;
-    updateStatus();
-    if (checkScoreWin()) return;
-    proceed(); // 觸發地產 → 換人
-  },
-  () => { // ❌ 答錯：0 分 → 一樣繼續本回合流程
-    proceed();
-  },
-  q
-);
-  
-  
-  
-  return;
+
+  askQuiz(
+    currentPlayer,
+    () => { // ✅ 答對：+3 分，結束回合
+      playerScores[currentPlayer] += 3;
+      logEl.innerText += `\n✅ 玩家${currentPlayer + 1} 在 ${cat || "general"} 題目答對，加 3 分`;
+      logEl.scrollTop = logEl.scrollHeight;
+      updateStatus();
+      checkScoreWin();
+      nextTurn(); // 結束本回合
+    },
+    () => { // ❌ 答錯：不加分，直接換人
+      logEl.innerText += `\n❌ 玩家${currentPlayer + 1} 在 ${cat || "general"} 題目答錯`;
+      logEl.scrollTop = logEl.scrollHeight;
+      nextTurn();
+    },
+    q
+  );
+  return; // 出題完就收工，不要再往下跑其他格子效果
 }
   
   if (cellImg.includes("bag1.png")) {
