@@ -779,8 +779,7 @@ askQuiz(
   checkScoreWin();
 
   // 換下一位
-  currentPlayer = (currentPlayer + 1) % nPlayers;
-  document.getElementById("currentPlayer").textContent = currentPlayer + 1;
+  nextTurn(); 
   return;
 }
   if (imgNow.includes("card2.png")) {
