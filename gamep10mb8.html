@@ -278,6 +278,13 @@ let timer = null;
 let timeLeft = timeLimit;
 
 let quizHistory = []; 
+et isAskingQuiz = false; // ✅ 防呆：避免同一回合重複彈出問答
+
+function isQuizTileName(name) {
+  if (!name) return false;
+  return name.includes("quiz_earthquake.png") || name.includes("quiz_fire.png") || name.includes("quiz_water.png");
+}
+
 function closeGameOver() {
   document.getElementById('game-over').classList.remove('show');
 }
@@ -734,15 +741,14 @@ function continueMoveLogic(dice) {
   
   const imgNow = (typeof getCellImageSrc === 'function') ? getCellImageSrc(toIndex) : (mapData[toIndex] || "");
   
-  // 如果你的檔名是 quiz_file.png，下面也加上：
-  // || imgNow.includes("quiz_file.png")
-  if (  imgNow.includes("quiz_earthquake.png") ||  imgNow.includes("quiz_fire.png") ||  imgNow.includes("quiz_water.png")  )
-  {
+  if (isQuizTileName(imgNow)) {
+  if (isAskingQuiz) return; // already asking, avoid double
+  isAskingQuiz = True; // set guard
+
   let cat = null;
   if (imgNow.includes("quiz_earthquake.png")) cat = "earthquake";
   else if (imgNow.includes("quiz_fire.png")) cat = "fire";
   else if (imgNow.includes("quiz_water.png")) cat = "water";
-  // else if (imgNow.includes("quiz_file.png")) cat = "fire"; // 若你真的是 file→請改想要對應的分類
 
   const q = getRandomQuiz(cat);
 
@@ -750,15 +756,19 @@ function continueMoveLogic(dice) {
     currentPlayer,
     () => { // ✅ 答對：+3 分，結束回合
       playerScores[currentPlayer] += 3;
-      logEl.innerText += `\n✅ 玩家${currentPlayer + 1} 在 ${cat || "general"} 題目答對，加 3 分`;
+      logEl.innerText += `
+✅ 玩家${currentPlayer + 1} 在 ${cat || "general"} 題目答對，加 3 分`;
       logEl.scrollTop = logEl.scrollHeight;
       updateStatus();
       checkScoreWin();
+      isAskingQuiz = false; // release guard
       nextTurn(); // 結束本回合
     },
     () => { // ❌ 答錯：不加分，直接換人
-      logEl.innerText += `\n❌ 玩家${currentPlayer + 1} 在 ${cat || "general"} 題目答錯`;
+      logEl.innerText += `
+❌ 玩家${currentPlayer + 1} 在 ${cat || "general"} 題目答錯`;
       logEl.scrollTop = logEl.scrollHeight;
+      isAskingQuiz = false; // release guard
       nextTurn();
     },
     q
@@ -771,7 +781,7 @@ function continueMoveLogic(dice) {
   updateStatus();
   logEl.innerText += `\n🎒 玩家 ${currentPlayer + 1} 撿到包包，加 5 分`;
   logEl.scrollTop = logEl.scrollHeight;
-  alert(`🎴 恭喜！玩家${currentPlayer+1} 獲得一張技能卡，目前技能卡：${playerSkills[currentPlayer]} 張`);  
+  alert(`🎴 恭喜！玩家 ${currentPlayer + 1} 撿到包包，加 5 分`);  
   checkScoreWin();
 
   // 換下一位
@@ -1393,28 +1403,31 @@ if (img.includes("bag1.png")) {
       }
 //console.log(img, "quiz判斷");
 // 4) quiz：問答（不檢查地產）
-      // 類別題目優先：quiz_earthquake / quiz_fire / quiz_water
-if (img.includes("quiz_earthquake.png") || img.includes("quiz_fire.png") || img.includes("quiz_water.png")) {
+      
+if (isQuizTileName(img)) {
+  if (isAskingQuiz) return; // already asking, avoid double
+  isAskingQuiz = true; // set guard
+
   let cat = null;
   if (img.includes("quiz_earthquake.png")) cat = "earthquake";
   else if (img.includes("quiz_fire.png")) cat = "fire";
   else if (img.includes("quiz_water.png")) cat = "water";
-alert("quiz_quiz_quiz_quiz_");
+
   const q = getRandomQuiz(cat);
-  askQuiz(currentPlayer,
+  askQuiz(
+    currentPlayer,
     () => { // 答對
-      // 你原本的答對加分規則（若需要在這裡加分可打開）
-        playerScores[currentPlayer] += 3; // 先加分
-		alert("wa");
+      playerScores[currentPlayer] += 3;
       logEl.innerText += `  答對題目：「${q.question}」 加 3 分`;
       logEl.scrollTop = logEl.scrollHeight;
       updateStatus(); // 更新分數顯示
       checkScoreWin();
-		
+      isAskingQuiz = false; // release guard
       currentPlayer = (currentPlayer + 1) % nPlayers;
       document.getElementById("currentPlayer").textContent = currentPlayer + 1;
     },
     () => { // 答錯
+      isAskingQuiz = false; // release guard
       currentPlayer = (currentPlayer + 1) % nPlayers;
       document.getElementById("currentPlayer").textContent = currentPlayer + 1;
     },
