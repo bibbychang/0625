@@ -977,10 +977,15 @@ function handleProperty(index, afterDone) {
       playerScores[currentPlayer] -= price;
       playerScores[owner - 1]     += price;
       updateStatus();
+	  
+	  alert(`玩家${me} 在「${name}」支付 ${price} 分過路費給玩家${owner}`);
       logEl.innerText += `\n💰 玩家${me} 在「${name}」支付 ${price} 分過路費給玩家${owner}`;
       logEl.scrollTop = logEl.scrollHeight;
     } else {
-      logEl.innerText += `\n⚠️ 玩家${me} 分數不足（${playerScores[currentPlayer]}）無法支付「${name}」過路費`;
+		playerScores[owner - 1]     += playerScores[currentPlayer];
+		playerScores[currentPlayer] = 0;
+	  alert(`玩家${me} 分數不足（${playerScores[currentPlayer]}）無法支付「${name}」過路費 把全部分數${playerScores[currentPlayer]}給玩家${owner} 自己變成0分`);
+      logEl.innerText += `\n⚠️ 玩家${me} 分數不足（${playerScores[currentPlayer]}）無法支付「${name}」過路費 把全部分數${playerScores[currentPlayer]}給玩家${owner} 自己變成0分`;
       logEl.scrollTop = logEl.scrollHeight;
     }
     afterDone && afterDone();
