@@ -772,9 +772,10 @@ askQuiz(
   
   if (cellImg.includes("bag1.png")) {
   playerScores[currentPlayer] += 5;
+  updateStatus();
   logEl.innerText += `\n🎒 玩家 ${currentPlayer + 1} 撿到包包，加 5 分`;
   logEl.scrollTop = logEl.scrollHeight;
-  updateStatus();
+  alert(`🎴 恭喜！玩家${currentPlayer+1} 獲得一張技能卡，目前技能卡：${playerSkills[currentPlayer]} 張`);  
   checkScoreWin();
 
   // 換下一位
