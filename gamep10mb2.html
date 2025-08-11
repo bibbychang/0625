@@ -2,7 +2,7 @@
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8">
-  <title>大富翁遊戲bb</title>
+  <title>大富翁遊戲cc</title>
   <style>
     body { font-family: sans-serif; margin: 0; padding: 1rem; display: flex; }
 	#left-panel { flex: 1; }
@@ -1103,11 +1103,20 @@ if (img.includes("card2.png")) {
         return;
       } 
       // 6) 以上皆非 → 在這裡檢查地產（買地／收費），處理完才換人
-       handleProperty(toIndex, () => {
-        currentPlayer = (currentPlayer + 1) % nPlayers;
-        document.getElementById("currentPlayer").textContent = currentPlayer + 1;
-        updateStatus();
-      });	
+			   const pKeyAfterEvent = getPropertyKey(mapData[toIndex]);
+		if (pKeyAfterEvent) {
+		  handleProperty(toIndex, () => {
+			currentPlayer = (currentPlayer + 1) % nPlayers;
+			document.getElementById("currentPlayer").textContent = currentPlayer + 1;
+			updateStatus();
+		  });
+		} else {
+		  // 不是地產 → 正常換人
+		  currentPlayer = (currentPlayer + 1) % nPlayers;
+		  document.getElementById("currentPlayer").textContent = currentPlayer + 1;
+		  updateStatus();
+		}
+		return;	
       
     });
   });
