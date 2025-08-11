@@ -698,8 +698,8 @@ function continueMoveLogic(dice) {
 
   function handleProperty(index, afterDone) {
   const pKey = propertyKeys[index] || getPropertyKey(mapData[index]);
-  if (!pKey) { afterDone && afterDone(); return; }
-
+  if (!pKey) { afterDone && afterDone(); alert("return");return; }
+alert("in");
   // 補快取
   propertyKeys[index] = pKey;
 
@@ -715,6 +715,7 @@ function continueMoveLogic(dice) {
 
   // 沒人擁有 → 看要不要買
   if (!owner || owner === 0) {
+  alert("0");
     if (playerScores[currentPlayer] >= price) {
       const yes = confirm(`${name} 價格 ${price} 分。玩家 ${me} 要購買嗎？`);
       if (yes) {
