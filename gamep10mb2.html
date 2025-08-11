@@ -1103,8 +1103,10 @@ if (img.includes("card2.png")) {
         return;
       } 
       // 6) 以上皆非 → 在這裡檢查地產（買地／收費），處理完才換人
+	  alert("buy ");
 			   const pKeyAfterEvent = getPropertyKey(mapData[toIndex]);
 		if (pKeyAfterEvent) {
+		alert("buy1");
 		  handleProperty(toIndex, () => {
 			currentPlayer = (currentPlayer + 1) % nPlayers;
 			document.getElementById("currentPlayer").textContent = currentPlayer + 1;
@@ -1112,6 +1114,7 @@ if (img.includes("card2.png")) {
 		  });
 		} else {
 		  // 不是地產 → 正常換人
+		  alert("buy2");
 		  currentPlayer = (currentPlayer + 1) % nPlayers;
 		  document.getElementById("currentPlayer").textContent = currentPlayer + 1;
 		  updateStatus();
