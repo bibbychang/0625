@@ -805,36 +805,6 @@ if (imgNow.includes("fire2.png")) {
   });
   return;
 }
-// 🎲 骰子格：再擲一次（落地後判斷）
-if (imgNow.includes("dice.png")) {
-  alert("🎲 踩到骰子格，可以再擲一次！");
-  logEl.innerText += `\n🎯 玩家${currentPlayer + 1} 踩到骰子格，可以再擲一次！`;
-  logEl.scrollTop = logEl.scrollHeight;
-  setTimeout(() => { rollDice(); }, 300);
-  return;
-}
-
-// 📚 underdesk：退回起點（落地後判斷）
-if (imgNow.includes("underdesk.png")) {
-  alert("📢 被書壓倒，退回起點！");
-  logEl.innerText += `\n📢 玩家${currentPlayer + 1} 被書壓倒！退回起點`;
-  logEl.scrollTop = logEl.scrollHeight;
-  const toStart = pathIndices[0];
-  playerSteps[currentPlayer] = 0;
-  animateMove(currentPlayer, toIndex, toStart, () => {
-    updateStatus();
-    nextTurn();
-  });
-  return;
-}
-
-// 🎴 event1/event2：抽事件卡（落地後判斷）
-if (imgNow.includes("event1.png") || imgNow.includes("event2.png")) {
-  const randomEvent = eventList[Math.floor(Math.random() * eventList.length)];
-  handleEventEffect(randomEvent, step); // 由事件流程負責後續（含連鎖與地產處理/換人）
-  return;
-}
-
 // rain1：水利局（用 askWaterBureauQuestion）
 if (imgNow.includes("rain1.png")) {
   handleOwnershipQuiz("rain1.png", "water_bureau", "水利局", toIndex, askWaterBureauQuestion, () => {
@@ -860,11 +830,38 @@ if (imgNow.includes("earthquake3.png")) {
     nextTurn();
     });
     });
-  });
+  }
+
+  if (cellImg.includes("dice.png")) {
+    playerSteps[currentPlayer] = step;
+    animateMove(currentPlayer, fromIndex, toIndex, () => {
+      updateStatus();
+      alert("🎲 踩到骰子格，可以再擲一次！");
+      setTimeout(() => {
+        rollDice();
+      }, 300);
+    });
     return;
-  });
+  }
+
+  if (cellImg.includes("underdesk.png")) {
+    alert("📢 被書壓倒，退回起點！");
+    log.innerText += ` 被書壓倒！退回起點`;
+    playerSteps[currentPlayer] = 0;
+    animateMove(currentPlayer, fromIndex, pathIndices[0], () => {
+      updateStatus();
+      nextTurn();
+    });
     return;
-  });
+  }
+
+
+  if (cellImg.includes("event1.png") || cellImg.includes("event2.png")) {
+    const randomEvent = eventList[Math.floor(Math.random() * eventList.length)];
+    playerSteps[currentPlayer] = step;
+    animateMove(currentPlayer, fromIndex, toIndex, () => {
+      handleEventEffect(randomEvent, step);
+    });
     return;
   }
 
