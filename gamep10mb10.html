@@ -1346,16 +1346,16 @@ console.log("handleEventEffect");
     }
 
 
-    // 決定動畫方向：退回/回到起點 → 後退；其他 → 前進
+    // 決定動畫方向：退回 → 後退；其他 → 前進
     let __animDir = 1;
-    if (event.effect === "退回1格" || event.effect === "退回2格" || event.effect === "回到起點") {
+    if (event.effect === "退回1格" || event.effect === "退回2格") {
       __animDir = -1;
     }
 
 
 
-    //const fromIndex = pathIndices[fromStep];
-    //const toIndex = pathIndices[newStep];
+    const fromIndex = pathIndices[fromStep];
+    const toIndex = pathIndices[newStep];
 	 const imgNow = getCellImageSrc(toIndex);
     playerSteps[currentPlayer] = newStep;
 
@@ -1418,12 +1418,12 @@ if (img.includes("bag1.png")) {
 		log.innerText += ` 玩家${currentPlayer + 1}被書壓倒！退回起點`;
         const toStart = pathIndices[0];
         playerSteps[currentPlayer] = 0;
-        animateMove(currentPlayer, toIndex, toStart, () => {
-          updateStatus();
-          currentPlayer = (currentPlayer + 1) % nPlayers;
-          document.getElementById("currentPlayer").textContent = currentPlayer + 1;
-        });-1;
-        return;
+		
+		renderPlayers();  
+		updateStatus();
+        currentPlayer = (currentPlayer + 1) % nPlayers;
+		  document.getElementById("currentPlayer").textContent = currentPlayer + 1;
+		  return;
       }
 //console.log(img, "quiz判斷");
 // 4) quiz：問答（不檢查地產）
