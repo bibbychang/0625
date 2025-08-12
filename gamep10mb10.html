@@ -1359,7 +1359,7 @@ console.log("handleEventEffect");
 	 const imgNow = getCellImageSrc(toIndex);
     playerSteps[currentPlayer] = newStep;
 
-    animateMove(currentPlayer, fromIndex, toIndex, () => {
+    animateMove(currentPlayer, fromIndex, toIndex, __animDir,() => {
 	console.log("handleEventEffect_animateMove");
       updateStatus();
       const img = mapData[toIndex] || "";
