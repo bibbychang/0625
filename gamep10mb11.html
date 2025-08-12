@@ -882,7 +882,7 @@ function nextTurn() {
 
 
 
-  function animateMove(playerIdx, fromCellIndex, toCellIndex, callback) {
+  function animateMove(playerIdx, fromCellIndex, toCellIndex, callback, direction = 1) {
   const token = playerTokens[playerIdx];
   if (!token) { callback && callback(); return; }
 
@@ -900,7 +900,7 @@ function nextTurn() {
 
   // 每格停留時間（可自行調整速度）
   const STEP_DELAY = 180; // 毫秒
-
+const stepDir = (direction === -1 ? -1 : 1); 
   // 逐格前進直到 targetStep
   function stepOnce() {
     if (curStep === targetStep) {
@@ -908,8 +908,8 @@ function nextTurn() {
       callback && callback();
       return;
     }
-    // 往下一格（繞圈）
-    curStep = (curStep + 1) % pathLen;
+    // 依方向走一格（可前進/後退，含環繞）
+    curStep = (curStep + stepDir + pathLen) % pathLen;
     const nextCellIndex = pathIndices[curStep];
 
     // 將棋子放到下一格（不複製、不顯示分身 → 不會殘影）
@@ -1329,9 +1329,22 @@ console.log("handleEventEffect");
 	  updateStatus();
 	  return; // 防止繼續執行後續程式
     }
-
+// 事件：回到起點 → 直接瞬移（不播放動畫）
+    if (event.effect === "回到起點") {
+      playerSteps[currentPlayer] = 0;
+      renderPlayers();
+      updateStatus();
+      currentPlayer = (currentPlayer + 1) % nPlayers;
+      document.getElementById("currentPlayer").textContent = currentPlayer + 1;
+      return;
+    }
+	
     const fromIndex = pathIndices[fromStep];
     const toIndex = pathIndices[newStep];
+	 // 決定動畫方向：退回 → 後退；其他 → 前進
+    let animDir = (event.effect === "退回1格" || event.effect === "退回2格") ? -1 : 1;
+
+	
 	 const imgNow = getCellImageSrc(toIndex);
     playerSteps[currentPlayer] = newStep;
 
@@ -1392,14 +1405,12 @@ if (img.includes("bag1.png")) {
       if (img.includes("underdesk.png")) {
         alert("📢 你走到了 underdesk！被書壓倒，退回起點！");
 		log.innerText += ` 玩家${currentPlayer + 1}被書壓倒！退回起點`;
-        const toStart = pathIndices[0];
         playerSteps[currentPlayer] = 0;
-        animateMove(currentPlayer, toIndex, toStart, () => {
-          updateStatus();
-          currentPlayer = (currentPlayer + 1) % nPlayers;
-          document.getElementById("currentPlayer").textContent = currentPlayer + 1;
-        });
-        return;
+		renderPlayers();                  // 立即重繪棋子位置
+		updateStatus();
+        currentPlayer = (currentPlayer + 1) % nPlayers;
+		document.getElementById("currentPlayer").textContent = currentPlayer + 1;
+		return;
       }
 //console.log(img, "quiz判斷");
 // 4) quiz：問答（不檢查地產）
@@ -1522,7 +1533,7 @@ if (imgNow.includes("earthquake3.png")) {
         document.getElementById("currentPlayer").textContent = currentPlayer + 1;
         updateStatus();
       }
-    });
+    } ,animDir);
   });
 }
 document.addEventListener('keydown', function(e) {
