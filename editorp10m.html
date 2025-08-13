@@ -159,126 +159,53 @@
     <div class="tooltip">事件卡2：隨機事件</div>
   </div>
   <div class="item-wrapper">
+    <img src="ok1.png" class="item" draggable="true" data-img="ok1.png">
+    <div class="tooltip">無特殊事件</div>
+  </div>
+  <div class="item-wrapper">
+    <img src="ok2.png" class="item" draggable="true" data-img="ok2.png">
+    <div class="tooltip">無特殊事件</div>
+  </div>
+  <div class="item-wrapper">
+    <img src="ok3.png" class="item" draggable="true" data-img="ok3.png">
+    <div class="tooltip">無特殊事件</div>
+  </div>
+  
+  <div class="item-wrapper">
     <img src="quiz.png" class="item" draggable="true" data-img="quiz.png">
     <div class="tooltip">答題格：答對可得分</div>
   </div>
-  
-  <div class="item-wrapper">
-	<img src="fire1.png" class="item" draggable="true" data-img="fire1.png">
-    <div class="tooltip">火災</div>
+
+  <br>
+<div class="item-wrapper">
+    <img src="underdesk.png" class="item" draggable="true" data-img="underdesk.png">
+    <div class="tooltip">地震來了躲到桌下，回到起點</div>
   </div>
-  
-  <div class="item-wrapper">
-	<img src="fire2.png" class="item" draggable="true" data-img="fire2.png">
-      <div class="tooltip">火災</div>
-  </div>
-  
-  <div class="item-wrapper">
-    <img src="light.png" class="item" draggable="true" data-img="light.png">
-    <div class="tooltip">燈光</div>
-  </div>
-  
-    
-	
-  <div class="item-wrapper">
-    <img src="bag1.png" class="item" draggable="true" data-img="bag1.png">
-    <div class="tooltip">包包</div>
-  </div>
-  
   <div class="item-wrapper">
     <img src="bag2.png" class="item" draggable="true" data-img="bag2.png">
-    <div class="tooltip">包包</div>
+    <div class="tooltip">急救包</div>
   </div>
   
-  <div class="item-wrapper">
-    <img src="card1.png" class="item" draggable="true" data-img="card1.png">
-    <div class="tooltip">空白卡片要幹嘛</div>
-  </div>
   
   <div class="item-wrapper">
     <img src="card2.png" class="item" draggable="true" data-img="card2.png">
     <div class="tooltip">特殊技能卡</div>
   </div>
+<div class="item-wrapper">
+	<img src="fire2.png" class="item" draggable="true" data-img="fire2.png">
+      <div class="tooltip">火災</div>
+  </div> 
   
   <div class="item-wrapper">
-    <img src="earthquake1.png" class="item" draggable="true" data-img="earthquake1.png">
-        
-    <div class="tooltip">地震了</div>
+    <img src="rain1.png" class="item" draggable="true" data-img="rain1.png">	
+    <div class="tooltip">水災了</div>
   </div>
-  
-  <div class="item-wrapper">
-    <img src="earthquake2.png" class="item" draggable="true" data-img="earthquake2.png">
-	<div class="tooltip">地震了</div>
-  </div>
-  
 <div class="item-wrapper">
     <img src="earthquake3.png" class="item" draggable="true" data-img="earthquake3.png">
     <div class="tooltip">地震了</div>
   </div>
 	 
-	<div class="item-wrapper">
-    <img src="ok1.png" class="item" draggable="true" data-img="ok1.png">
-    <div class="tooltip">沒事</div>
-  </div>
-  
-  <div class="item-wrapper">
-    <img src="ok2.png" class="item" draggable="true" data-img="ok2.png">	
-    <div class="tooltip">沒事</div>
-  </div>
-  
-  <div class="item-wrapper">
-    <img src="ok3.png" class="item" draggable="true" data-img="ok3.png">
-    <div class="tooltip">沒事</div>
-  </div>
-  <div class="item-wrapper">
-    <img src="rain1.png" class="item" draggable="true" data-img="rain1.png">	
-    <div class="tooltip">下雨</div>
-  </div>
-  
-  <div class="item-wrapper">
-    <img src="rain2.png" class="item" draggable="true" data-img="rain2.png">	
-    <div class="tooltip">下雨</div>
-  </div>
-  
-  <div class="item-wrapper">
-    <img src="rain3.png" class="item" draggable="true" data-img="rain3.png">
-    <div class="tooltip">下雨</div>
-  </div>
-	
-	<div class="item-wrapper">
-    <img src="safe.png" class="item" draggable="true" data-img="safe.png">
-	
-    <div class="tooltip">答題格：答對可得分</div>
-  </div>
-	
-		<div class="item-wrapper">
-    <img src="safezone.png" class="item" draggable="true" data-img="safezone.png">
-    <div class="tooltip">安全區</div>
-  </div>
-  
-  	<div class="item-wrapper">
-    <img src="warning1.png" class="item" draggable="true" data-img="warning1.png">
-    <div class="tooltip">警告</div>
-  </div>
-  
-  	<div class="item-wrapper">
-    <img src="warning2.png" class="item" draggable="true" data-img="warning2.png">
-    <div class="tooltip">警告</div>
-  </div>
-  
-  	<div class="item-wrapper">
-    <img src="underdesk.png" class="item" draggable="true" data-img="underdesk.png">
-    <div class="tooltip">地震來了躲到桌下，回到起點</div>
-  </div>
-	
-	
-	
-	
-    
-	
-	
-	
-	
+
 	
       </div>
 	  <button onclick="loadMap1()">📌 地圖1</button><button onclick="saveAndStart()">▶ 開始遊戲</button>
@@ -432,29 +359,36 @@ function getDescription(filename) {
   const name = filename.split('/').pop().trim();
   const dictZH = {
     "start.png": "起點：玩家從這裡開始",
-    "quiz.png": "答題格：答對可得分",
+    "quiz_fire.png": "火災相關問題答題格：答對可得分",
+    "quiz_water.png": "水災相關問題答題格：答對可得分",
+    "quiz_earthquake.png": "地震相關問題答題格：答對可得分",
     "event1.png": "事件卡1：隨機事件",
     "event2.png": "事件卡2：隨機事件",
-    "fire1.png": "火災", "fire2.png": "火災",
+    "fire1.png": "發生火災", "fire2.png": "發生火災",
     "light.png": "燈光",
-    "bag1.png": "包包", "bag2.png": "包包",
+    "bag1.png": "急救包，可加分", "bag2.png": "急救包，可加分",
     "card1.png": "空白卡片", "card2.png": "特殊技能卡",
-    "earthquake1.png": "地震了", "earthquake2.png": "地震了", "earthquake3.png": "地震了",
-    "ok1.png": "沒事","ok2.png":"沒事","ok3.png":"沒事",
-    "rain1.png": "下雨","rain2.png":"下雨","rain3.png":"下雨",
+    "earthquake1.png": "發生地震了", "earthquake2.png": "發生地震了", "earthquake3.png": "發生地震了",
+    "ok1.png": "無特殊事件","ok2.png":"無特殊事件","ok3.png":"無特殊事件",
+    "rain1.png": "發生水災","rain2.png":"發生水災","rain3.png":"發生水災",
     "safe.png": "安全區", "safezone.png": "安全區",
     "warning1.png": "警告", "warning2.png": "警告",
-    "underdesk.png": "被書壓倒退回起點",
+    "underdesk.png": "發生地震，躲到桌下，退回起點",
     "dice.png": "骰子格：可以再擲一次",
+    "fire_station_0.png":"消防局",
+	  "water_bureau_0.png": "水利局",
+	  "museum921_0.png": "地震博物館",
   };
   const dictEN = {
     "start.png": "Start: where all players begin",
-    "quiz.png": "Quiz: answer to earn points",
+    "quiz_fire.png": "Quiz for fire: answer to earn points",
+    "quiz_water.png": "Quiz for water: answer to earn points",    
+    "quiz_earthquake.png": "Quiz for earthquake: answer to earn points",
     "event1.png": "Event 1: random effect",
     "event2.png": "Event 2: random effect",
     "fire1.png": "Fire", "fire2.png": "Fire",
     "light.png": "Light",
-    "bag1.png": "Bag", "bag2.png": "Bag",
+    "bag1.png": "Aid kit", "bag2.png": "Aid kit",
     "card1.png": "Blank card", "card2.png": "Skill card",
     "earthquake1.png": "Earthquake", "earthquake2.png":"Earthquake", "earthquake3.png":"Earthquake",
     "ok1.png": "Safe","ok2.png":"Safe","ok3.png":"Safe",
@@ -463,6 +397,9 @@ function getDescription(filename) {
     "warning1.png": "Warning", "warning2.png": "Warning",
     "underdesk.png": "Books fell — back to start",
     "dice.png": "Dice tile: roll again",
+    "fire_station_0.png":"fire station",
+	  "water_bureau_0.png": "Water Bureau",
+	  "museum921_0.png": "921Earthquake Museum",
   };
   const dict = (lang === 'en') ? dictEN : dictZH;
   return dict[name] || "";
