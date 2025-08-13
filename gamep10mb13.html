@@ -2,7 +2,7 @@
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8">
-  <title>大富翁遊戲cc</title>
+  <title>大富翁遊戲</title>
   <style>
     body { font-family: sans-serif; margin: 0; padding: 1rem; display: flex; }
 	#left-panel { flex: 1; }
@@ -269,26 +269,41 @@ function __buildDefaultMap() {
 
   // 使用你提供的 map1 陣列語法（只放置有內容的格子）
   const map1 = [
-    { index: 0,  img: 'start.png' },
-    { index: 1,  img: 'fire_station_0.png' },
-    { index: 2,  img: 'event1.png' },
-    { index: 3,  img: 'bag1.png' },
-    { index: 4,  img: 'museum921_0.png' },
-    { index: 5,  img: 'event1.png' },
-    { index: 6,  img: 'dice.png' },
-    { index: 7,  img: 'event1.png' },
-    { index: 15, img: 'underdesk.png' },
-    { index: 23, img: 'water_bureau_0.png' },
-    { index: 31, img: 'event1.png' },
-    { index: 30, img: 'rain1.png' },
-    { index: 29, img: 'event1.png' },
-    { index: 28, img: 'dice.png' },
-    { index: 27, img: 'event1.png' },
-    { index: 26, img: 'earthquake3.png' },
-    { index: 25, img: 'event2.png' },
-    { index: 24, img: 'rain1.png' },
-    { index: 16, img: 'quiz_earthquake.png' },
-    { index: 8,  img: 'quiz_fire.png' }
+
+
+
+
+ { index: 0, img: 'start.png' },
+      { index: 1, img: 'fire_station_0.png' },
+      { index: 2, img: 'event1.png' },
+      { index: 3, img: 'bag1.png' },
+      { index: 4, img: 'museum921_0.png' },
+      { index: 5, img: 'event1.png' },
+      { index: 6, img: 'dice.png' },
+      { index: 7, img: 'event1.png' },
+      { index: 15, img: 'underdesk.png' },
+	  { index: 23, img: 'water_bureau_0.png' },
+      { index: 31, img: 'event1.png' },
+      { index: 39, img: 'rain1.png' },
+      { index: 38, img: 'ok3.png' },
+      { index: 37, img: 'dice.png' },
+	  { index: 36, img: 'event1.png' },
+      { index: 28, img: 'quiz_earthquake.png' },
+      { index: 20, img: 'ok2.png' },     
+	  { index: 19, img: 'event1.png' },
+      { index: 27, img: 'fire.png' },
+      { index: 35, img: 'event2.png' },
+      { index: 34, img: 'rain1.png' },
+	  { index: 33, img: 'ok1.png' },
+	  { index: 32, img: 'event1.png' },
+      { index: 24, img: 'earthquake3.png' },
+      { index: 16, img: 'event2.png' },
+      { index: 17, img: 'rain1.png' },
+	  { index: 9, img: 'quiz_water.png' },
+      { index: 8, img: 'quiz_fire.png' },
+
+
+
   ];
 
   // 轉成遊戲用的 mapData 結構（index -> img）
@@ -841,8 +856,8 @@ function continueMoveLogic(dice) {
   return; // 出題完就收工，不要再往下跑其他格子效果
 }
   if (imgNow.includes("underdesk.png")) {
-  alert("📢 被書壓倒，退回起點！");
-  logEl.innerText += `\n📢 玩家${currentPlayer + 1} 被書壓倒！退回起點`;
+  alert("📢 發生地震，躲到桌下，退回起點！");
+  logEl.innerText += `\n📢 玩家${currentPlayer + 1} 發生地震，躲到桌下，退回起點`;
   playerSteps[currentPlayer] = 0;
   renderPlayers();
   updateStatus();
@@ -862,9 +877,9 @@ if (imgNow.includes("dice.png")) {
   if (imgNow.includes("bag1.png")) {
   playerScores[currentPlayer] += 5;
   updateStatus();
-  logEl.innerText += `\n🎒 玩家 ${currentPlayer + 1} 撿到包包，加 5 分`;
+  logEl.innerText += `\n🎒 玩家 ${currentPlayer + 1} 撿到急救包，加 5 分`;
   logEl.scrollTop = logEl.scrollHeight;
-  alert(`🎴 恭喜！玩家 ${currentPlayer + 1} 撿到包包，加 5 分`);  
+  alert(`🎴 恭喜！玩家 ${currentPlayer + 1} 撿到急救包，加 5 分`);  
   checkScoreWin();
 
   // 換下一位
@@ -1074,24 +1089,24 @@ function showEventCard(event, callback) {
   // 有技能才有按鈕
   if (playerSkills[currentPlayer] > 0) {
     card.querySelector("#event-skill-btn").onclick = () => {
-      alert("🎮 你使用了特殊技能，本次事件效果無效！");
+      alert("🎮 你使用了特殊技能，本次事件無效！");
 	  if (passedStart) {
         playerScores[currentPlayer] += 1;
 		
-        alert("🎉 完成一圈，加1分(這邊是套圈後  走到event的加分 然後用技能卡的)！");
+        //alert("🎉 完成一圈，加1分(這邊是套圈後  走到event的加分 然後用技能卡的)！");
+		  alert("🎉 完成一圈，加1分！");
 		
         log.innerText += `\n🎯 玩家${currentPlayer + 1} 完成一圈，加1分`;
         passedStart = false;
         updateStatus();
-		alert("⚠event完成一圈");
-		checkScoreWin();
+		    checkScoreWin();
       }
       playerSkills[currentPlayer]--;
       updateStatus();
       hideEventCard();
       // 跳過事件、換人
 	  
-	  logEl.innerText += ` 觸發事件：「${event.desc} ${event.effect}」，使用技能卡  事件無效`;
+	    logEl.innerText += ` 觸發事件：「${event.desc} ${event.effect}」，使用技能卡  事件無效`;
       logEl.scrollTop = logEl.scrollHeight;
       currentPlayer = (currentPlayer + 1) % nPlayers;
       document.getElementById("currentPlayer").textContent = currentPlayer + 1;
@@ -1167,8 +1182,8 @@ function handleOwnershipQuiz(tileName, propKey, propDisplayName, toIndex, askFun
       }
     } else {
       // 無人擁有
-      alert(correct ? `你答對了，目前沒有${propDisplayName}需要處理`
-                    : `你答錯了，目前沒有${propDisplayName}需要處理`);
+      alert(correct ? `你答對了，但目前沒有玩家擁有${propDisplayName}`
+                    : `你答錯了，但目前沒有玩家擁有${propDisplayName}`);
     }
 
     afterResolve && afterResolve();
@@ -1468,8 +1483,8 @@ if (img.includes("bag1.png")) {
 
 // 3) underdesk：退回起點（不檢查地產）
       if (img.includes("underdesk.png")) {
-        alert("📢 你走到了 underdesk！被書壓倒，退回起點！");
-		log.innerText += ` 玩家${currentPlayer + 1}被書壓倒！退回起點`;
+        alert("📢 發生地震，躲到桌下，退回起點");        
+		log.innerText += ` 發生地震，躲到桌下，玩家${currentPlayer + 1}，退回起點`;
         playerSteps[currentPlayer] = 0;
 		renderPlayers();                  // 立即重繪棋子位置
 		updateStatus();
@@ -1575,7 +1590,7 @@ if (imgNow.includes("earthquake3.png")) {
 
 // 5) 若 landing 是事件格，且本次事件是「位移型事件」，做事件連鎖（不檢查地產）
       if ((img.includes("event1.png") || img.includes("event2.png")) && moveEffects.includes(event.effect)) {
-	  alert("handleEventEffect");
+	  alert("連鎖事件卡");
         const nextEvent = eventList[Math.floor(Math.random() * eventList.length)];
         setTimeout(() => {
           handleEventEffect(nextEvent, newStep);
