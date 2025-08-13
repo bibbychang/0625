@@ -38,7 +38,7 @@
     header.hero{position:sticky;top:0;z-index:5;background:linear-gradient(180deg,var(--bg) 0%,transparent 100%);backdrop-filter:saturate(1.2) blur(6px);}
     .hero-inner{display:flex;gap:18px;align-items:center;justify-content:space-between;padding:14px 24px;border-bottom:1px solid var(--border)}
     .brand{display:flex;gap:12px;align-items:center}
-    .logo{width:40px;height:40px;border-radius:12px;background:conic-gradient(from 20deg,var(--accent),var(--accent-2));box-shadow:var(--shadow)}
+    .logo{width:40px;height:40px;border-radius:12px;background: url('background.jpg') center / contain no-repeat;box-shadow:var(--shadow)}
     .title{font-weight:800;font-size:20px;letter-spacing:.3px}
     .actions{display:flex;gap:10px;align-items:center}
     .btn{border:1px solid var(--border);background:var(--card);color:var(--text);padding:8px 12px;border-radius:12px;cursor:pointer;box-shadow:var(--shadow)}
@@ -78,9 +78,43 @@
       .card{break-inside:avoid}
     }
   </style>
+  <style id="bg-override">
+    /* Subtle watermark background — very light, behind all content */
+    body{ background: inherit; }
+    body::before{
+      content:"";
+      position: fixed;
+      inset: 0;
+      background: url('background.jpg') top center / 100vmin repeat-x;
+      opacity: 0.08;            /* ← 調整淡度（0.08 ~ 0.18） */
+      pointer-events: none;
+      z-index: 0;
+      filter: saturate(0.85);
+    }
+    /* 保證主要內容蓋在背景上方 */
+    body > * { position: relative; z-index: 1; }
+  </style>
+  <style id="video-layout-override">
+    /* 兩支影片並排各 50% */
+    #videoGrid{
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      align-items: start;
+    }
+    #videoGrid figure{ margin: 0; }
+    #videoGrid video, #videoGrid iframe{
+      width: 100%;
+      height: auto;
+      display: block;
+      border-radius: 10px;
+    }
+  </style>
 </head>
 <body>
+
   <header class="hero">
+    
     <div class="hero-inner">
       <div class="brand">
         <div class="logo" aria-hidden="true"></div>
@@ -96,7 +130,7 @@
       </div>
     </div>
     <nav class="toc container">
-      <a href="#goal">快速上手</a>
+      <a href="#goal">教育目標</a>
       <a href="#quickstart">快速上手</a>
       <a href="#rules">基本規則</a>
       <a href="#tiles">格子一覽</a>
@@ -110,26 +144,57 @@
 
   <main class="container">
 <section id="goal" class="section">
-      <h2>🎀 遊戲目的</h2>
-      
+      <h2>🎀 防災大富翁｜教育目標</h2>
+      <p class="lead">以遊戲化方式強化「知識×決策×公共意識」，落實防災素養</div>
       <div class="grid cols-2">
         <div class="card">
-          <h3>1) 目的1</h3>
+          <h3>1) 教育定位</h3>
           <ol class="list">
             
-            <li>bbb</li>
+            <li>與 SDG 11.5「減少災害損失」及課綱防災素養對齊。</li>
+            <span class="pill">主題：校園/家庭防災</span>
+          <span class="pill">學段：國小中年級</span>
+          <span class="pill">類型：教育型桌遊</span>
           </ol>
           
         </div>
         <div class="card">
-          <h3>2) 目的2</h3>
+          <h3>2) 學習目標</h3>
           <ol class="list">
             
-            <li>???</li>
-            <li>????</li>
+        <li><strong>知識</strong>：地震/火災/水災正確行動。</li>
+          <li><strong>技能</strong>：情境判斷、與風險評估。</li>
+          <li><strong>態度</strong>：預先準備、公共意識、團隊合作。</li>
           </ol>
           
         </div>
+<div class="card">
+          <h3>3) 教育意義</h3>
+          <ol class="list">
+            
+        <li><strong>問答</strong>：強化正確知識→答對加分。</li>
+          <li><strong>事件卡</strong>：隨機情境與決策練習；退回、回起點、加分等。</li>
+          <li><strong>防災包</strong>：平時準備換取災時優勢。</li>
+          <li><strong>可購買地點</strong>：答對才能購買。</li>
+          <li><strong>退回起點</strong>：就地掩護的模型化示例。</li>
+          </ol>
+          
+        </div>
+
+<div class="card">
+        <h3>4) 評量設計</h2>
+        <ol class="list">
+
+        <li><strong>答題檢視</strong>：遊戲結束後可以回看答題狀況，能有效提升學習成效。</li>
+        <li><strong>事件卡</strong>：隨機情境與決策練習。</li>
+        <li><strong>勝負制</strong>：透過比賽勝負機制提升學生學習動機。</li>  
+        </ol>
+        
+</div>
+
+
+
+
       </div>
     </section>
 
@@ -343,7 +408,7 @@
   <footer class="footer">
     <div>© 2025 防災大富翁｜教學頁</div>
     <h2>🎬 影片集</h2>
-    <p class="meta">影片檔放在 <code>videos/</code> 資料夾</p>
+    <p class="meta">AI工具產生的影片</p>
     <div class="grid" id="videoGrid">
       <figure>
         <video controls preload="metadata" src="v1.mp4"></video>
