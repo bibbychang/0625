@@ -1310,7 +1310,7 @@ function handleProperty(index, afterDone) {
         updateStatus(); // 先刷新計分板
 
         setTimeout(() => {
-          logEl.innerText += `\n🏠 玩家${me} 以 ${price} 分購買了「${name}」`;
+          logEl.innerText += ` 以 ${price} 分購買了「${name}」`;
           logEl.scrollTop = logEl.scrollHeight;
           afterDone && afterDone();
         }, 0);
