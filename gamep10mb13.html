@@ -1317,7 +1317,8 @@ function handleProperty(index, afterDone) {
         return;
       }
     } else {
-      logEl.innerText += `\n💡 玩家${me} 分數不足（${playerScores[currentPlayer]}）無法購買「${name}」（需 ${price} 分）`;
+      alert(`玩家${me} 分數不足 無法購買「${name}」（需 ${price} 分）`);
+	  logEl.innerText += `分數不足 無法購買「${name}」（需 ${price} 分）`;
       logEl.scrollTop = logEl.scrollHeight;
     }
     afterDone && afterDone();
