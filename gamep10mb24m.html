@@ -372,7 +372,7 @@ function __buildDefaultMap() {
 
   // 使用你提供的 map1 陣列語法（只放置有內容的格子）
   const map1 = [
- { index: 0, img: 'start.png' },
+      { index: 0, img: 'start.png' },
       { index: 1, img: 'fire_station_0.png' },
       { index: 2, img: 'event1.png' },
       { index: 3, img: 'bag1.png' },
@@ -382,13 +382,15 @@ function __buildDefaultMap() {
       { index: 7, img: 'event1.png' },
       { index: 15, img: 'underdesk.png' },
 	  { index: 23, img: 'water_bureau_0.png' },
-      { index: 31, img: 'event1.png' },
+      { index: 31, img: 'light.png' },
       { index: 39, img: 'rain1.png' },
       { index: 38, img: 'ok3.png' },
       { index: 37, img: 'dice.png' },
 	  { index: 36, img: 'event1.png' },
-      { index: 28, img: 'quiz_earthquake.png' },
-      { index: 20, img: 'ok2.png' },     
+      { index: 28, img: 'earthquake3.png' },
+      { index: 20, img: 'ok2.png' },
+      { index: 12, img: 'rain1.png' },
+	  { index: 11, img: 'quiz_earthquake.png' },
 	  { index: 19, img: 'event1.png' },
       { index: 27, img: 'fire2.png' },
       { index: 35, img: 'event2.png' },
@@ -400,7 +402,7 @@ function __buildDefaultMap() {
       { index: 17, img: 'rain1.png' },
 	  { index: 9, img: 'quiz_water.png' },
       { index: 8, img: 'quiz_fire.png' },
-  ];
+    ];
 
   // 轉成遊戲用的 mapData 結構（index -> img）
   const map = {};
@@ -412,20 +414,26 @@ function __buildDefaultMap() {
   return { ring, map };
 }
 
+function __isValidConfig(cfg) {
+  const okPath = Array.isArray(cfg?.pathIndices)
+    && cfg.pathIndices.length > 0
+    && cfg.pathIndices.every(n => Number.isInteger(n) && n >= 0 && n < 64);
+
+  const okMap = cfg?.mapData && Object.keys(cfg.mapData).length > 0;
+
+  return okPath && okMap;
+}
 
 // 若沒有地圖（pathIndices 或 mapData 皆可作為判斷）→ 套用預設
 (function __ensureDefaults(){
-  const needPath = !Array.isArray(config.pathIndices) || config.pathIndices.length === 0;
-  const needMap  = !config.mapData || Object.keys(config.mapData).length === 0;
-
-  if (needPath || needMap) {
+  if (!__isValidConfig(config)) {
     const { ring, map } = __buildDefaultMap();
-    if (needPath) config.pathIndices = ring;
-    if (needMap)  config.mapData     = map;
-    if (!config.mode)         config.mode = "score";
-    if (!config.scoreTarget)  config.scoreTarget = 20;
-    if (!config.timeLimit)    config.timeLimit = 120;
-    if (!config.playerCount)  config.playerCount = 2;
+    config.pathIndices = ring;
+    config.mapData     = map;
+    config.mode        = config.mode || "score";
+    config.scoreTarget = config.scoreTarget || 20;
+    config.timeLimit   = config.timeLimit || 120;
+    config.playerCount = config.playerCount || 2;
   }
 })();
 
@@ -1394,7 +1402,8 @@ function hideEventCard() {
 
 function getPropertyIndexesByKey(propKey, ownerFilter /* (ownerId)=>bool */ = null) {
   const arr = [];
-  for (let i = 0; i < mapData.length; i++) {
+  const total = 64; // 8x8 棋盤
+  for (let i = 0; i < total; i++) {
     const key = propertyKeys[i] || getPropertyKey(mapData[i] || "");
     if (key === propKey) {
       const owner = (propertyOwners[i] ?? 0);

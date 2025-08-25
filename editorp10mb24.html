@@ -554,6 +554,7 @@ function drop(e) {
 }
 
  function loadMap1() {
+	clearMap(); 
     const map1 = [
       { index: 0, img: 'start.png' },
       { index: 1, img: 'fire_station_0.png' },
@@ -620,6 +621,7 @@ function clearMap() {
 
 // 範例 Map 2（你可以再調整內容順序與圖示）
 function loadMap2() {
+clearMap(); 
   const map2 = [
     { index: 0, img: 'start.png' },
     { index: 1, img: 'quiz_fire.png' },
@@ -670,6 +672,7 @@ function loadMap2() {
 
 // 範例 Map 3（你可以再調整內容順序與圖示）
 function loadMap3() {
+clearMap(); 
   const map3 = [
     { index: 0, img: 'start.png' },
     { index: 1, img: 'event1.png' },
@@ -744,7 +747,7 @@ function saveAndStart() {
   localStorage.setItem("gameConfig", JSON.stringify(config));
   console.log(config);
   localStorage.setItem("gameLang", lang); // 記住語言選擇
-window.location.href = (lang === 'en') ? "gamep10mb23e.html" : "gamep10mb23m.html";
+window.location.href = (lang === 'en') ? "gamep10mb23e.html" : "gamep10mb24m.html";
 }
 </script>
 </body>
