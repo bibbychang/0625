@@ -859,10 +859,10 @@ player: playerIndex + 1,
       });
 // 結果處理（保留你原本加分/不加分由呼叫端決定）
       if (correct) {
-        alert("答對了！");
+        alert("答對了！加3分");
         onCorrect && onCorrect();
       } else {
-        alert("答錯了！");
+        alert("答錯了！不加分");
         onWrong && onWrong();
       }
     };
