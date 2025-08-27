@@ -364,51 +364,54 @@ try { config = JSON.parse(localStorage.getItem("gameConfig") || '{}'); } catch (
 
 function __buildDefaultMap() {
   // 外圈路徑（8x8）：上→右→下→左（共 28 格）
-  const ring = [];
-  for (let c = 0; c < 8; c++) ring.push(0 * 8 + c);     // top row 0..7
-  for (let r = 1; r < 8; r++) ring.push(r * 8 + 7);     // right col
-  for (let c = 6; c >= 0; c--) ring.push(7 * 8 + c);    // bottom row
-  for (let r = 6; r >= 1; r--) ring.push(r * 8 + 0);    // left col
+  
 
   // 使用你提供的 map1 陣列語法（只放置有內容的格子）
   const map1 = [
       { index: 0, img: 'start.png' },
       { index: 1, img: 'fire_station_0.png' },
-      { index: 2, img: 'event1.png' },
+      { index: 2, img: 'dice.png' },
       { index: 3, img: 'bag1.png' },
       { index: 4, img: 'museum921_0.png' },
-      { index: 5, img: 'event1.png' },
-      { index: 6, img: 'dice.png' },
-      { index: 7, img: 'event1.png' },
+      { index: 5, img: 'ok1.png' },
+      { index: 6, img: 'event1.png' },
+      { index: 7, img: 'quiz_water.png' },
       { index: 15, img: 'underdesk.png' },
 	  { index: 23, img: 'water_bureau_0.png' },
       { index: 31, img: 'light.png' },
-      { index: 39, img: 'rain1.png' },
+      { index: 39, img: 'fire2.png' },
       { index: 38, img: 'ok3.png' },
-      { index: 37, img: 'dice.png' },
-	  { index: 36, img: 'event1.png' },
-      { index: 28, img: 'earthquake3.png' },
-      { index: 20, img: 'ok2.png' },
-      { index: 12, img: 'rain1.png' },
-	  { index: 11, img: 'quiz_earthquake.png' },
-	  { index: 19, img: 'event1.png' },
+      { index: 37, img: 'dice.png' },	 
+      { index: 29, img: 'fire_station_0.png' },
+      { index: 21, img: 'ok2.png' },
+      { index: 20, img: 'rain1.png' },
+	  { index: 19, img: 'quiz_earthquake.png' },	  
       { index: 27, img: 'fire2.png' },
       { index: 35, img: 'event2.png' },
-      { index: 34, img: 'rain1.png' },
-	  { index: 33, img: 'ok1.png' },
-	  { index: 32, img: 'event1.png' },
-      { index: 24, img: 'earthquake3.png' },
-      { index: 16, img: 'event2.png' },
-      { index: 17, img: 'rain1.png' },
-	  { index: 9, img: 'quiz_water.png' },
+      { index: 34, img: 'quiz_water.png' },
+	  { index: 33, img: 'event1.png' },
+	  { index: 32, img: 'fire_station_0.png' },
+      { index: 24, img: 'earthquake3.png' },      
+      { index: 17, img: 'rain1.png' },	  
       { index: 8, img: 'quiz_fire.png' },
     ];
 
   // 轉成遊戲用的 mapData 結構（index -> img）
   const map = {};
+  
+
   for (const {index, img} of map1) {
     if (Number.isInteger(index) && typeof img === 'string') {
       map[index] = img;
+    }
+  }
+  
+  const seen = new Set();
+  const ring = [];
+  for (const { index } of map1) {
+    if (Number.isInteger(index) && !seen.has(index)) {
+      seen.add(index);
+      ring.push(index);
     }
   }
   return { ring, map };
@@ -503,7 +506,8 @@ const QUIZ = {
 	  { category:'water', question:'哪一項不是造成水災的原因？',      options:['下大雨或颱風','河水暴漲','排水系統不良','天氣太乾燥'], answer:3 },
 	  { category:'water', question:'為了減少水災的影響，我們平時可以做什麼？',      options:['把垃圾丟進水溝','蓋房子在低窪地區','清理排水孔、避免水溝堵塞','不聽氣象預報'], answer:2 },
 	  { category:'water', question:'水災期間，如果政府宣布撤離，我們應該？',      options:['繼續留在家中睡覺','拿雨傘走出去玩','馬上照指示前往避難地點，收看氣象資訊','拍影片上傳網路'], answer:2 } ,
-	  { category:'water', question:'下列哪一項不是水災可能造成的影響？',      options:['房屋淹水','農田受損','道路中斷、洞穴或看不到的危險','天氣變熱'], answer:3 },
+	  
+	  { category:'water', question:'下列哪一項不是水災可能造成的影響？',      options:['房屋淹水','農田受損','道路中斷','天氣變熱'], answer:3 },
 	  { category:'water', question:'當水災發生時，我們應該怎麼做？',      options:['留在家裡看電視','跑去河邊看水有多高','聽從大人指示，前往安全地點','跳進水裡游泳'], answer:2 },
 	  { category:'water', question:'下列哪一項可以幫助減少水災發生的機會？',      options:['亂丟垃圾進水溝','建造排水系統','砍光所有樹木','把垃圾丟進河裡'], answer:1 },
 	  { category:'water', question:'為什麼不能亂丟垃圾進水溝？',      options:['沒關係，水會沖走','垃圾會變少','容易堵塞，導致水災','比較方便'], answer:2 },
@@ -527,13 +531,13 @@ const QUIZ = {
 	
     { category:'earthquake', question:'地震時應該離窗戶遠一點，是因為？',      options:['玻璃可能破碎','看不到外面','太冷'], answer:0},
 	{ category:'earthquake', question:'地震發生後，應注意哪些地方可能有餘震？',      options:['室外空地','樓梯間','地震後都安全了'], answer:1},
-    { category:'earthquake', question:'地防災包中下列哪一項不是必要物品？',      options:['哨子','手電筒','電動玩具'], answer:2 },
+    { category:'earthquake', question:'防災包中下列哪一項不是必要物品？',      options:['哨子','手電筒','電動玩具'], answer:2 },
 	
 	{ category:'earthquake', question:'地震時打開門的目的為何？',      options:['看鄰居在幹嘛','通風','預防門卡住'], answer:2 },
 	 { category:'earthquake', question:'地震最容易發生在哪些地方？',      options:['山區','找火山附近','板塊交界處'], answer:2},
 	{ category:'earthquake', question:'如果在電影院遇到地震，應該？',      options:['快跑出去','蹲下抱頭','坐著繼續看'], answer:1 },
    
-	{ category:'earthquake', question:'地震時樓梯可能是危險區域，原因是？？',      options:['容易堵塞','結構不穩','太高了'], answer:1 },
+	{ category:'earthquake', question:'地震時樓梯可能是危險區域，原因是？',      options:['容易堵塞','結構不穩','太高了'], answer:1 },
     { category:'earthquake', question:'地震當下在車內，應該怎麼做？',      options:['立刻下車','保持冷靜停靠','加速離開'], answer:1 },
 	
 	{ category:'earthquake', question:'地震時最應避免哪一種行為？',      options:['大聲尖叫','找出口','抱著牆'], answer:0 },
